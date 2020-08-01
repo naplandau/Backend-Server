@@ -6,6 +6,7 @@ use dotenv;
 
 use crate::app::routes::routes::routes;
 use crate::config::config::CONFIG;
+use crate::core::db::db::add_pool;
 
 pub async fn server() -> std::io::Result<()>{
     dotenv::dotenv().ok();
@@ -28,8 +29,8 @@ pub async fn server() -> std::io::Result<()>{
                 .allowed_headers(vec![AUTHORIZATION, CONTENT_TYPE])
                 .max_age(3600)
                 .finish())
+        .configure(add_pool)
         //.wrap(get_identity_service())
-        //.configure(add_pool)
         //.app_data(data.clone())
         .configure(routes)
         .default_service(web::route().to(||HttpResponse::NotFound()))
