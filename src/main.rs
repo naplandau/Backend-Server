@@ -4,6 +4,10 @@ extern crate lazy_static;
 extern crate serde_derive;
 #[macro_use]
 extern crate env_logger;
+#[macro_use]
+extern crate diesel;
+#[macro_use]
+extern crate validator_derive;
 
 mod server;
 mod app;

@@ -4,6 +4,10 @@ use actix_web::{
     HttpResponse
 };
 use derive_more::Display;
+use diesel::{
+    r2d2::PoolError,
+    result::{DatabaseErrorKind, Error as DBError},
+};
 
 #[derive(Debug, Display, PartialEq)]
 #[allow(dead_code)]
@@ -16,7 +20,8 @@ pub enum Error{
     Unauthorized(String),
     //403
     Forbidden(String),
-    InternalServerError
+    PoolError(String),
+    InternalServerError(String)
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -52,5 +57,29 @@ impl ResponseError for Error{
             // }
             _ => HttpResponse::new(StatusCode::INTERNAL_SERVER_ERROR),
         }
+    }
+}
+
+/// Convert DBErrors to ApiErrors
+impl From<DBError> for Error {
+    fn from(error: DBError) -> Error {
+        // Right now we just care about UniqueViolation from diesel
+        // But this would be helpful to easily map errors as our app grows
+        match error {
+            DBError::DatabaseError(kind, info) => {
+                if let DatabaseErrorKind::UniqueViolation = kind {
+                    let message = info.details().unwrap_or_else(|| info.message()).to_string();
+                    return Error::BadRequest(message);
+                }
+                Error::InternalServerError("Unknown database error".into())
+            }
+            _ => Error::InternalServerError("Unknown database error".into()),
+        }
+    }
+}
+/// Convert PoolErrors to ApiErrors
+impl From<PoolError> for Error {
+    fn from(error: PoolError) -> Error {
+        Error::PoolError(error.to_string())
     }
 }
