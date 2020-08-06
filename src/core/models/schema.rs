@@ -1,13 +1,12 @@
 table! {
     users (id) {
-        id -> Uuid,
+        id -> Text,
         username -> Text,
-        email -> Varchar,
+        email -> Nullable<Varchar>,
         password -> Text,
         first_name -> Nullable<Text>,
         last_name -> Nullable<Text>,
         phone_number -> Nullable<Varchar>,
-        dob -> Timestamp,
         role -> Nullable<Varchar>,
         roles -> Nullable<Text>,
         avatar -> Nullable<Text>,

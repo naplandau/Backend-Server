@@ -8,3 +8,7 @@ where
 {
     Ok(Json(data))
 }
+
+pub fn respond_ok() -> Result<HttpResponse, Error> {
+    Ok(HttpResponse::Ok().body(Body::Empty))
+}
