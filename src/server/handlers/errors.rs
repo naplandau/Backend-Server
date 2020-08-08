@@ -4,7 +4,7 @@ use actix_web::{
     HttpResponse
 };
 use failure::Fail;
-use derive_more::Display;
+//use derive_more::Display;
 use diesel::{
     r2d2::PoolError,
     result::{DatabaseErrorKind, Error as DBError},

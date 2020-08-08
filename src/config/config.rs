@@ -4,11 +4,11 @@ use serde::Deserialize;
 pub struct Config{
     //pub auth_salt: String,
     //pub database: DatabaseConnection,
-    pub database_url: String,
     //pub jwt_expiration: i64,
     //pub jwt_key: String,
     //pub rust_backtrace:u8,
     //pub rust_log:String,
+    pub secret_key: String,
     pub server: String,
     //pub session_key: String,
     //pub session_name:String,
@@ -19,7 +19,6 @@ pub struct Config{
 lazy_static! {
     pub static ref CONFIG: Config = get_config();
 }
-
 fn get_config() -> Config{
     dotenv().ok();
 
