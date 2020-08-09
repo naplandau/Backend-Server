@@ -9,7 +9,8 @@ use diesel::{
     r2d2::PoolError,
     result::{DatabaseErrorKind, Error as DBError},
 };
-
+use validator::ValidationErrors;
+use serde_json::{Map as JsonMap, Value as JsonValue};
 #[derive(Debug, Fail, PartialEq)]
 #[allow(dead_code)]
 pub enum Error{
@@ -30,6 +31,9 @@ pub enum Error{
     PoolError(String),
     #[fail(display = "Internal Server Error")]
     InternalServerError(String),
+    // 422
+    #[fail(display = "Unprocessable Entity: {}", _0)]
+    UnprocessableEntity(JsonValue),
     #[fail(display = "Time Out")]
     TimeOut
 }
@@ -98,5 +102,27 @@ impl From<DBError> for Error {
 impl From<PoolError> for Error {
     fn from(error: PoolError) -> Error {
         Error::PoolError(error.to_string())
+    }
+}
+
+impl From<ValidationErrors> for Error {
+    fn from(errors: ValidationErrors) -> Self {
+        let mut err_map = JsonMap::new();
+
+        // transforms errors into objects that err_map can take
+        for (field, errors) in errors.field_errors().iter() {
+            let errors: Vec<JsonValue> = errors
+                .iter()
+                .map(|error| {
+                    // dbg!(error) // <- Uncomment this if you want to see what error looks like
+                    json!(error.message)
+                })
+                .collect();
+            err_map.insert(field.to_string(), json!(errors));
+        }
+
+        Error::UnprocessableEntity(json!({
+            "errors": err_map,
+        }))
     }
 }

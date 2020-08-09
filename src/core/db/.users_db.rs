@@ -9,24 +9,6 @@ use crate::core::models::schema::users::dsl::*;
 use crate::core::models::users::*;
 use crate::server::handlers::errors::*;
 
-// pub fn find_all(pool: &PgPool) -> Result<UsersResponse, Error> {
-//    let conn = pool.get()?;
-//    let all_users = users.load(&conn)?;
-
-//    Ok(all_users.into())
-// }
-
-// pub fn find(pool: &PgPool, user_id: String) -> Result<UserResponse, Error> {
-//    let not_found = format!("not found");
-//    let conn = pool.get()?;
-//    let user = users
-//       .filter(id.eq(user_id))
-//       .first::<User>(&conn)
-//       .map_err(|_| Error::NotFound(not_found))?;
-
-//    Ok(user.into())
-// }
-
 // /// Find a user by the user's authentication information (email + password)
 // /// Return an Unauthorized error if it doesn't match
 // // pub fn find_by_auth(pool: &PgPool, user_email: &str, user_password: &str) -> Result<UserResponse, Error>
@@ -40,13 +22,6 @@ use crate::server::handlers::errors::*;
 // //     Ok(user.into())
 // //  }
 
-// pub fn create(pool: &PgPool, user: &User) -> Result<UserResponse, Error> {
-//    let conn = pool.get()?;
-//    diesel::insert_into(users).values(user).execute(&conn)?;
-
-//    Ok(UserResponse::from(user.clone()).into())
-// }
-
 // pub fn update(pool: &PgPool, update_user: &User) -> Result<UserResponse, Error> {
 //    let conn = pool.get()?;
 //    diesel::update(users)
@@ -55,13 +30,4 @@ use crate::server::handlers::errors::*;
 //       .execute(&conn)?;
 
 //    find(&pool, update_user.id.clone())
-// }
-
-// pub fn delete(pool: &PgPool, user_id: Uuid) -> Result<(), Error> {
-//    let conn = pool.get()?;
-//    diesel::delete(users)
-//       .filter(id.eq(user_id.to_string()))
-//       .execute(&conn)?;
-
-//    Ok(())
 // }

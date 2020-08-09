@@ -2481,6 +2481,7 @@ version = "0.1.0"
 dependencies = [
  "actix",
  "actix-cors",
+ "actix-http 1.0.1",
  "actix-rt",
  "actix-web 3.0.0-beta.1",
  "bson",
@@ -2501,6 +2502,7 @@ dependencies = [
  "num_cpus",
  "once_cell",
  "rayon",
+ "regex",
  "rust-crypto",
  "serde",
  "serde_derive",

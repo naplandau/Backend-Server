@@ -1,8 +1,9 @@
+use bson::Document;
+// use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
-use chrono::NaiveDateTime;
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct LoginResponse{
+pub struct LoginResponse {
     pub data: String,
     pub status: bool,
     pub request_id: String,
@@ -10,7 +11,8 @@ pub struct LoginResponse{
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Response{
+pub struct Response {
+    pub data: Document,
     pub message: String,
-    pub status: bool
+    pub status: bool,
 }
