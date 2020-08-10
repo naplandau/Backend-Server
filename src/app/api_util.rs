@@ -1,5 +1,6 @@
 use bson::Document;
 use validator::{ValidationErrors, ValidationErrorsKind};
+
 pub fn get_validate_error(e: ValidationErrors) -> Document {
     let mut doc = Document::new();
     for (s, vlk) in e.into_errors().iter() {

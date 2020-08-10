@@ -4,8 +4,8 @@ use crate::core::models::users::{
 };
 use crate::server::handlers::hasher::{hash_validation, HASHER};
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
-use validator::{Validate, ValidationError, ValidationErrorsKind};
 use std::error::Error;
+use validator::{Validate, ValidationError, ValidationErrorsKind};
 
 pub async fn admin() -> impl Responder {
     let _exec = db_utils::insert("users", &ADMIN_DOC).await;
@@ -74,13 +74,13 @@ pub async fn login(user: web::Json<Login>) -> HttpResponse {
                 let mut _date: DateTime<Utc>;
                 //Remember me
                 if !user.remember_me {
-                    _date = Utc::now() + Duration::hours(1);
+                    _date = chrono::Utc::now() + Duration::hours(1);
                 } else {
-                    _date = Utc::now() + Duration::days(365);
+                    _date = chrono::Utc::now() + Duration::days(365);
                 }
                 let my_claims = Claims {
                     sub: user.email,
-                    expire_time: _date.timestamp() as usize,
+                    exp: _date.timestamp() as usize,
                 };
                 let token = encode(
                     &Header::default(),
@@ -89,11 +89,10 @@ pub async fn login(user: web::Json<Login>) -> HttpResponse {
                 )
                 .unwrap();
 
-                HttpResponse::Ok().json(LoginResponse {
-                    data: "You have successfully logged in.".to_string(),
-                    auth_token: token.clone(),
+                HttpResponse::Ok().json(Response {
+                    data: doc! {"auth_token": token.to_string()},
+                    message: "".to_string(),
                     status: true,
-                    request_id: token.clone(),
                 })
             } else {
                 HttpResponse::Ok()
@@ -144,13 +143,13 @@ pub async fn register(user: web::Json<Register>) -> HttpResponse {
                     }
                 }
             }
-        },
-        Err(e) =>{
+        }
+        Err(e) => {
             let err_doc = api_util::get_validate_error(e);
             HttpResponse::Ok().json(Response {
-            data: doc! {"error": Bson::Document(err_doc)},
-            status: false,
-            message: "Data not valid.".to_string(),
+                data: doc! {"error": Bson::Document(err_doc)},
+                status: false,
+                message: "Data not valid.".to_string(),
             })
         }
     }
@@ -195,4 +194,38 @@ fn get_sub_field(doc: &Document) -> Document {
         new_doc.remove(key);
     }
     new_doc
+}
+
+async fn check_token(token: &str) -> bool {
+    let _var = &CONFIG.secret_key;
+    let key = _var.as_bytes();
+    let _decode = decode::<Claims>(
+        token,
+        &DecodingKey::from_secret(key),
+        &Validation::default(),
+    );
+    match _decode {
+        Ok(decoded) => match users_db::find_by_email(decoded.claims.sub.to_string()).await {
+            Ok(_) => true,
+            Err(_) => false,
+        },
+        Err(_) => false,
+    }
+}
+pub async fn check_auth(_req: HttpRequest) -> HttpResponse {
+    let _auth = _req.headers().get("Authorization");
+    let _spilt: Vec<&str> = _auth.unwrap().to_str().unwrap().split("Bearer").collect();
+    let token = _spilt[1].trim();
+    match check_token(token).await {
+        true => HttpResponse::Ok().json(Response {
+            data: doc! {},
+            status: true,
+            message: "Your token is valid".to_string(),
+        }),
+        false => HttpResponse::Ok().json(Response {
+            data: doc! {},
+            status: true,
+            message: "Your token is invalid".to_string(),
+        }),
+    }
 }

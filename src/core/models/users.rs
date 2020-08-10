@@ -55,7 +55,7 @@ pub struct Login {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
     pub sub: String,
-    pub expire_time: usize,
+    pub exp: usize,
 }
 
 #[derive(Debug, Serialize, Deserialize, Validate)]

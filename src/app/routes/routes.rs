@@ -9,6 +9,7 @@ async fn index() -> impl Responder {
 
 pub fn routes(cfg: &mut web::ServiceConfig) {
     cfg.service(web::resource("/").to(index))
+    .service(web::resource("/check_auth").to(cb_users::check_auth))
         .service(web::resource("/admin").to(cb_users::admin))
         .service(web::resource("/mongo").to(cb_users::test_mongo))
         .service(web::resource("/login").to(cb_users::login))
