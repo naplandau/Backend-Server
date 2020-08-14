@@ -1,11 +1,9 @@
-use super::lib::*;
+use super::super::lib::*;
 use crate::core::models::users::{
     Claims, Delete, Login, Register, Update, UserResponse, ADMIN_DOC,
 };
-use crate::server::handlers::hasher::{hash_validation, HASHER};
-use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 use std::error::Error;
-use validator::{Validate, ValidationError, ValidationErrorsKind};
+use validator::{Validate};
 
 pub async fn admin() -> impl Responder {
     let _exec = db_utils::insert("users", &ADMIN_DOC).await;
@@ -196,7 +194,7 @@ fn get_sub_field(doc: &Document) -> Document {
     new_doc
 }
 
-async fn check_token(token: &str) -> bool {
+pub async fn check_token(token: &str) -> Option<User> {
     let _var = &CONFIG.secret_key;
     let key = _var.as_bytes();
     let _decode = decode::<Claims>(
@@ -205,11 +203,8 @@ async fn check_token(token: &str) -> bool {
         &Validation::default(),
     );
     match _decode {
-        Ok(decoded) => match users_db::find_by_email(decoded.claims.sub.to_string()).await {
-            Ok(_) => true,
-            Err(_) => false,
-        },
-        Err(_) => false,
+        Ok(decoded) => Some(users_db::find_by_email(decoded.claims.sub.to_string()).await.unwrap().unwrap()),
+        Err(e) => None
     }
 }
 pub async fn check_auth(_req: HttpRequest) -> HttpResponse {
@@ -217,12 +212,12 @@ pub async fn check_auth(_req: HttpRequest) -> HttpResponse {
     let _spilt: Vec<&str> = _auth.unwrap().to_str().unwrap().split("Bearer").collect();
     let token = _spilt[1].trim();
     match check_token(token).await {
-        true => HttpResponse::Ok().json(Response {
+        Some(result) => HttpResponse::Ok().json(Response {
             data: doc! {},
             status: true,
             message: "Your token is valid".to_string(),
         }),
-        false => HttpResponse::Ok().json(Response {
+        None => HttpResponse::Ok().json(Response {
             data: doc! {},
             status: true,
             message: "Your token is invalid".to_string(),

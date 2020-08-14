@@ -1,4 +1,4 @@
-use super::lib::*;
+use super::super::lib::*;
 
 #[derive(Serialize)]
 pub struct HealthResponse {
