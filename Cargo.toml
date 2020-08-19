@@ -16,6 +16,7 @@ http = "0.2"
 base64 = "0.12"
 rand = "0.7"
 url = "2.1"
+yarte = "0.12.2"
 dotenv = "0.15"
 oauth2 = { version = "3.0", default-features = false }
 listenfd = "0.3"

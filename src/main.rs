@@ -25,7 +25,6 @@ use listenfd::ListenFd;
 
 use crate::app::routes::routes::routes;
 use crate::config::config::CONFIG;
-use std::env;
 use crate::core::db::get_mongo;
 
 mod app;

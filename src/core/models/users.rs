@@ -51,7 +51,12 @@ pub struct Login {
     #[serde(default)]
     pub remember_me: bool,
 }
-
+#[derive(Serialize, Deserialize, Debug, Validate)]
+pub struct Confirmation{
+    pub id: Uuid,
+    pub email: String,
+    pub expires_at: DateTime,
+}
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
     pub sub: String,

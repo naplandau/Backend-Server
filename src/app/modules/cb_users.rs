@@ -4,7 +4,7 @@ use crate::core::models::users::{
 };
 use std::error::Error;
 use validator::{Validate};
-
+use yarte::Template;
 pub async fn admin() -> impl Responder {
     let _exec = db_utils::insert("users", &ADMIN_DOC).await;
     match _exec {
