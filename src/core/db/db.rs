@@ -5,7 +5,6 @@ use actix_web::web;
 //     pg::PgConnection,
 //     r2d2::{self, ConnectionManager, Pool, PoolError, PooledConnection},
 // };
-use dotenv::dotenv;
 use mongodb::{error::Error, Client};
 use std::env;
 use std::sync::*;

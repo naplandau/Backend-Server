@@ -10,6 +10,8 @@ pub struct Config{
     //pub rust_log:String,
     pub secret_key: String,
     pub server: String,
+    pub smtp_username: String,
+    pub smtp_password: String,
     //pub session_key: String,
     //pub session_name:String,
     //pub session_secure: bool,

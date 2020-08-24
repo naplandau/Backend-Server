@@ -2,9 +2,7 @@ use super::super::lib::*;
 use crate::core::models::users::{
     Claims, Delete, Login, Register, Update, UserResponse, ADMIN_DOC,
 };
-use std::error::Error;
 use validator::{Validate};
-use yarte::Template;
 pub async fn admin() -> impl Responder {
     let _exec = db_utils::insert("users", &ADMIN_DOC).await;
     match _exec {
@@ -208,12 +206,16 @@ pub async fn check_token(token: &str) -> Option<User> {
     }
 }
 pub async fn check_auth(_req: HttpRequest) -> HttpResponse {
+    use crate::core::services::email_service;
+    
+    web::block(move || email_service::send_email()).await;
+
     let _auth = _req.headers().get("Authorization");
     let _spilt: Vec<&str> = _auth.unwrap().to_str().unwrap().split("Bearer").collect();
     let token = _spilt[1].trim();
     match check_token(token).await {
         Some(result) => HttpResponse::Ok().json(Response {
-            data: doc! {},
+            data: doc! {},  
             status: true,
             message: "Your token is valid".to_string(),
         }),

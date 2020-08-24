@@ -15,7 +15,8 @@ pub fn routes(cfg: &mut web::ServiceConfig) {
         .service(web::resource("/login").to(cb_users::login))
         .service(web::resource("/register").to(cb_users::register))
         .service(web::resource("/forgot").to(cb_users::test_mongo))
-        .service(web::resource("/health").to(get_health));
+        .service(web::resource("/health").to(get_health))
+        .service(web::resource("/confirmation?").to(get_health));
     // .service(
     //     web::scope("/api/v1")
     //         .guard(guard::Header("content-type", "application/json"))

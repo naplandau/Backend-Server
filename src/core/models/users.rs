@@ -5,8 +5,6 @@ use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use validator::{Validate, ValidationError};
-// use validator::Validate;
-// use validator_derive::Validate;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
@@ -43,7 +41,6 @@ pub struct UserResponse {
 
 #[derive(Serialize, Deserialize, Debug, Validate)]
 pub struct Login {
-    //pub user_name: String,
     #[validate(email(message = "email is not valid"))]
     pub email: String,
     #[validate(length(min = 8, message = "password must be at least 8 characters"))]
@@ -65,11 +62,12 @@ pub struct Claims {
 
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct Register {
-     #[validate(email(message = "email is not valid"))]
+    #[validate(email(message = "email is not valid"))]
     pub email: String,
     #[validate(length(min = 8, message = "password must be at least 8 characters"))]
     pub password: String,
 }
+#[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct Update {
     pub email: String,
     pub first_name: Option<String>,
@@ -79,6 +77,7 @@ pub struct Update {
     pub avatar: Option<String>,
     pub time_zone: Option<i8>,
 }
+#[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct Delete {
     pub email: String,
 }

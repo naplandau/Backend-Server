@@ -11,17 +11,13 @@ extern crate diesel;
 #[macro_use]
 extern crate validator_derive;
 extern crate validator;
-#[macro_use] 
+#[macro_use]
 extern crate bson;
 
-use actix_cors::Cors;
-use actix_web::http::{
-    header::{AUTHORIZATION, CONTENT_TYPE},
-    //HeaderValue,
-};
+use actix_identity::{CookieIdentityPolicy, IdentityService};
+use actix_web::http::header::{AUTHORIZATION, CONTENT_TYPE};
 use actix_web::{middleware, web, App, HttpResponse, HttpServer};
 use dotenv;
-use listenfd::ListenFd;
 
 use crate::app::routes::routes::routes;
 use crate::config::config::CONFIG;
@@ -34,6 +30,9 @@ mod server;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
+    use actix_cors::Cors;
+    use listenfd::ListenFd;
+
     dotenv::dotenv().ok();
     std::env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
     //std::env::set_var("RUST_BACKTRACE", "1");
@@ -48,6 +47,14 @@ async fn main() -> std::io::Result<()> {
             //.wrap(Cors::new().supports_credentials().finish())
             .wrap(middleware::Logger::default())
             .wrap(middleware::Compress::default())
+            // .wrap(IdentityService::new(
+            //     CookieIdentityPolicy::new("123".as_bytes())
+            //     .name("auth")
+            //     .path("/")
+            //     .domain("value: S")
+            //     //.max_age_time(10)
+            //     .secure(true),
+            // ))
             // .wrap(
             //     Cors::new()
             //         .allowed_origin("*")
