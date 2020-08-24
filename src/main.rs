@@ -19,7 +19,7 @@ use actix_web::http::header::{AUTHORIZATION, CONTENT_TYPE};
 use actix_web::{middleware, web, App, HttpResponse, HttpServer};
 use dotenv;
 
-use crate::app::routes::routes::routes;
+use crate::app::routes;
 use crate::config::config::CONFIG;
 use crate::core::db::get_mongo;
 
@@ -40,20 +40,22 @@ async fn main() -> std::io::Result<()> {
 
     get_mongo().await.unwrap();
     let mut listenfd = ListenFd::from_env();
-
+    let domain = std::env::var("DOMAIN").unwrap_or_else(|_| "localhost".to_string());
+    let secret_key = std::env::var("SECRET_KEY").expect("SECRET_KEY must be set");
     let mut server = HttpServer::new(move || {
         App::new()
             //.configure(add_cache)
             //.wrap(Cors::new().supports_credentials().finish())
             .wrap(middleware::Logger::default())
             .wrap(middleware::Compress::default())
+            .data(web::JsonConfig::default().limit(4096))
             // .wrap(IdentityService::new(
-            //     CookieIdentityPolicy::new("123".as_bytes())
+            //     CookieIdentityPolicy::new(secret_key.as_bytes())
             //     .name("auth")
             //     .path("/")
-            //     .domain("value: S")
-            //     //.max_age_time(10)
-            //     .secure(true),
+            //     .domain(domain.as_str())
+            //     //.max_age_time(chrono::Duration::days(1))
+            //     .secure(false),
             // ))
             // .wrap(
             //     Cors::new()
@@ -64,7 +66,7 @@ async fn main() -> std::io::Result<()> {
             //         .finish(),
             // )
             //.wrap(get_identity_service())
-            .configure(routes)
+            .configure(routes::init_route)
             .default_service(web::route().to(|| HttpResponse::NotFound()))
     });
 
