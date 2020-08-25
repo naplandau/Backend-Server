@@ -26,23 +26,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="66856ab5-26fe-4332-960a-5e0d519de6a9" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/app/modules/articles/mod.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/modules/users/confirm_mail.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/modules/users/login.rs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/modules/users/register.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/modules/cb_comfirm_email.rs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/modules/cb_users.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/modules/cb_users.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/modules/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/modules/mod.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/routes/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/routes/mod.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/routes/routes.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/routes/routes.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/config/config.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/config.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/db/users_db.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/db/users_db.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/models/users.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/models/users.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/services/email_service.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/services/email_service.rs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,7 +97,7 @@
       <workItem from="1598323605893" duration="1727000" />
       <workItem from="1598325359541" duration="1203000" />
       <workItem from="1598331141113" duration="48000" />
-      <workItem from="1598331204874" duration="8056000" />
+      <workItem from="1598331204874" duration="8146000" />
     </task>
     <servers />
   </component>
