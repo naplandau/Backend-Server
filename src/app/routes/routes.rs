@@ -1,7 +1,6 @@
 use crate::app::modules::health::get_health;
 use crate::app::modules::*;
 use actix_web::{guard, web, HttpResponse, Responder};
-//use futures::Future;
 
 async fn index() -> impl Responder {
     HttpResponse::Ok().body("Hello World")

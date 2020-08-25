@@ -46,7 +46,7 @@ pub async fn find_by_email(email: String) -> Result<Option<User>, Error> {
 //     )
 //     .await;
 //     match cursor {
-//         Ok(cursor) => 
+//         Ok(cursor) =>
 //             match bson::from_bson(bson::Bson::Document(doc)) {
 //             Ok(model) => Ok(model),
 //             Err(e) => Err(Error::from(e)),

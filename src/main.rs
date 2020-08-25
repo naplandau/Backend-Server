@@ -10,7 +10,6 @@ extern crate env_logger;
 extern crate diesel;
 #[macro_use]
 extern crate validator_derive;
-extern crate validator;
 #[macro_use]
 extern crate bson;
 
@@ -66,7 +65,7 @@ async fn main() -> std::io::Result<()> {
             //         .finish(),
             // )
             //.wrap(get_identity_service())
-            .configure(routes::init_route)
+            .configure(routes::routes::routes)
             .default_service(web::route().to(|| HttpResponse::NotFound()))
     });
 

@@ -1,21 +1,31 @@
 use super::super::lib::*;
-use crate::core::models::users::{
-    Claims, Delete, Login, Register, Update, UserResponse, ADMIN_DOC,
-};
-use validator::{Validate};
+use crate::core::models::users::{Claims, Delete, Login, Register, Update, ADMIN_DOC};
+use validator::Validate;
+
 pub async fn admin() -> impl Responder {
-    let _exec = db_utils::insert("users", &ADMIN_DOC).await;
-    match _exec {
-        Ok(doc) => HttpResponse::Ok().json(Response {
+    let email = ADMIN_DOC.get_str("email").unwrap();
+    let _exists = users_db::find_by_email(email.to_string()).await.unwrap();
+    match _exists {
+        Some(v) => HttpResponse::Ok().json(Response {
             data: get_sub_field(&*ADMIN_DOC),
             message: "success".to_string(),
             status: true,
         }),
-        Err(_) => HttpResponse::Ok().json(Response {
-            data: doc! {},
-            status: false,
-            message: "Wrong.".to_string(),
-        }),
+        None => {
+            let _exec = db_utils::insert("users", &ADMIN_DOC).await;
+            match _exec {
+                Ok(doc) => HttpResponse::Ok().json(Response {
+                    data: get_sub_field(&*ADMIN_DOC),
+                    message: "success".to_string(),
+                    status: true,
+                }),
+                Err(_) => HttpResponse::Ok().json(Response {
+                    data: doc! {},
+                    status: false,
+                    message: "Something went wrong.".to_string(),
+                }),
+            }
+        }
     }
 }
 pub async fn test_mongo() -> impl Responder {
@@ -129,7 +139,7 @@ pub async fn register(user: web::Json<Register>) -> HttpResponse {
                         Ok(_) => HttpResponse::Ok().json(Response {
                             data: get_sub_field(&user_doc),
                             status: true,
-                            message: "Register successfull.".to_string(),
+                            message: "Register successfully.".to_string(),
                         }),
                         Err(_) => HttpResponse::Ok().json(Response {
                             data: doc! {},
@@ -201,21 +211,19 @@ pub async fn check_token(token: &str) -> Option<User> {
         &Validation::default(),
     );
     match _decode {
-        Ok(decoded) => Some(users_db::find_by_email(decoded.claims.sub.to_string()).await.unwrap().unwrap()),
-        Err(e) => None
+        Ok(decoded) => users_db::find_by_email(decoded.claims.sub.to_string())
+            .await
+            .unwrap(),
+        Err(e) => None,
     }
 }
 pub async fn check_auth(_req: HttpRequest) -> HttpResponse {
-    use crate::core::services::email_service;
-    
-    web::block(move || email_service::send_email()).await;
-
     let _auth = _req.headers().get("Authorization");
     let _spilt: Vec<&str> = _auth.unwrap().to_str().unwrap().split("Bearer").collect();
     let token = _spilt[1].trim();
     match check_token(token).await {
         Some(result) => HttpResponse::Ok().json(Response {
-            data: doc! {},  
+            data: doc! {},
             status: true,
             message: "Your token is valid".to_string(),
         }),

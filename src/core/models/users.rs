@@ -49,7 +49,7 @@ pub struct Login {
     pub remember_me: bool,
 }
 #[derive(Serialize, Deserialize, Debug, Validate)]
-pub struct Confirmation{
+pub struct Confirmation {
     pub id: Uuid,
     pub email: String,
     pub expires_at: DateTime,
@@ -86,15 +86,15 @@ pub struct Auth {
 }
 lazy_static! {
     pub static ref ADMIN_DOC: Document = doc! {
-        "id": String::from("user_") + &Uuid::new_v4().to_string(),
+        "id": "user_06e75640-09b0-4b8f-b06f-a4af47aebd4a".to_string(),
         "email": "admin@gmail.com".to_string(),
         "password": HASHER.hash("123456789").unwrap(),
-        "first_name": "Thong".to_string(),
-        "last_name": "Nguyen".to_string(),
+        "first_name": "ADMIN".to_string(),
+        "last_name": "".to_string(),
         "phone_number": "+84767336687".to_string(),
         "role": "USER".to_string(),
         "roles": "ADMIN".to_string(),
-        "avatar": Bson::Null,
+        "avatar": "".to_string(),
         "time_zone": 7,
         "created_by": "admin".to_string(),
         "created_time_dt": Utc::now(),

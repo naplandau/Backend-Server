@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="CargoProjects">
+    <cargoProject FILE="$PROJECT_DIR$/Cargo.toml" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="66856ab5-26fe-4332-960a-5e0d519de6a9" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/app/modules/articles/mod.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/modules/users/confirm_mail.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/modules/users/login.rs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/modules/users/register.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Cargo.toml" beforeDir="false" afterPath="$PROJECT_DIR$/Cargo.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/modules/cb_comfirm_email.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/modules/cb_users.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/modules/cb_users.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/modules/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/modules/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/routes/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/routes/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/routes/routes.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/routes/routes.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config/config.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/config.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/db/users_db.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/db/users_db.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/models/users.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/models/users.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/services/email_service.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/services/email_service.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Rust File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="d9gev16m" />
+  </component>
+  <component name="ProjectId" id="1gZYVIsJmLXILZ0vEB3PokT4NMo" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+  </component>
+  <component name="RunManager">
+    <configuration name="Run started" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
+      <option name="channel" value="DEFAULT" />
+      <option name="command" value="run --package started --bin started" />
+      <option name="allFeatures" value="false" />
+      <option name="emulateTerminal" value="false" />
+      <option name="backtrace" value="SHORT" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Cargo Command.Run started" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="RustProjectSettings">
+    <option name="externalLinter" value="Clippy" />
+    <option name="runRustfmtOnSave" value="true" />
+    <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+    <option name="useOffline" value="true" />
+    <option name="version" value="2" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="66856ab5-26fe-4332-960a-5e0d519de6a9" name="Default Changelist" comment="" />
+      <created>1598323604420</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1598323604420</updated>
+      <workItem from="1598323605893" duration="1727000" />
+      <workItem from="1598325359541" duration="1203000" />
+      <workItem from="1598331141113" duration="48000" />
+      <workItem from="1598331204874" duration="8056000" />
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="502" y="264" width="527" height="351" key="#Notifications" timestamp="1598331260682">
+      <screen x="0" y="28" width="1536" height="836" />
+    </state>
+    <state x="502" y="264" width="527" height="351" key="#Notifications/0.28.1536.836@0.28.1536.836" timestamp="1598331260682" />
+    <state width="1492" height="277" key="GridCell.Tab.0.bottom" timestamp="1598370360407">
+      <screen x="0" y="28" width="1536" height="836" />
+    </state>
+    <state width="1492" height="277" key="GridCell.Tab.0.bottom/0.28.1536.836@0.28.1536.836" timestamp="1598370360407" />
+    <state width="1492" height="277" key="GridCell.Tab.0.center" timestamp="1598370360407">
+      <screen x="0" y="28" width="1536" height="836" />
+    </state>
+    <state width="1492" height="277" key="GridCell.Tab.0.center/0.28.1536.836@0.28.1536.836" timestamp="1598370360407" />
+    <state width="1492" height="277" key="GridCell.Tab.0.left" timestamp="1598370360407">
+      <screen x="0" y="28" width="1536" height="836" />
+    </state>
+    <state width="1492" height="277" key="GridCell.Tab.0.left/0.28.1536.836@0.28.1536.836" timestamp="1598370360407" />
+    <state width="1492" height="277" key="GridCell.Tab.0.right" timestamp="1598370360407">
+      <screen x="0" y="28" width="1536" height="836" />
+    </state>
+    <state width="1492" height="277" key="GridCell.Tab.0.right/0.28.1536.836@0.28.1536.836" timestamp="1598370360407" />
+    <state x="208" y="67" width="1016" height="736" key="SettingsEditor" timestamp="1598326478413">
+      <screen x="0" y="28" width="1536" height="836" />
+    </state>
+    <state x="208" y="67" width="1016" height="736" key="SettingsEditor/0.28.1536.836@0.28.1536.836" timestamp="1598326478413" />
+    <state x="366" y="173" width="800" height="542" key="Vcs.Push.Dialog.v2" timestamp="1598364840012">
+      <screen x="0" y="28" width="1536" height="836" />
+    </state>
+    <state x="366" y="173" width="800" height="542" key="Vcs.Push.Dialog.v2/0.28.1536.836@0.28.1536.836" timestamp="1598364840012" />
+    <state x="643" y="293" width="246" height="312" key="cloudConfig.SelfSettingsDialog" timestamp="1598326498589">
+      <screen x="0" y="28" width="1536" height="836" />
+    </state>
+    <state x="643" y="293" width="246" height="312" key="cloudConfig.SelfSettingsDialog/0.28.1536.836@0.28.1536.836" timestamp="1598326498589" />
+  </component>
+</project>
