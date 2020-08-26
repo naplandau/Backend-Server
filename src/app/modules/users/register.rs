@@ -40,7 +40,6 @@ pub async fn register(user: web::Json<Register>) -> HttpResponse {
         }
     }
 }
-
 fn prepare_register_user(user: Register) -> Document {
     let current_time = Utc::now();
     doc! {
@@ -51,15 +50,13 @@ fn prepare_register_user(user: Register) -> Document {
         "last_name": "".to_string(),
         "phone_number": "".to_string(),
         "role": "USER".to_string(),
-        "roles": "".to_string(),
-        "avatar":"".to_string(),
-        "time_zone": 7,
+        //"roles": "".to_string(),
+        //"avatar":"".to_string(),
+        //"time_zone": 7,
         "created_by": "".to_string(),
         "created_time_dt": Bson::DateTime(current_time),
         "updated_by": "".to_string(),
         "updated_time_dt": Bson::DateTime(current_time),
         "status": 0,
-        "confirm_code": "".to_string(),
-        "confirm_code_created_time_dt": Bson::DateTime(current_time)
     }
 }
