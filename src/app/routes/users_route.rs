@@ -1,16 +1,15 @@
+use crate::app::modules::users::*;
 use actix_web::web;
-use actix_web::{Responder, HttpResponse};
-
-async fn index1() -> impl Responder {
-    HttpResponse::Ok().body("API USER GET")
-}
-async fn index2() -> impl Responder {
-    HttpResponse::Ok().body("API USER POST")
-}
 pub fn init_route(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::resource("users")
-            .route(web::get().to(index1))
-            .route(web::post().to(index2)),
-    );
+            .route(web::get().to(get_all_users))
+            .route(web::post().to(register)),
+    )
+    .service(
+        web::resource("users/{id}")
+            .route(web::get().to(get_all_users))
+            .route(web::put().to(get_all_users)),
+    )
+    .service(web::resource("admin").to(admin));
 }

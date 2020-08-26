@@ -13,11 +13,6 @@ extern crate validator_derive;
 #[macro_use]
 extern crate bson;
 
-use actix_identity::{CookieIdentityPolicy, IdentityService};
-use actix_web::http::header::{AUTHORIZATION, CONTENT_TYPE};
-use actix_web::{middleware, web, App, HttpResponse, HttpServer};
-use dotenv;
-
 use crate::app::routes;
 use crate::config::config::CONFIG;
 use crate::core::db::get_mongo;
@@ -30,6 +25,10 @@ mod utils;
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     use actix_cors::Cors;
+    use actix_identity::{CookieIdentityPolicy, IdentityService};
+    use actix_web::http::header::{AUTHORIZATION, CONTENT_TYPE};
+    use actix_web::{middleware, web, App, HttpResponse, HttpServer};
+    use dotenv;
     use listenfd::ListenFd;
 
     dotenv::dotenv().ok();
@@ -39,12 +38,9 @@ async fn main() -> std::io::Result<()> {
 
     get_mongo().await.unwrap();
     let mut listenfd = ListenFd::from_env();
-    let domain = std::env::var("DOMAIN").unwrap_or_else(|_| "localhost".to_string());
-    let secret_key = std::env::var("SECRET_KEY").expect("SECRET_KEY must be set");
     let mut server = HttpServer::new(move || {
         App::new()
             //.configure(add_cache)
-            //.wrap(Cors::new().supports_credentials().finish())
             .wrap(middleware::Logger::default())
             .wrap(middleware::Compress::default())
             .data(web::JsonConfig::default().limit(4096))
@@ -65,7 +61,7 @@ async fn main() -> std::io::Result<()> {
             //         .finish(),
             // )
             //.wrap(get_identity_service())
-            .configure(routes::routes::routes)
+            .configure(routes::init_route)
             .default_service(web::route().to(|| HttpResponse::NotFound()))
     });
 

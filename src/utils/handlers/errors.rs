@@ -70,30 +70,6 @@ impl ResponseError for Error {
     }
 }
 
-/// Convert DBErrors to ApiErrors
-// impl From<DBError> for Error {
-//     fn from(error: DBError) -> Error {
-//         // Right now we just care about UniqueViolation from diesel
-//         // But this would be helpful to easily map errors as our app grows
-//         match error {
-//             DBError::DatabaseError(kind, info) => {
-//                 if let DatabaseErrorKind::UniqueViolation = kind {
-//                     let message = info.details().unwrap_or_else(|| info.message()).to_string();
-//                     return Error::BadRequest(message);
-//                 }
-//                 Error::InternalServerError("Unknown database error".into())
-//             }
-//             _ => Error::InternalServerError("Unknown database error".into()),
-//         }
-//     }
-// }
-// Convert PoolErrors to ApiErrors
-// impl From<PoolError> for Error {
-//     fn from(error: PoolError) -> Error {
-//         Error::PoolError(error.to_string())
-//     }
-// }
-
 impl From<ValidationErrors> for Error {
     fn from(errors: ValidationErrors) -> Self {
         let mut err_map = JsonMap::new();

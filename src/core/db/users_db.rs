@@ -9,7 +9,7 @@ use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, 
 use mongodb::{error::Error, options::FindOptions};
 use uuid::Uuid;
 
-const COLLECTION_NAME: &str = "users-pending";
+const COLLECTION_NAME: &str = "users";
 
 pub async fn find(id: String) -> Result<Option<User>, Error> {
     let doc = db_utils::find(COLLECTION_NAME, id).await.unwrap();
