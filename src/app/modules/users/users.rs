@@ -35,7 +35,11 @@ pub async fn get_all_users() -> impl Responder {
             }
         }
     }
-    HttpResponse::Ok().json(results)
+    HttpResponse::Ok().json(ResponseList {
+        data: results,
+        status: true,
+        message: "success".to_string(),
+    })
 }
 pub async fn admin() -> impl Responder {
     let email = ADMIN_DOC.get_str("email").unwrap();

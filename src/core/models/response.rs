@@ -16,3 +16,9 @@ pub struct Response {
     pub message: String,
     pub status: bool,
 }
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ResponseList {
+    pub data: Vec<Document>,
+    pub message: String,
+    pub status: bool,
+}
