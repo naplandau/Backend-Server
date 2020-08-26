@@ -25,7 +25,7 @@ use crate::core::db::get_mongo;
 mod app;
 mod config;
 mod core;
-mod server;
+mod utils;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {

@@ -26,7 +26,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="66856ab5-26fe-4332-960a-5e0d519de6a9" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diesel.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/.gitkeep" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/modules/users/forgot_mail.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/00000000000000_diesel_initial_setup/down.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/00000000000000_diesel_initial_setup/up.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/2020-08-01-061812_create_users/down.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/2020-08-01-061812_create_users/up.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/lib.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/lib.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/modules/cb_users.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/modules/cb_users.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/modules/users/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/modules/users/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config/config.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/config.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/db/confirm_db.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/db/confirm_db.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/db/db.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/db/db.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/db/db_utils.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/db/db_utils.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/db/users_db.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/db/users_db.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/models/api_response.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/models/response.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/models/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/models/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/models/schema.rs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/models/users.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/models/users.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/services/email_service.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/services/email_service.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/handlers/errors.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/handlers/errors.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/handlers/hasher.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/handlers/hasher.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/handlers/helpers.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/handlers/helpers.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/handlers/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/handlers/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/middleware/auth.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/middleware/auth.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/middleware/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/middleware/mod.rs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/mod.rs" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/mod.rs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +75,9 @@
     <option name="directoryName" value="d9gev16m" />
   </component>
   <component name="ProjectId" id="1gZYVIsJmLXILZ0vEB3PokT4NMo" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -59,6 +90,11 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="org.rust.cargo.project.model.PROJECT_DISCOVERY" value="true" />
     <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/utils" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="Run started" type="CargoCommandRunConfiguration" factoryName="Cargo Command" temporary="true">
@@ -98,6 +134,9 @@
       <workItem from="1598325359541" duration="1203000" />
       <workItem from="1598331141113" duration="48000" />
       <workItem from="1598331204874" duration="8321000" />
+      <workItem from="1598400770912" duration="17000" />
+      <workItem from="1598400806075" duration="1055000" />
+      <workItem from="1598401957906" duration="5151000" />
     </task>
     <servers />
   </component>
@@ -118,22 +157,22 @@
       <screen x="0" y="28" width="1536" height="836" />
     </state>
     <state x="502" y="264" width="527" height="351" key="#Notifications/0.28.1536.836@0.28.1536.836" timestamp="1598331260682" />
-    <state width="1492" height="277" key="GridCell.Tab.0.bottom" timestamp="1598370360407">
+    <state width="1492" height="256" key="GridCell.Tab.0.bottom" timestamp="1598417465216">
       <screen x="0" y="28" width="1536" height="836" />
     </state>
-    <state width="1492" height="277" key="GridCell.Tab.0.bottom/0.28.1536.836@0.28.1536.836" timestamp="1598370360407" />
-    <state width="1492" height="277" key="GridCell.Tab.0.center" timestamp="1598370360407">
+    <state width="1492" height="256" key="GridCell.Tab.0.bottom/0.28.1536.836@0.28.1536.836" timestamp="1598417465216" />
+    <state width="1492" height="256" key="GridCell.Tab.0.center" timestamp="1598417465213">
       <screen x="0" y="28" width="1536" height="836" />
     </state>
-    <state width="1492" height="277" key="GridCell.Tab.0.center/0.28.1536.836@0.28.1536.836" timestamp="1598370360407" />
-    <state width="1492" height="277" key="GridCell.Tab.0.left" timestamp="1598370360407">
+    <state width="1492" height="256" key="GridCell.Tab.0.center/0.28.1536.836@0.28.1536.836" timestamp="1598417465213" />
+    <state width="1492" height="256" key="GridCell.Tab.0.left" timestamp="1598417465212">
       <screen x="0" y="28" width="1536" height="836" />
     </state>
-    <state width="1492" height="277" key="GridCell.Tab.0.left/0.28.1536.836@0.28.1536.836" timestamp="1598370360407" />
-    <state width="1492" height="277" key="GridCell.Tab.0.right" timestamp="1598370360407">
+    <state width="1492" height="256" key="GridCell.Tab.0.left/0.28.1536.836@0.28.1536.836" timestamp="1598417465212" />
+    <state width="1492" height="256" key="GridCell.Tab.0.right" timestamp="1598417465215">
       <screen x="0" y="28" width="1536" height="836" />
     </state>
-    <state width="1492" height="277" key="GridCell.Tab.0.right/0.28.1536.836@0.28.1536.836" timestamp="1598370360407" />
+    <state width="1492" height="256" key="GridCell.Tab.0.right/0.28.1536.836@0.28.1536.836" timestamp="1598417465215" />
     <state x="208" y="67" width="1016" height="736" key="SettingsEditor" timestamp="1598326478413">
       <screen x="0" y="28" width="1536" height="836" />
     </state>

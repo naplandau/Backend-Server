@@ -12,7 +12,7 @@ pub async fn admin() -> impl Responder {
             status: true,
         }),
         None => {
-            let _exec = db_utils::insert("users", &ADMIN_DOC).await;
+            let _exec = db_utils::insert("users_pending", &ADMIN_DOC).await;
             match _exec {
                 Ok(doc) => HttpResponse::Ok().json(Response {
                     data: get_sub_field(&*ADMIN_DOC),

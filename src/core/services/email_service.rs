@@ -27,7 +27,7 @@ fn get_mailer() -> SmtpTransport {
         .connection_reuse(ConnectionReuseParameters::ReuseUnlimited)
         .transport()
 }
-pub fn send_email(email: EmailBuilder) -> Result<SmtpResult, ()> {
+pub fn send_email(email: Email) -> Result<SmtpResult, ()> {
     // let email = Email::builder()
     //     .to("ndthong144@gmail.com")
     //     .from("ndthong144.email@gmail.com")

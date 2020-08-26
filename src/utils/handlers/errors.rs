@@ -1,18 +1,10 @@
-use actix_web::{
-    error::{ResponseError},
-    http::StatusCode,
-    HttpResponse
-};
+use actix_web::{error::ResponseError, http::StatusCode, HttpResponse};
 use failure::Fail;
-// use diesel::{
-//     r2d2::PoolError,
-//     result::{DatabaseErrorKind, Error as DBError},
-// };
-use validator::ValidationErrors;
 use serde_json::{Map as JsonMap, Value as JsonValue};
+use validator::ValidationErrors;
 #[derive(Debug, Fail, PartialEq)]
 #[allow(dead_code)]
-pub enum Error{
+pub enum Error {
     #[fail(display = "Bad Request")]
     BadRequest(String),
     #[fail(display = "Blocking Error")]
@@ -34,34 +26,32 @@ pub enum Error{
     #[fail(display = "Unprocessable Entity: {}", _0)]
     UnprocessableEntity(JsonValue),
     #[fail(display = "Time Out")]
-    TimeOut
+    TimeOut,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct ErrorResponse{
-    errors: Vec<String>
+pub struct ErrorResponse {
+    errors: Vec<String>,
 }
-impl From<&String> for ErrorResponse{
-    fn from(error: &String) -> Self{
-        ErrorResponse{
-            errors: vec![error.into()]
+impl From<&String> for ErrorResponse {
+    fn from(error: &String) -> Self {
+        ErrorResponse {
+            errors: vec![error.into()],
         }
     }
 }
-impl From<Vec<String>> for ErrorResponse{
-    fn from(errors: Vec<String>) -> Self{
-        ErrorResponse{errors}
+impl From<Vec<String>> for ErrorResponse {
+    fn from(errors: Vec<String>) -> Self {
+        ErrorResponse { errors }
     }
 }
-impl ResponseError for Error{
-    fn error_response(&self) -> HttpResponse{
-        match self{
+impl ResponseError for Error {
+    fn error_response(&self) -> HttpResponse {
+        match self {
             Error::BadRequest(error) => {
                 HttpResponse::BadRequest().json::<ErrorResponse>(error.into())
             }
-            Error::NotFound(error) =>{
-                HttpResponse::NotFound().json::<ErrorResponse>(error.into())
-            }
+            Error::NotFound(error) => HttpResponse::NotFound().json::<ErrorResponse>(error.into()),
             // Error::Unauthorized(error) =>{
             //     HttpResponse::Unauthorized.json::<ErrorResponse>(error.into())
             // }
@@ -71,11 +61,11 @@ impl ResponseError for Error{
             _ => HttpResponse::new(StatusCode::INTERNAL_SERVER_ERROR),
         }
     }
-    fn status_code(&self) -> StatusCode{
+    fn status_code(&self) -> StatusCode {
         match *self {
             Error::BadRequest(_) => StatusCode::BAD_REQUEST,
             Error::InternalServerError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            _ => StatusCode::GATEWAY_TIMEOUT
+            _ => StatusCode::GATEWAY_TIMEOUT,
         }
     }
 }

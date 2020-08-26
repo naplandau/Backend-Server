@@ -1,5 +1,5 @@
 use crate::core::db::db_utils;
-use crate::server::handlers::HASHER;
+use crate::utils::handlers::HASHER;
 use bson::{doc, Bson, DateTime, Document};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
@@ -15,29 +15,26 @@ pub struct User {
     pub last_name: String,
     pub phone_number: String,
     pub role: String,
-    pub roles: String,
-    pub avatar: String,
-    pub time_zone: i32,
+    //pub roles: String,
+    //pub avatar: String,
     pub created_by: String,
     pub created_time_dt: DateTime,
     pub updated_by: String,
     pub updated_time_dt: DateTime,
     pub status: i32,
-    pub confirm_code: String,
-    pub confirm_code_created_time_dt: DateTime,
 }
-#[derive(Serialize, Deserialize, Debug)]
-pub struct UserResponse {
-    pub id: String,
-    pub email: String,
-    pub first_name: Option<String>,
-    pub last_name: Option<String>,
-    pub phone_number: Option<String>,
-    pub role: Option<String>,
-    pub roles: Option<String>,
-    pub avatar: Option<String>,
-    pub status: i8,
-}
+// #[derive(Serialize, Deserialize, Debug)]
+// pub struct UserResponse {
+//     pub id: String,
+//     pub email: String,
+//     pub first_name: Option<String>,
+//     pub last_name: Option<String>,
+//     pub phone_number: Option<String>,
+//     pub role: Option<String>,
+//     pub roles: Option<String>,
+//     pub avatar: Option<String>,
+//     pub status: i8,
+// }
 
 #[derive(Serialize, Deserialize, Debug, Validate)]
 pub struct Login {
@@ -92,16 +89,16 @@ lazy_static! {
         "first_name": "ADMIN".to_string(),
         "last_name": "".to_string(),
         "phone_number": "+84767336687".to_string(),
-        "role": "USER".to_string(),
-        "roles": "ADMIN".to_string(),
-        "avatar": "".to_string(),
-        "time_zone": 7,
+        "role": "ADMIN".to_string(),
+        //"roles": "ADMIN".to_string(),
+        //"avatar": "".to_string(),
+        //"time_zone": 7,
         "created_by": "admin".to_string(),
         "created_time_dt": Utc::now(),
         "updated_by": "admin".to_string(),
         "updated_time_dt": Utc::now(),
         "status": 1,
-        "confirm_code": "admin".to_string(),
-        "confirm_code_created_time_dt": Utc::now(),
+        //"confirm_code": "admin".to_string(),
+        //"confirm_code_created_time_dt": Utc::now(),
     };
 }
