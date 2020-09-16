@@ -6,12 +6,12 @@ extern crate serde_derive;
 extern crate serde_json;
 #[macro_use]
 extern crate env_logger;
-#[macro_use]
-extern crate diesel;
+// #[macro_use]
+// extern crate diesel;
 #[macro_use]
 extern crate validator_derive;
-#[macro_use]
-extern crate bson;
+// #[macro_use]
+// extern crate bson;
 
 use crate::app::routes;
 use crate::config::config::CONFIG;
@@ -24,8 +24,8 @@ mod utils;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    use actix_cors::Cors;
-    use actix_identity::{CookieIdentityPolicy, IdentityService};
+    // use actix_cors::Cors;
+    //use actix_identity::{CookieIdentityPolicy, IdentityService};
     use actix_web::http::header::{AUTHORIZATION, CONTENT_TYPE};
     use actix_web::{middleware, web, App, HttpResponse, HttpServer};
     use dotenv;
