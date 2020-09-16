@@ -9,7 +9,7 @@ impl FromRequest for AuthorizationService{
     type Error = Error;
     type Future = Ready<Result<AuthorizationService, Error>>;
     type Config = ();
-    fn from_request(req: &HttpRequest, payload: &mut dev::Payload) -> Self::Future{
+    fn from_request(req: &HttpRequest, _payload: &mut dev::Payload) -> Self::Future{
         let auth = req.headers().get("Authorization");
         match auth {
             Some(_) => {

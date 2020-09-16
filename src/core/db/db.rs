@@ -2,7 +2,9 @@ use crate::config::config::CONFIG;
 // use actix::prelude::{Actor, SyncContext};
 // use actix::prelude::{Addr, SyncArbiter};
 // use actix_web::web;
-use mongodb::{error::Error, Client};
+use mongodb::{
+    //error::Error, 
+    Client};
 use once_cell::sync::OnceCell;
 // use std::env;
 // use std::sync::*;

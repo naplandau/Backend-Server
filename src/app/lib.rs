@@ -12,6 +12,6 @@ pub use chrono::{DateTime, Duration, Utc};
 pub use futures::StreamExt;
 pub use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
 pub use mongodb::Cursor;
-pub use regex::Regex;
+// pub use regex::Regex;
 pub use uuid::Uuid;
 pub use validator::Validate;

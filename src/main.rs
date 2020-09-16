@@ -26,7 +26,7 @@ mod utils;
 async fn main() -> std::io::Result<()> {
     // use actix_cors::Cors;
     //use actix_identity::{CookieIdentityPolicy, IdentityService};
-    use actix_web::http::header::{AUTHORIZATION, CONTENT_TYPE};
+    // use actix_web::http::header::{AUTHORIZATION, CONTENT_TYPE};
     use actix_web::{middleware, web, App, HttpResponse, HttpServer};
     use dotenv;
     use listenfd::ListenFd;

@@ -1,5 +1,5 @@
 use super::lib::*;
-
+#[allow(dead_code)]
 pub async fn delete(user: web::Json<Delete>) -> HttpResponse {
     //Result<LoginResponse, Response> {
     let user = user.into_inner();
@@ -7,7 +7,7 @@ pub async fn delete(user: web::Json<Delete>) -> HttpResponse {
         .await
         .unwrap();
     match data {
-        Some(x) => HttpResponse::Ok().json(Response {
+        Some(_) => HttpResponse::Ok().json(Response {
             data: doc! {},
             message: "delete success".to_string(),
             status: true,
@@ -62,7 +62,7 @@ pub async fn admin() -> HttpResponse {
     let email = ADMIN_DOC.get_str("email").unwrap();
     let _exists = users_db::find_by_email(email.to_string()).await.unwrap();
     match _exists {
-        Some(v) => HttpResponse::Ok().json(Response {
+        Some(_) => HttpResponse::Ok().json(Response {
             data: get_sub_field(&*ADMIN_DOC),
             message: "success".to_string(),
             status: true,
@@ -70,7 +70,7 @@ pub async fn admin() -> HttpResponse {
         None => {
             let _exec = db_utils::insert("users", &ADMIN_DOC).await;
             match _exec {
-                Ok(doc) => HttpResponse::Ok().json(Response {
+                Ok(_) => HttpResponse::Ok().json(Response {
                     data: get_sub_field(&*ADMIN_DOC),
                     message: "success".to_string(),
                     status: true,
@@ -85,7 +85,7 @@ pub async fn admin() -> HttpResponse {
     }
 }
 fn prepare_user(user: User) -> Document {
-    let current_time = Utc::now();
+    // let current_time = Utc::now();
     doc! {
         "id": user.id.to_string(),
         "email": user.email.to_string(),

@@ -2607,7 +2607,6 @@ dependencies = [
 name = "started"
 version = "0.1.0"
 dependencies = [
- "actix-http",
  "actix-rt",
  "actix-web",
  "bson",
@@ -2627,7 +2626,6 @@ dependencies = [
  "mongodb",
  "native-tls",
  "once_cell",
- "regex",
  "serde",
  "serde_derive",
  "serde_json",

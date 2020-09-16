@@ -1,10 +1,10 @@
-use crate::core::db::db_utils;
+// use crate::core::db::db_utils;
 use crate::utils::handlers::HASHER;
-use bson::{doc, Bson, DateTime, Document};
+use bson::{doc, DateTime, Document};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use validator::{Validate, ValidationError};
+// use validator::{Validate, ValidationError};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
@@ -78,6 +78,7 @@ pub struct Update {
 pub struct Delete {
     pub email: String,
 }
+#[allow(dead_code)]
 pub struct Auth {
     pub token: String,
 }
