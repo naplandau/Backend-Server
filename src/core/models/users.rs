@@ -72,9 +72,9 @@ pub struct Update {
     pub first_name: Option<String>,
     pub last_name: Option<String>,
     pub role: Option<String>,
-    pub roles: Option<String>,
-    pub avatar: Option<String>,
-    pub time_zone: Option<i8>,
+    //pub roles: Option<String>,
+    //pub avatar: Option<String>,
+    //pub time_zone: Option<i8>,
 }
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct Delete {

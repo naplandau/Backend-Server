@@ -10,7 +10,7 @@ pub fn init_route(cfg: &mut web::ServiceConfig) {
     // .service(
     //     web::resource("users/{id}")
     //         .route(web::get().to(get_user))
-    //         .route(web::put().to(get_user)),
+    //         .route(web::put().to(update_user)),
     // )
     // .service(web::resource("login").route(web::post().to(login)))
     // .service(web::resource("admin").to(admin));
