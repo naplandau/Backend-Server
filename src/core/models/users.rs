@@ -36,7 +36,7 @@ pub struct User {
 //     pub status: i8,
 // }
 
-#[derive(Serialize, Deserialize, Debug, Validate)]
+#[derive(Serialize, Deserialize, Debug, Validate, Clone)]
 pub struct Login {
     #[validate(email(message = "email is not valid"))]
     pub email: String,
@@ -45,19 +45,21 @@ pub struct Login {
     #[serde(default)]
     pub remember_me: bool,
 }
-#[derive(Serialize, Deserialize, Debug, Validate)]
+#[derive(Serialize, Deserialize, Debug, Validate, Clone)]
 pub struct Confirmation {
-    pub id: Uuid,
+    pub id: String,
     pub email: String,
+    pub password: String,
     pub expires_at: DateTime,
 }
-#[derive(Debug, Serialize, Deserialize)]
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Claims {
     pub sub: String,
     pub exp: usize,
 }
 
-#[derive(Debug, Serialize, Deserialize, Validate)]
+#[derive(Debug, Serialize, Deserialize, Clone, Validate)]
 pub struct Register {
     #[validate(email(message = "email is not valid"))]
     pub email: String,

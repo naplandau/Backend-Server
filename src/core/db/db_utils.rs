@@ -62,19 +62,28 @@ pub async fn update_all(
 }
 #[allow(dead_code)]
 pub async fn delete(
-    client: &Client,
     collection: &str,
     query: Document,
 ) -> Result<DeleteResult, Error> {
+    let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
     collection.delete_one(query.clone(), None).await
 }
 #[allow(dead_code)]
+pub async fn delete_filter(
+    collection: &str,
+    filter: Document,
+)-> Result<DeleteResult, Error>{
+     let client = get_mongo().await.unwrap();
+    let collection = &get_collection(client, collection);
+    collection.delete_many(filter.clone(), None).await
+}
+#[allow(dead_code)]
 pub async fn delete_all(
-    client: &Client,
     collection: &str,
     query: Document,
 ) -> Result<DeleteResult, Error> {
+    let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
     collection.delete_many(query.clone(), None).await
 }

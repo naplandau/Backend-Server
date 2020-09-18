@@ -47,7 +47,6 @@ pub fn send_email(email: Email) -> Result<SmtpResult, ()> {
     let result = mailer.send(email.into());
 
     if result.is_ok() {
-        println!("Email sent");
         Ok(result)
     } else {
         println!("Could not send email: {:?}", result);
