@@ -21,12 +21,12 @@ pub async fn register(user: web::Json<Register>) -> HttpResponse {
                         id: _confirm_id,
                         email: user.clone().email,
                         password: user.clone().password,
-                        expires_at: bson::DateTime(Utc::now() + Duration::hours(TIMEOUT_PENDING)),
+                        expires_time_dt: bson::DateTime(Utc::now() + Duration::hours(TIMEOUT_PENDING)),
                     };
                     let _exec = send_confirmation_mail(&_confirm);
                     let user_doc = prepare_pending_user(user.clone(), _confirm);
-                    //let _execs = db_utils::insert(PENDING_COLLECTION, &user_doc).await;
-                    match _exec {
+                    let _execs = db_utils::insert(PENDING_COLLECTION, &user_doc).await;
+                    match _execs {
                         Ok(_) => HttpResponse::Ok().json(Response {
                             data: get_sub_field(&user_doc),
                             status: true,
@@ -54,7 +54,7 @@ pub async fn register(user: web::Json<Register>) -> HttpResponse {
 pub fn send_confirmation_mail(confirmation: &Confirmation) -> Result<(), ()> {
     let domain_url = std::env::var("DOMAIN").expect("DOMAIN must be set");
     let expires = confirmation
-        .expires_at.with_timezone(&Local)
+        .expires_time_dt.with_timezone(&Local)
         .format("%I:%M %p %A, %-d %B, %C%y")
         .to_string();
     let html_text = format!(
@@ -76,7 +76,7 @@ pub fn send_confirmation_mail(confirmation: &Confirmation) -> Result<(), ()> {
 
     let email = Email::builder()
         .to(confirmation.email.clone())
-        .from(("noreply@auth-started.com"))
+        .from(("noreply@auth-started.com","STARTED"))
         .subject("Complete your registration on our one-of-a-kind Auth Service")
         //.text(plain_text)
         .html(html_text)
@@ -105,24 +105,23 @@ pub async fn verify_register(id: web::Path<String>) -> HttpResponse {
                     .await
                     .unwrap();
                 
-            // let _exec = db_utils::insert(USERS_COLLECTION, &user_doc).await;
-            // match _exec {
-            //     Ok(_) => HttpResponse::Ok()
-            //         .status(StatusCode::from_u16(200).unwrap())
-            //         .json(Response {
-            //             data: get_sub_field(&user_doc),
-            //             status: true,
-            //             message: "Register Succcessfull".to_string(),
-            //         }),
-            //     Err(_) => HttpResponse::Ok()
-            //         .status(StatusCode::from_u16(500).unwrap())
-            //         .json(Response {
-            //             data: doc! {},
-            //             status: false,
-            //             message: "Internal Server Error".to_string(),
-            //         }),
-            // }
-            HttpResponse::Ok().body("API ARTICLE GET")
+            let _exec = db_utils::insert(USERS_COLLECTION, &user_doc).await;
+            match _exec {
+                Ok(_) => HttpResponse::Ok()
+                    .status(StatusCode::from_u16(200).unwrap())
+                    .json(Response {
+                        data: get_sub_field(&user_doc),
+                        status: true,
+                        message: "Register Succcessfull".to_string(),
+                    }),
+                Err(_) => HttpResponse::Ok()
+                    .status(StatusCode::from_u16(500).unwrap())
+                    .json(Response {
+                        data: doc! {},
+                        status: false,
+                        message: "Internal Server Error".to_string(),
+                    }),
+            }
         }
         None => HttpResponse::Ok()
             .status(StatusCode::from_u16(401).unwrap())
@@ -141,7 +140,7 @@ fn prepare_pending_user(user: Register, confirm: Confirmation) -> Document {
         "password": HASHER.hash(&user.password).unwrap(),
         "created_by": "CUSTOMER".to_string(),
         "created_time_dt": Bson::DateTime(current_time),
-        "expired_time_dt": Bson::DateTime(*confirm.expires_at),
+        "expires_time_dt": Bson::DateTime(*confirm.expires_time_dt),
     }
 }
 fn prepare_register_user(user: Confirmation) -> Document {
@@ -149,7 +148,7 @@ fn prepare_register_user(user: Confirmation) -> Document {
     doc! {
         "id": String::from("user_") + &Uuid::new_v4().to_string(),
         "email": user.email.to_string(),
-        "password": HASHER.hash(&user.password).unwrap(),
+        "password": user.password,
         "first_name": "".to_string(),
         "last_name": "".to_string(),
         "phone_number": "".to_string(),

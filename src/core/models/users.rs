@@ -50,7 +50,7 @@ pub struct Confirmation {
     pub id: String,
     pub email: String,
     pub password: String,
-    pub expires_at: DateTime,
+    pub expires_time_dt: DateTime,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
