@@ -21,7 +21,6 @@ pub async fn get_mongo() -> Option<&'static Client> {
     let mut initialized = initializing_mutex.lock().await;
 
     if !*initialized {
-        //let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
         let database_url = &CONFIG.database_url;
         if let Ok(client) = Client::with_uri_str(database_url.as_str()).await {
             if let Ok(_) = MONGO.set(client) {

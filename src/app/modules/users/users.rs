@@ -46,7 +46,7 @@ pub async fn get_user(id: web::Path<String>) -> HttpResponse {
     match user {
         Some(v) => HttpResponse::Ok().json(Response {
             data: get_sub_field(&prepare_user(v)),
-            message: "success".to_string(),
+            message: "Success".to_string(),
             status: true,
         }),
         None => HttpResponse::Ok().json(Response {
@@ -56,17 +56,19 @@ pub async fn get_user(id: web::Path<String>) -> HttpResponse {
         }),
     }
 }
-pub async fn update_user(user: web::Json<Update>, id: web::Path<String>) -> HttpResponse {
+pub async fn update_user(_user: web::Json<Update>, id: web::Path<String>) -> HttpResponse {
     let user = users_db::find(id.to_string()).await.unwrap();
     match user {
-        Some(v) => HttpResponse::Ok().json(Response {
+        Some(v) => {
+            // let _execs = db_utils::insert(PENDING_COLLECTION, &user_doc).await;
+            HttpResponse::Ok().json(Response {
             data: get_sub_field(&prepare_user(v)),
-            message: "success".to_string(),
+            message: "Success".to_string(),
             status: true,
-        }),
+        })},
         None => HttpResponse::Ok().json(Response {
             data: doc! {},
-            message: "User Not Found".to_string(),
+            message: "Not Found".to_string(),
             status: false,
         }),
     }
@@ -77,7 +79,7 @@ pub async fn admin() -> HttpResponse {
     match _exists {
         Some(_) => HttpResponse::Ok().json(Response {
             data: get_sub_field(&*ADMIN_DOC),
-            message: "success".to_string(),
+            message: "Success".to_string(),
             status: true,
         }),
         None => {
@@ -85,7 +87,7 @@ pub async fn admin() -> HttpResponse {
             match _exec {
                 Ok(_) => HttpResponse::Ok().json(Response {
                     data: get_sub_field(&*ADMIN_DOC),
-                    message: "success".to_string(),
+                    message: "Success".to_string(),
                     status: true,
                 }),
                 Err(_) => HttpResponse::Ok().json(Response {

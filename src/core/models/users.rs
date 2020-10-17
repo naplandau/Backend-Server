@@ -1,9 +1,7 @@
-// use crate::core::db::db_utils;
 use crate::utils::handlers::HASHER;
 use bson::{doc, DateTime, Document};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 // use validator::{Validate, ValidationError};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -72,9 +70,6 @@ pub struct Update {
     pub first_name: Option<String>,
     pub last_name: Option<String>,
     pub role: Option<String>,
-    //pub roles: Option<String>,
-    //pub avatar: Option<String>,
-    //pub time_zone: Option<i8>,
 }
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct Delete {
@@ -100,8 +95,6 @@ lazy_static! {
         "created_time_dt": Utc::now(),
         "updated_by": "admin".to_string(),
         "updated_time_dt": Utc::now(),
-        "status": 1,
-        //"confirm_code": "admin".to_string(),
-        //"confirm_code_created_time_dt": Utc::now(),
+        "status": 1
     };
 }
