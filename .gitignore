@@ -1,5 +1,4 @@
 /target
 .vscode/settings.json
-.idea/
-.idea/workspace.xml
+.idea
 /data
