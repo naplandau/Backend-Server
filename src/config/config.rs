@@ -15,6 +15,7 @@ pub struct Config {
     pub smtp_host: String,
     pub smtp_port: i64,
     pub domain: String,
+    pub dev_mode: bool
     //pub session_key: String,
     //pub session_name:String,
     //pub session_secure: bool,

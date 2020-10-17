@@ -1,6 +1,6 @@
 // use crate::core::models::users::*;
 use lettre::smtp::authentication::{Credentials, Mechanism};
-use lettre::smtp::error::SmtpResult;
+use lettre::smtp::error::{SmtpResult,Error};
 use lettre::smtp::ConnectionReuseParameters;
 use lettre::smtp::SmtpTransport;
 use lettre::{ClientSecurity, ClientTlsParameters, SmtpClient, Transport};
@@ -31,25 +31,9 @@ fn get_mailer() -> SmtpTransport {
         .transport()
 }
 #[allow(dead_code)]
-pub fn send_email(email: Email) -> Result<SmtpResult, ()> {
-    // let email = Email::builder()
-    //     .to("ndthong144@gmail.com")
-    //     .from("ndthong144.email@gmail.com")
-    //     .subject("subject")
-    //     .html("<h1>Hi there</h1>")
-    //     .text("message")
-    //     //.attachment_from_file(Path::new("myAttachement.pdf"), None, &mime::APPLICATION_PDF).unwrap()
-    //     .build()
-    //     .unwrap();
-
+pub fn send_email(email: Email) -> SmtpResult{
     let mut mailer = get_mailer();
     // Send the email
     let result = mailer.send(email.into());
-
-    if result.is_ok() {
-        Ok(result)
-    } else {
-        println!("Could not send email: {:?}", result);
-        Ok(result)
-    }
+    result
 }

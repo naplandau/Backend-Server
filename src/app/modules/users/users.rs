@@ -21,25 +21,27 @@ pub async fn delete(user: web::Json<Delete>) -> HttpResponse {
     }
 }
 pub async fn get_users() -> HttpResponse {
-    let mut cursor = db_utils::find_all("users").await.unwrap();
-    let mut results = Vec::new();
-    while let Some(result) = cursor.next().await {
-        match result {
-            Ok(document) => {
-                let mut doc = document.clone();
-                doc.remove("_id");
-                results.push(get_sub_field(&doc));
-            }
-            _ => {
+    let option = FindOptions::builder()
+    //.sort(doc! {"title":1})
+    .build();
+    let data = users_db::find_all(doc! {}, option).await;
+    match data {
+        Ok(vec) => match vec {
+            Some(v) => HttpResponse::Ok().json(ResponseList {
+                data: vec_user_to_vec_docs(v),
+                status: true,
+                message: "success".to_string(),
+            }),
+            None => {
+                println!("get_users: None");
                 return HttpResponse::InternalServerError().finish();
             }
+        },
+        Err(e) => {
+            println!("get_users: {}", e.to_string());
+            return HttpResponse::InternalServerError().finish();
         }
     }
-    HttpResponse::Ok().json(ResponseList {
-        data: results,
-        status: true,
-        message: "success".to_string(),
-    })
 }
 pub async fn get_user(id: web::Path<String>) -> HttpResponse {
     let user = users_db::find(id.to_string()).await.unwrap();
@@ -62,10 +64,11 @@ pub async fn update_user(_user: web::Json<Update>, id: web::Path<String>) -> Htt
         Some(v) => {
             // let _execs = db_utils::insert(PENDING_COLLECTION, &user_doc).await;
             HttpResponse::Ok().json(Response {
-            data: get_sub_field(&prepare_user(v)),
-            message: "Success".to_string(),
-            status: true,
-        })},
+                data: get_sub_field(&prepare_user(v)),
+                message: "Success".to_string(),
+                status: true,
+            })
+        }
         None => HttpResponse::Ok().json(Response {
             data: doc! {},
             message: "Not Found".to_string(),
@@ -98,6 +101,13 @@ pub async fn admin() -> HttpResponse {
             }
         }
     }
+}
+fn vec_user_to_vec_docs(vec: Vec<User>) -> Vec<Document> {
+    let mut res: Vec<Document> = Vec::new();
+    for user in vec.iter() {
+        res.push(get_sub_field(&bson::to_document(&user).unwrap()));
+    }
+    res
 }
 fn prepare_user(user: User) -> Document {
     // let current_time = Utc::now();
