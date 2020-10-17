@@ -1,6 +1,6 @@
 // use crate::core::models::users::*;
 use lettre::smtp::authentication::{Credentials, Mechanism};
-use lettre::smtp::error::{SmtpResult,Error};
+use lettre::smtp::error::{SmtpResult};
 use lettre::smtp::ConnectionReuseParameters;
 use lettre::smtp::SmtpTransport;
 use lettre::{ClientSecurity, ClientTlsParameters, SmtpClient, Transport};
