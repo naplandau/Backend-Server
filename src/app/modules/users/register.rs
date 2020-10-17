@@ -1,7 +1,7 @@
 use super::lib::*;
 const PENDING_COLLECTION: &str = "users_pending";
 const USERS_COLLECTION: &str = "users";
-const TIMEOUT_PENDING: i64 = 1;//Hours
+const TIMEOUT_PENDING: i64 = 1; //Hours
 pub async fn register(user: web::Json<Register>) -> HttpResponse {
     match user.validate() {
         Ok(_) => {
@@ -16,27 +16,51 @@ pub async fn register(user: web::Json<Register>) -> HttpResponse {
                     status: false,
                 }),
                 None => {
-                    let _confirm_id = String::from("confirm_") + &Uuid::new_v4().to_string();
-                    let _confirm = Confirmation {
-                        id: _confirm_id,
-                        email: user.clone().email,
-                        password: user.clone().password,
-                        expires_time_dt: bson::DateTime(Utc::now() + Duration::hours(TIMEOUT_PENDING)),
-                    };
-                    let _exec = send_confirmation_mail(&_confirm);
-                    let user_doc = prepare_pending_user(user.clone(), _confirm);
-                    let _execs = db_utils::insert(PENDING_COLLECTION, &user_doc).await;
-                    match _execs {
-                        Ok(_) => HttpResponse::Ok().json(Response {
-                            data: get_sub_field(&user_doc),
-                            status: true,
-                            message: "Check your mail to complete your Registration".to_string(),
-                        }),
-                        Err(_) => HttpResponse::Ok().json(Response {
-                            data: doc! {},
-                            status: false,
-                            message: "Something was wrong.".to_string(),
-                        }),
+                    if CONFIG.dev_mode == true {
+                        let user_doc = prepare_user(user);
+                        let _exec = db_utils::insert(USERS_COLLECTION, &user_doc).await;
+                        match _exec {
+                            Ok(_) => HttpResponse::Ok()
+                                .status(StatusCode::from_u16(201).unwrap())
+                                .json(Response {
+                                    data: get_sub_field(&user_doc),
+                                    status: true,
+                                    message: "Register Succcessfull".to_string(),
+                                }),
+                            Err(_) => HttpResponse::Ok()
+                                .status(StatusCode::from_u16(500).unwrap())
+                                .json(Response {
+                                    data: doc! {},
+                                    status: false,
+                                    message: "Internal Server Error".to_string(),
+                                }),
+                        }
+                    } else {
+                        let _confirm_id = String::from("confirm_") + &Uuid::new_v4().to_string();
+                        let _confirm = Confirmation {
+                            id: _confirm_id,
+                            email: user.clone().email,
+                            password: user.clone().password,
+                            expires_time_dt: bson::DateTime(
+                                Utc::now() + Duration::hours(TIMEOUT_PENDING),
+                            ),
+                        };
+                        let _exec = send_confirmation_mail(&_confirm).await;
+                        let user_doc = prepare_pending_user(user.clone(), _confirm.clone());
+                        let _execs = db_utils::insert(PENDING_COLLECTION, &user_doc).await;
+                        match _execs {
+                            Ok(_) => HttpResponse::Ok().json(Response {
+                                data: get_sub_field(&user_doc),
+                                status: true,
+                                message: "Check your mail to complete your Registration"
+                                    .to_string(),
+                            }),
+                            Err(_) => HttpResponse::Ok().json(Response {
+                                data: doc! {},
+                                status: false,
+                                message: "Something was wrong.".to_string(),
+                            }),
+                        }
                     }
                 }
             }
@@ -51,10 +75,11 @@ pub async fn register(user: web::Json<Register>) -> HttpResponse {
         }
     }
 }
-pub fn send_confirmation_mail(confirmation: &Confirmation) -> Result<(), ()> {
+pub async fn send_confirmation_mail(confirmation: &Confirmation) -> Result<(), ()> {
     let domain_url = std::env::var("DOMAIN").expect("DOMAIN must be set");
     let expires = confirmation
-        .expires_time_dt.with_timezone(&Local)
+        .expires_time_dt
+        .with_timezone(&Local)
         .format("%I:%M %p %A, %-d %B, %C%y")
         .to_string();
     let html_text = format!(
@@ -76,7 +101,7 @@ pub fn send_confirmation_mail(confirmation: &Confirmation) -> Result<(), ()> {
 
     let email = Email::builder()
         .to(confirmation.email.clone())
-        .from(("noreply@auth-started.com","STARTED"))
+        .from(("noreply@auth-started.com", "STARTED"))
         .subject("Complete your registration on our one-of-a-kind Auth Service")
         //.text(plain_text)
         .html(html_text)
@@ -84,14 +109,15 @@ pub fn send_confirmation_mail(confirmation: &Confirmation) -> Result<(), ()> {
         .unwrap();
 
     let result = send_email(email);
-
-    if result.is_ok() {
-        println!("Email sent");
-
-        Ok(())
-    } else {
-        println!("Could not send email: {:?}", result);
-        Ok(())
+    match result {
+        Ok(v) => {
+            println!("Response: {:#?}",v);
+            Ok(())
+        },
+        Err(e) => {
+            println!("Error: {:#?}",e);
+            Ok(())
+        }
     }
 }
 
@@ -104,11 +130,11 @@ pub async fn verify_register(id: web::Path<String>) -> HttpResponse {
                 db_utils::delete_filter(PENDING_COLLECTION, doc! {"email": doc.email})
                     .await
                     .unwrap();
-                
+
             let _exec = db_utils::insert(USERS_COLLECTION, &user_doc).await;
             match _exec {
                 Ok(_) => HttpResponse::Ok()
-                    .status(StatusCode::from_u16(200).unwrap())
+                    .status(StatusCode::from_u16(201).unwrap())
                     .json(Response {
                         data: get_sub_field(&user_doc),
                         status: true,
@@ -149,6 +175,26 @@ fn prepare_register_user(user: Confirmation) -> Document {
         "id": String::from("user_") + &Uuid::new_v4().to_string(),
         "email": user.email.to_string(),
         "password": user.password,
+        "first_name": "".to_string(),
+        "last_name": "".to_string(),
+        "phone_number": "".to_string(),
+        "role": "USER".to_string(),
+        //"roles": "".to_string(),
+        //"avatar":"".to_string(),
+        //"time_zone": 7,
+        "created_by": "".to_string(),
+        "created_time_dt": Bson::DateTime(current_time),
+        "updated_by": "".to_string(),
+        "updated_time_dt": Bson::DateTime(current_time),
+        "status": 0,
+    }
+}
+fn prepare_user(user: Register) -> Document{
+    let current_time = Utc::now();
+    doc! {
+        "id": String::from("user_") + &Uuid::new_v4().to_string(),
+        "email": user.email.to_string(),
+        "password": HASHER.hash(&user.password).unwrap(),
         "first_name": "".to_string(),
         "last_name": "".to_string(),
         "phone_number": "".to_string(),

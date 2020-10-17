@@ -21,18 +21,6 @@ pub struct User {
     pub updated_time_dt: DateTime,
     pub status: i32,
 }
-// #[derive(Serialize, Deserialize, Debug)]
-// pub struct UserResponse {
-//     pub id: String,
-//     pub email: String,
-//     pub first_name: Option<String>,
-//     pub last_name: Option<String>,
-//     pub phone_number: Option<String>,
-//     pub role: Option<String>,
-//     pub roles: Option<String>,
-//     pub avatar: Option<String>,
-//     pub status: i8,
-// }
 
 #[derive(Serialize, Deserialize, Debug, Validate, Clone)]
 pub struct Login {
@@ -75,10 +63,7 @@ pub struct Update {
 pub struct Delete {
     pub email: String,
 }
-#[allow(dead_code)]
-pub struct Auth {
-    pub token: String,
-}
+
 lazy_static! {
     pub static ref ADMIN_DOC: Document = doc! {
         "id": "user_06e75640-09b0-4b8f-b06f-a4af47aebd4a".to_string(),

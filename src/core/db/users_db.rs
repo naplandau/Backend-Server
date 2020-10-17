@@ -1,14 +1,14 @@
 use super::db_utils;
-pub use futures::StreamExt;
+use futures::StreamExt;
 use crate::core::models::{users::Confirmation, users::User, Update};
 use bson::doc;
 use bson::{Bson, Document};
 use chrono::Utc;
 use mongodb::{error::Error, options::FindOptions};
-// use uuid::Uuid;
 
 const COLLECTION_NAME: &str = "users";
 const PENDING_COLLECTION: &str = "users_pending";
+
 pub async fn insert(user: User) -> Result<String, Error> {
     let docs = prepare_user(user);
     let ret = db_utils::insert(COLLECTION_NAME, &docs).await;
