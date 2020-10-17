@@ -29,4 +29,4 @@ lint:
 dev:
 	@cargo run
 
-.PHONY: build test docs style-check lint
+.PHONY: build test docs style-check lint dev mongostart mongostop
