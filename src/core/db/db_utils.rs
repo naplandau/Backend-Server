@@ -33,7 +33,7 @@ pub async fn find_all_with_filter(
     let collection = &get_collection(client, collection);
     collection.find(filter, find_options).await
 }
-
+#[allow(dead_code)]
 pub async fn find_all(collection: &str) -> Result<Cursor, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);

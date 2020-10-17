@@ -1,12 +1,9 @@
 use super::db_utils;
 pub use futures::StreamExt;
-//use crate::config::config::CONFIG;
 use crate::core::models::{users::Confirmation, users::User, Update};
-// use crate::utils::handlers::hasher::{hash_validation,     HASHER};
 use bson::doc;
 use bson::{Bson, Document};
-use chrono::{DateTime, Duration, Utc};
-// use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
+use chrono::Utc;
 use mongodb::{error::Error, options::FindOptions};
 // use uuid::Uuid;
 
@@ -72,21 +69,29 @@ pub async fn find_pending(id: String) -> Result<Option<Confirmation>, Error> {
 pub async fn find_all(filter: Document, option: FindOptions) -> Result<Option<Vec<User>>, Error> {
     let cursor = db_utils::find_all_with_filter(COLLECTION_NAME, filter, option).await;
     match cursor {
-        Ok(cursor) => {
-            let res = Vec::new();
+        Ok(mut cursor) => {
+            let mut res: Vec<User> = Vec::new();
             while let Some(result) = cursor.next().await {
-                let mut doc = result.unwrap().clone();
-                match bson::from_bson(bson::Bson::Document(doc)){
-                        Ok(model) => {
-                            res.push(&model);
-                        },
-                        _ => unimplemented!()
+                let doc = result.unwrap().clone();
+                // match bson::from_bson(bson::Bson::Document(doc)) {
+                //     Ok(model) => {
+                        res.push(doc_to_user(doc));
+                    // }
+                    // _ => unimplemented!(),
+                // }
             }
-            };
             Ok(Some(res))
         }
         Err(e) => Err(Error::from(e)),
     }
+}
+fn doc_to_user(doc: Document) -> User {
+    let user: User = bson::from_document(doc).unwrap();
+    user
+}
+fn user_to_doc(user: User) -> Document {
+    let doc: Document = bson::to_document(&user).unwrap();
+    doc
 }
 fn prepare_user(user: User) -> Document {
     let current_time = Utc::now();
