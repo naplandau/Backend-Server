@@ -65,7 +65,7 @@ pub fn send_confirmation_mail(confirmation: &Confirmation) -> Result<(), ()> {
         id = confirmation.id,
         expires = expires
     );
-    let plain_text = format!(
+    let _plain_text = format!(
         "Please visit the link below to complete registration:\n
       {domain}/register/{id}\n
       This link expires on {expires}.",
