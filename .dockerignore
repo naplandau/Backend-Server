@@ -13,6 +13,9 @@
 **/*.jfm
 **/azds.yaml
 **/bin
+**/mongo*
+**/target
+**/data
 **/charts
 **/docker-compose*
 **/Dockerfile*

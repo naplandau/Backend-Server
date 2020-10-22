@@ -1,6 +1,74 @@
-version: '3.4'
+version: "3"
 
 services:
-  started:
-    image: started
-    build: .
+  # web:
+  #   build: ./web
+  #   volumes:
+  #     - ./web:/usr/src/app
+  #   ports:
+  #     - "3000:3000"
+  #   command: bash -c "yarn && yarn start"
+  #   links:
+  #     - api_server
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports: 
+      - "3000:3000"
+    # expose: ["3000"]
+    volumes:
+      - .:/usr/src/app
+      - registry:/root/.cargo/registry
+    depends_on:
+      # - redis
+      - mongo_db
+    # links:
+    #   - mongo_db
+    env_file: .env
+    command: bash -c "bash cargo-watch -x run"
+
+  # redis:
+  #     image: redis:latest
+  #     ports:
+  #       - "6379:6379"
+  #     expose:
+  #       - "6379"
+  #     volumes:
+  #       - .docker/redis:/data
+  #     restart: unless-stopped
+  #     deploy:
+  #       replicas: 1
+  #     # configs:
+  #     #   - my_config
+  #     #   - my_other_config
+
+  mongo_db:
+    image: mongo:latest
+    ports: 
+      - "27017:27017"
+    volumes:
+      #- .docker/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - .docker/mongodb/data/db/:/data/db/
+      - .docker/mongodb/data/log/:/var/log/mongodb/
+      - .docker/mongodb/config:/data/configdb
+    environment:
+      - MONGO_INITDB_DATABASE=stated-rust
+    # restart: unless-stopped
+
+# configs:
+#   my_config:
+#     file: ./my_config.txt
+#   my_other_config:
+#     external: true
+
+# networks:
+#   default:
+#     driver: bridge
+
+# cargo will try to redownload packages @ docker-compose up so store them here.
+volumes:
+  # mongodb:
+  registry:
+    driver: local
