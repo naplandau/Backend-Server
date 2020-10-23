@@ -1,5 +1,7 @@
 # RUST API SERVER
 
+![CI](https://github.com/DianaSensei/Started/workflows/Rust/badge.svg?branch=master)
+
 ## This project for learning build Server by Rust
 
 ## Features
