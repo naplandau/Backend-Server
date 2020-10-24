@@ -11,19 +11,36 @@ pub async fn delete(user: web::Json<Delete>) -> HttpResponse {
             message: "delete success".to_string(),
             status: true,
         }),
-        None => HttpResponse::Ok()
-            .status(StatusCode::from_u16(401).unwrap())
-            .json(Response {
-                data: doc! {},
-                status: false,
-                message: "Check your infomations".to_string(),
-            }),
+        None => {
+            error!("delete_user: Not Found");
+            Error::NotFound("User Not Found".to_string()).error_response()
+        }
     }
 }
-pub async fn get_users() -> HttpResponse {
+pub async fn create_users(req: web::Json<Register>) -> HttpResponse {
+    match req.validate() {
+        Ok(_) => {
+            let user = users_db::find_by_email(req.email.to_string())
+                .await
+                .unwrap();
+            match user {
+                Some(_) => Error::Conflict.error_response(),
+                None => match users_db::insert(req.to_owned().into()).await {
+                    Ok(id) => {
+                        println!("{}",id);
+                        HttpResponse::Created().json(req.to_owned())
+                    },
+                    Err(e) => Error::from(e).error_response()
+                }
+            }
+        },
+        Err(e) => Error::from(e).error_response(),
+    }
+}
+pub async fn get_users(_query: web::Query<HashMap<String, String>>) -> HttpResponse {
     let option = FindOptions::builder()
-    //.sort(doc! {"title":1})
-    .build();
+        //.sort(doc! {"title":1})
+        .build();
     let data = users_db::find_all(doc! {}, option).await;
     match data {
         Ok(vec) => match vec {
@@ -33,13 +50,13 @@ pub async fn get_users() -> HttpResponse {
                 message: "success".to_string(),
             }),
             None => {
-                println!("get_users: None");
-                return HttpResponse::InternalServerError().finish();
+                error!("get_users: None");
+                return Error::InternalServerError.error_response();
             }
         },
         Err(e) => {
-            println!("get_users: {}", e.to_string());
-            return HttpResponse::InternalServerError().finish();
+            error!("get_users: {:?}", e);
+            return Error::InternalServerError.error_response();
         }
     }
 }
@@ -51,11 +68,10 @@ pub async fn get_user(id: web::Path<String>) -> HttpResponse {
             message: "Success".to_string(),
             status: true,
         }),
-        None => HttpResponse::Ok().json(Response {
-            data: doc! {},
-            message: "Not Found".to_string(),
-            status: false,
-        }),
+        None => {
+            error!("get_user: Not Found");
+            Error::NotFound("User Not Found".to_string()).error_response()
+        }
     }
 }
 pub async fn update_user(_user: web::Json<Update>, id: web::Path<String>) -> HttpResponse {
@@ -119,9 +135,6 @@ fn prepare_user(user: User) -> Document {
         "last_name": user.last_name.to_string(),
         "phone_number": user.phone_number.to_string(),
         "role": user.role.to_string(),
-        //"roles": "".to_string(),
-        //"avatar":"".to_string(),
-        //"time_zone": 7,
         "created_by": user.created_by.to_string(),
         "created_time_dt": user.created_time_dt.naive_utc().to_string(),
         "updated_by": user.updated_by.to_string(),
@@ -138,4 +151,23 @@ fn prepare_update(user: User, update_user: Update) -> Document {
     };
     docs.extend(update_doc);
     docs
+}
+impl From<Register> for User {
+    fn from(register: Register) -> Self {
+        let current_time = Utc::now();
+        User {
+            id: String::from("user_") + &Uuid::new_v4().to_simple().to_string(),
+            email: register.email.to_owned(),
+            password: HASHER.hash(&register.password).unwrap(),
+            first_name: "".to_string(),
+            last_name: "".to_string(),
+            phone_number: "".to_string(),
+            role: "USER".to_string(),
+            created_by: "".to_string(),
+            created_time_dt: bson::DateTime(current_time),
+            updated_by: "".to_string(),
+            updated_time_dt: bson::DateTime(current_time),
+            status: 1,
+        }
+    }
 }

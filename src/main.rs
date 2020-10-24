@@ -4,8 +4,6 @@ extern crate lazy_static;
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
-// #[macro_use]
-// extern crate env_logger;
 #[macro_use]
 extern crate log;
 #[macro_use]
@@ -36,7 +34,7 @@ async fn main() -> std::io::Result<()> {
     // use rand::Rng;
 
     dotenv::dotenv().ok();
-    std::env::set_var("RUST_LOG","actix_web=debug,actix_server=info");
+    std::env::set_var("RUST_LOG","actix_web=info,actix_server=info");
     //std::env::set_var("RUST_BACKTRACE", "1");
     env_logger::init();
 

@@ -2,6 +2,8 @@ use actix_web::{error, error::ResponseError, http::StatusCode, HttpRequest, Http
 use failure::Fail;
 use serde_json::{Map as JsonMap, Value as JsonValue};
 use validator::ValidationErrors;
+use mongodb::error::Error as MongoError;
+
 #[derive(Debug, Fail, PartialEq)]
 pub enum Error {
     #[fail(display = "Bad Request")]
@@ -17,11 +19,15 @@ pub enum Error {
     #[fail(display = "Pool Error")]
     PoolError(String),
     #[fail(display = "Internal Server Error")]
-    InternalServerError(String),
+    InternalServerError,
     #[fail(display = "Method Not Allowed")]
     MethodNotAllowed,
     #[fail(display = "Bad Gateway")]
     BadGateway,
+    #[fail(display = "Resource Exists")]
+    Conflict,
+    #[fail(display = "Database Error")]
+    DBError(String),
     #[fail(display = "Unprocessable Entity: {}", _0)]
     UnprocessableEntity(JsonValue),
     #[fail(display = "Time Out")]
@@ -46,16 +52,19 @@ impl From<Vec<String>> for ErrorResponse {
 impl ResponseError for Error {
     fn error_response(&self) -> HttpResponse {
         match self {
-            Error::BadRequest(error) => {
-                HttpResponse::BadRequest().json::<ErrorResponse>(error.into())
+            Error::BadRequest(err) => {
+                HttpResponse::BadRequest().json::<ErrorResponse>(err.into())
             }
-            Error::NotFound(error) => HttpResponse::NotFound().json::<ErrorResponse>(error.into()),
-            Error::Unauthorized(error) => {
-                HttpResponse::Unauthorized().json::<ErrorResponse>(error.into())
+
+            Error::NotFound(err) => HttpResponse::NotFound().json::<ErrorResponse>(err.into()),
+            Error::Unauthorized(err) => {
+                HttpResponse::Unauthorized().json::<ErrorResponse>(err.into())
             }
-            Error::Forbidden(error) => {
-                HttpResponse::Forbidden().json::<ErrorResponse>(error.into())
+            Error::Conflict => HttpResponse::Conflict().finish(),
+            Error::Forbidden(err) => {
+                HttpResponse::Forbidden().json::<ErrorResponse>(err.into())
             }
+            Error::UnprocessableEntity(json) => HttpResponse::BadRequest().json(json),
             Error::RequestTimeOut => HttpResponse::RequestTimeout().finish(),
             Error::MethodNotAllowed => HttpResponse::MethodNotAllowed().finish(),
             Error::BadGateway => HttpResponse::BadGateway().finish(),
@@ -65,8 +74,14 @@ impl ResponseError for Error {
     fn status_code(&self) -> StatusCode {
         match *self {
             Error::BadRequest(_) => StatusCode::BAD_REQUEST,
-            Error::InternalServerError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            _ => StatusCode::GATEWAY_TIMEOUT,
+            Error::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
+            Error::DBError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Error::BadGateway => StatusCode::BAD_GATEWAY,
+            Error::NotFound(_) => StatusCode::NOT_FOUND,
+            Error::RequestTimeOut => StatusCode::REQUEST_TIMEOUT,
+            Error::Unauthorized(_) => StatusCode::UNAUTHORIZED,
+            Error::Conflict => StatusCode::CONFLICT,
+            _ => StatusCode::OK,
         }
     }
 }
@@ -91,7 +106,11 @@ impl From<ValidationErrors> for Error {
         }))
     }
 }
-
+impl From<MongoError> for Error{
+    fn from(error: MongoError) -> Self{
+        Error::DBError(error.to_string())
+    }
+}
 pub fn json_error_handler(err: error::JsonPayloadError, _req: &HttpRequest) -> error::Error {
     use actix_web::error::JsonPayloadError;
 

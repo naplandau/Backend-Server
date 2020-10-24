@@ -13,8 +13,6 @@ pub struct User {
     pub last_name: String,
     pub phone_number: String,
     pub role: String,
-    //pub roles: String,
-    //pub avatar: String,
     pub created_by: String,
     pub created_time_dt: DateTime,
     pub updated_by: String,
@@ -52,12 +50,13 @@ pub struct Register {
     #[validate(length(min = 8, message = "password must be at least 8 characters"))]
     pub password: String,
 }
-#[derive(Debug, Serialize, Deserialize, Validate)]
+#[derive(Debug, Serialize, Deserialize, Clone, Validate)]
 pub struct Update {
     pub email: String,
     pub first_name: Option<String>,
     pub last_name: Option<String>,
     pub role: Option<String>,
+    pub phone_number: Option<String>,
 }
 #[derive(Debug, Serialize, Deserialize, Validate)]
 pub struct Delete {
@@ -73,9 +72,6 @@ lazy_static! {
         "last_name": "".to_string(),
         "phone_number": "+84767336687".to_string(),
         "role": "ADMIN".to_string(),
-        //"roles": "ADMIN".to_string(),
-        //"avatar": "".to_string(),
-        //"time_zone": 7,
         "created_by": "admin".to_string(),
         "created_time_dt": Utc::now(),
         "updated_by": "admin".to_string(),

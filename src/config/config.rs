@@ -1,4 +1,3 @@
-use dotenv::dotenv;
 use serde::Deserialize;
 #[derive(Clone, Deserialize, Debug)]
 pub struct Config {
@@ -21,17 +20,12 @@ pub struct Config {
     //pub session_secure: bool,
     //pub session_timeout: i64
 }
-// pub fn get_secret_key() -> String {
-//     std::env::var("SECRET_KEY").expect("SECRET_KEY must be set")
-// }
-// pub fn get_smtp_username() -> String {
-//     std::env::var("SMTP_USER_NAME").expect("")
-// }
+
 lazy_static! {
     pub static ref CONFIG: Config = get_config();
 }
 fn get_config() -> Config {
-    dotenv().ok();
+    dotenv::dotenv().ok();
 
     match envy::from_env::<Config>() {
         Ok(config) => config,
