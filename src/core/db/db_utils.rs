@@ -23,7 +23,6 @@ pub async fn find_by(collection: &str, field: Document) -> Result<Option<Documen
     let collection = &get_collection(client, collection);
     collection.find_one(field, None).await
 }
-#[allow(dead_code)]
 pub async fn find_all_with_filter(
     collection: &str,
     filter: Document,
@@ -33,14 +32,13 @@ pub async fn find_all_with_filter(
     let collection = &get_collection(client, collection);
     collection.find(filter, find_options).await
 }
-#[allow(dead_code)]
 pub async fn find_all(collection: &str) -> Result<Cursor, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
     collection.find(doc! {}, None).await
     //let docs = Vec<_> = .map(|doc| doc.unwrap()).collect)
 }
-#[allow(dead_code)]
+
 pub async fn update(
     collection: &str,
     query: Document,
@@ -50,7 +48,7 @@ pub async fn update(
     let collection = &get_collection(client, collection);
     collection.update_one(query.clone(), update, None).await
 }
-#[allow(dead_code)]
+
 pub async fn update_all(
     collection: &str,
     query: Document,
@@ -60,40 +58,31 @@ pub async fn update_all(
     let collection = &get_collection(client, collection);
     collection.update_many(query.clone(), update, None).await
 }
-#[allow(dead_code)]
-pub async fn delete(
-    collection: &str,
-    query: Document,
-) -> Result<DeleteResult, Error> {
+
+pub async fn delete(collection: &str, query: Document) -> Result<DeleteResult, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
     collection.delete_one(query.clone(), None).await
 }
-#[allow(dead_code)]
-pub async fn delete_filter(
-    collection: &str,
-    filter: Document,
-)-> Result<DeleteResult, Error>{
-     let client = get_mongo().await.unwrap();
+
+pub async fn delete_filter(collection: &str, filter: Document) -> Result<DeleteResult, Error> {
+    let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
     collection.delete_many(filter.clone(), None).await
 }
-#[allow(dead_code)]
-pub async fn delete_all(
-    collection: &str,
-    query: Document,
-) -> Result<DeleteResult, Error> {
+
+pub async fn delete_all(collection: &str, query: Document) -> Result<DeleteResult, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
     collection.delete_many(query.clone(), None).await
 }
-#[allow(dead_code)]
+
 pub async fn count_filter(collection: &str, filter: Document) -> Result<i64, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
     collection.count_documents(filter.clone(), None).await
 }
-#[allow(dead_code)]
+
 pub async fn find_distinct_value(
     collection: &str,
     field_name: String,
@@ -105,13 +94,13 @@ pub async fn find_distinct_value(
         .distinct(&*field_name, filter.clone(), None)
         .await
 }
-#[allow(dead_code)]
+
 pub async fn drop(collection: &str) -> Result<(), Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
     collection.drop(None).await
 }
-#[allow(dead_code)]
+
 pub async fn create_collection(collection: &str) -> Result<(), Error> {
     let client = get_mongo().await.unwrap();
     client

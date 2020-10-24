@@ -1,0 +1,18 @@
+# application:
+#   name: started-rust
+#   project: Started
+#   publicly_accessible: true
+# # databases:
+# # - type: postgresql
+# #   version: "11.5"
+# #   name: my-postgresql-8628210
+# databases:
+# - type: mongo
+#   version: latest
+#   name: mongo_db
+# routers:
+# - name: main
+#   routes:
+#   - application_name: started-rust
+#     paths:
+#     - /

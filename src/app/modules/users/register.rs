@@ -65,14 +65,7 @@ pub async fn register(user: web::Json<Register>) -> HttpResponse {
                 }
             }
         }
-        Err(e) => {
-            let err_doc = api_util::get_validate_error(e);
-            HttpResponse::Ok().json(Response {
-                data: doc! {"error": Bson::Document(err_doc)},
-                status: false,
-                message: "Data not valid.".to_string(),
-            })
-        }
+        Err(e) => Error::from(e).error_response()
     }
 }
 pub async fn send_confirmation_mail(confirmation: &Confirmation) -> Result<(), ()> {

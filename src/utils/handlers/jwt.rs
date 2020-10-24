@@ -8,7 +8,7 @@ pub fn generate_jwt(claims: Claims) -> String {
     let key = _var.as_bytes();
     encode(&Header::default(), &claims, &EncodingKey::from_secret(key)).unwrap()
 }
-#[allow(dead_code)]
+
 pub fn validate_jwt(jwt_token: &str) -> Option<Claims> {
     let _var = &CONFIG.secret_key;
     let key = _var.as_bytes();

@@ -4,7 +4,7 @@ pub fn init_route(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::resource("users")
             .route(web::get().to(get_users))
-            .route(web::post().to(register)),
+            .route(web::post().to(create_users)),
     )
     .service(
         web::resource("users/{id}")
