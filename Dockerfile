@@ -30,5 +30,6 @@ COPY --from=builder /code/target/release/started /usr/bin/started
 ENV RUSTFLAGS=-Awarnings
 
 EXPOSE 3000
+# EXPOSE 9090
 
 ENTRYPOINT [ "/usr/bin/started" ]

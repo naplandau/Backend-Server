@@ -1,34 +1,32 @@
-use actix_web::{error::ResponseError, http::StatusCode, HttpResponse};
+use actix_web::{error, error::ResponseError, http::StatusCode, HttpRequest, HttpResponse};
 use failure::Fail;
 use serde_json::{Map as JsonMap, Value as JsonValue};
 use validator::ValidationErrors;
 #[derive(Debug, Fail, PartialEq)]
-#[allow(dead_code)]
 pub enum Error {
     #[fail(display = "Bad Request")]
     BadRequest(String),
     #[fail(display = "Blocking Error")]
     BlockingError(String),
-    //404
     #[fail(display = "Not Found")]
     NotFound(String),
-    //401
     #[fail(display = "Unauthorized")]
     Unauthorized(String),
-    //403
     #[fail(display = "Forbidden")]
     Forbidden(String),
     #[fail(display = "Pool Error")]
     PoolError(String),
     #[fail(display = "Internal Server Error")]
     InternalServerError(String),
-    // 422
+    #[fail(display = "Method Not Allowed")]
+    MethodNotAllowed,
+    #[fail(display = "Bad Gateway")]
+    BadGateway,
     #[fail(display = "Unprocessable Entity: {}", _0)]
     UnprocessableEntity(JsonValue),
     #[fail(display = "Time Out")]
-    TimeOut,
+    RequestTimeOut,
 }
-
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ErrorResponse {
     errors: Vec<String>,
@@ -52,13 +50,16 @@ impl ResponseError for Error {
                 HttpResponse::BadRequest().json::<ErrorResponse>(error.into())
             }
             Error::NotFound(error) => HttpResponse::NotFound().json::<ErrorResponse>(error.into()),
-            // Error::Unauthorized(error) =>{
-            //     HttpResponse::Unauthorized.json::<ErrorResponse>(error.into())
-            // }
-            // Error::Forbidden(error) =>{
-            //     HttpResponse::Forbidden.json::<ErrorResponse>(error.into())
-            // }
-            _ => HttpResponse::new(StatusCode::INTERNAL_SERVER_ERROR),
+            Error::Unauthorized(error) => {
+                HttpResponse::Unauthorized().json::<ErrorResponse>(error.into())
+            }
+            Error::Forbidden(error) => {
+                HttpResponse::Forbidden().json::<ErrorResponse>(error.into())
+            }
+            Error::RequestTimeOut => HttpResponse::RequestTimeout().finish(),
+            Error::MethodNotAllowed => HttpResponse::MethodNotAllowed().finish(),
+            Error::BadGateway => HttpResponse::BadGateway().finish(),
+            _ => HttpResponse::InternalServerError().finish(),
         }
     }
     fn status_code(&self) -> StatusCode {
@@ -73,7 +74,6 @@ impl ResponseError for Error {
 impl From<ValidationErrors> for Error {
     fn from(errors: ValidationErrors) -> Self {
         let mut err_map = JsonMap::new();
-
         // transforms errors into objects that err_map can take
         for (field, errors) in errors.field_errors().iter() {
             let errors: Vec<JsonValue> = errors
@@ -90,4 +90,18 @@ impl From<ValidationErrors> for Error {
             "errors": err_map,
         }))
     }
+}
+
+pub fn json_error_handler(err: error::JsonPayloadError, _req: &HttpRequest) -> error::Error {
+    use actix_web::error::JsonPayloadError;
+
+    let detail = err.to_string();
+    let resp = match &err {
+        JsonPayloadError::ContentType => HttpResponse::UnsupportedMediaType().body(detail),
+        JsonPayloadError::Deserialize(json_err) if json_err.is_data() => {
+            HttpResponse::UnprocessableEntity().body(detail)
+        }
+        _ => HttpResponse::BadRequest().body(detail),
+    };
+    error::InternalError::from_response(err, resp).into()
 }

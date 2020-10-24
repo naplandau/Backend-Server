@@ -1,21 +1,19 @@
-// use crate::core::models::users::*;
-use lettre::smtp::authentication::{Credentials, Mechanism};
-use lettre::smtp::error::{SmtpResult};
-use lettre::smtp::ConnectionReuseParameters;
-use lettre::smtp::SmtpTransport;
-use lettre::{ClientSecurity, ClientTlsParameters, SmtpClient, Transport};
-use lettre_email::{Email, 
-    // EmailBuilder
+use lettre::smtp::{
+    authentication::{Credentials, Mechanism},
+    error::SmtpResult,
+    ConnectionReuseParameters, SmtpTransport,
 };
+use lettre::{ClientSecurity, ClientTlsParameters, SmtpClient, Transport};
+use lettre_email::Email;
 use native_tls::{Protocol, TlsConnector};
 use std::env;
-#[allow(dead_code)]
+
 fn get_credentials() -> Credentials {
     let smtp_username = env::var("SMTP_USERNAME").expect("SMTP_USERNAME must be set");
     let smtp_password = env::var("SMTP_PASSWORD").expect("SMTP_PASSWORD must be set");
     Credentials::new(smtp_username, smtp_password)
 }
-#[allow(dead_code)]
+
 fn get_mailer() -> SmtpTransport {
     let smtp_host = &*env::var("SMTP_HOST").expect("SMTP_HOST must be set");
     let mut tls_builder = TlsConnector::builder();
@@ -30,8 +28,8 @@ fn get_mailer() -> SmtpTransport {
         .connection_reuse(ConnectionReuseParameters::ReuseUnlimited)
         .transport()
 }
-#[allow(dead_code)]
-pub fn send_email(email: Email) -> SmtpResult{
+
+pub fn send_email(email: Email) -> SmtpResult {
     let mut mailer = get_mailer();
     // Send the email
     let result = mailer.send(email.into());

@@ -1,13 +1,8 @@
 use crate::config::config::CONFIG;
 // use actix::prelude::{Actor, SyncContext};
 // use actix::prelude::{Addr, SyncArbiter};
-// use actix_web::web;
-use mongodb::{
-    //error::Error, 
-    Client};
+use mongodb::Client;
 use once_cell::sync::OnceCell;
-// use std::env;
-// use std::sync::*;
 use tokio;
 
 static MONGO: OnceCell<Client> = OnceCell::new();
@@ -22,7 +17,7 @@ pub async fn get_mongo() -> Option<&'static Client> {
 
     if !*initialized {
         let database_url = &CONFIG.database_url;
-        print!("DB_URL {}",database_url);
+        info!("DB_URL {}\n", database_url);
         if let Ok(client) = Client::with_uri_str(database_url.as_str()).await {
             if let Ok(_) = MONGO.set(client) {
                 *initialized = true;

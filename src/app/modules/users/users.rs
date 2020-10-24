@@ -1,5 +1,5 @@
 use super::lib::*;
-#[allow(dead_code)]
+
 pub async fn delete(user: web::Json<Delete>) -> HttpResponse {
     let user = user.into_inner();
     let data = users_db::find_by_email(user.email.to_string())
