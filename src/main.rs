@@ -16,10 +16,17 @@ mod config;
 #[allow(dead_code)]
 mod core;
 #[allow(dead_code)]
+mod services;
+#[allow(dead_code)]
 mod utils;
 #[allow(dead_code)]
-mod services;
+mod middleware;
 
+use actix_web::{
+    dev, http,
+    middleware::errhandlers::{ErrorHandlerResponse},
+    Result as ActixResult
+};
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     use crate::app::routes;
@@ -29,12 +36,15 @@ async fn main() -> std::io::Result<()> {
     //use actix_session::{CookieSession, Session};
     //use actix_identity::{CookieIdentityPolicy, IdentityService};
     // use actix_web::http::header::{AUTHORIZATION, CONTENT_TYPE};
-    use actix_web::{middleware, web, App, HttpResponse, HttpServer};
+    use actix_web::{
+        middleware::{errhandlers::ErrorHandlers, Compress, Logger},
+        web, App, HttpResponse, HttpServer,
+    };
     use listenfd::ListenFd;
     // use rand::Rng;
 
     dotenv::dotenv().ok();
-    std::env::set_var("RUST_LOG","actix_web=info,actix_server=info");
+    std::env::set_var("RUST_LOG", "actix_web=info,actix_server=info");
     //std::env::set_var("RUST_BACKTRACE", "1");
     env_logger::init();
 
@@ -47,8 +57,8 @@ async fn main() -> std::io::Result<()> {
             // .app_data(web::JsonConfig::default()
             //     // register error_handler for JSON extractors.
             //     .error_handler(utils::handlers::json_error_handler),)
-            .wrap(middleware::Logger::default())
-            .wrap(middleware::Compress::default())
+            .wrap(Logger::default())
+            .wrap(Compress::default())
             .data(web::JsonConfig::default().limit(4096))
             //.wrap(CookieSession::signed(&[0; 32]).secure(false))
             // .wrap(IdentityService::new(
@@ -69,6 +79,7 @@ async fn main() -> std::io::Result<()> {
             //         .max_age(3600)
             //         .finish(),
             // )
+            .wrap(ErrorHandlers::new().handler(http::StatusCode::INTERNAL_SERVER_ERROR, render_500))
             .configure(routes::init_route)
             .default_service(web::route().to(|| HttpResponse::NotFound()))
     });
@@ -80,4 +91,12 @@ async fn main() -> std::io::Result<()> {
         server.bind(&CONFIG.server)?
     };
     server.run().await
+}
+
+fn render_500<B>(mut res: dev::ServiceResponse<B>) -> ActixResult<ErrorHandlerResponse<B>> {
+    res.response_mut().headers_mut().insert(
+        http::header::CONTENT_TYPE,
+        http::HeaderValue::from_static("Error"),
+    );
+    Ok(ErrorHandlerResponse::Response(res))
 }

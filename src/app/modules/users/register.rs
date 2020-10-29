@@ -119,10 +119,10 @@ pub async fn verify_register(id: web::Path<String>) -> HttpResponse {
     match data {
         Some(doc) => {
             let user_doc = prepare_register_user(doc.clone());
-            let _delete_pending =
-                db_utils::delete_filter(PENDING_COLLECTION, doc! {"email": doc.email})
-                    .await
-                    .unwrap();
+            // let _delete_pending =
+            //     db_utils::delete_filter(PENDING_COLLECTION, doc! {"email": doc.email})
+            //         .await
+            //         .unwrap();
 
             let _exec = db_utils::insert(USERS_COLLECTION, &user_doc).await;
             match _exec {

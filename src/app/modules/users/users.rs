@@ -1,39 +1,49 @@
 use super::lib::*;
 
-pub async fn delete(user: web::Json<Delete>) -> HttpResponse {
-    let user = user.into_inner();
-    let data = users_db::find_by_email(user.email.to_string())
-        .await
-        .unwrap();
+pub async fn delete_user(id: web::Path<String>) -> HttpResponse {
+    let data = users_db::find_by_id(id.to_owned())
+        .await.unwrap();
     match data {
-        Some(_) => HttpResponse::Ok().json(Response {
-            data: doc! {},
-            message: "delete success".to_string(),
-            status: true,
-        }),
+        Some(_) => {
+            let res = users_db::delete_by_id(id.to_owned()).await;
+            match res {
+                Ok(op) => match op {
+                    Some(u) => HttpResponse::Ok().json(Response {
+                        data: user_to_doc(u),
+                        message: "success".to_string(),
+                        status: true,
+                    }),
+                    None => Error::NoContent.error_response(),
+                },
+                Err(_) => Error::NoContent.error_response(),
+            }
+        }
         None => {
             error!("delete_user: Not Found");
-            Error::NotFound("User Not Found".to_string()).error_response()
+            Error::NoContent.error_response()
         }
     }
 }
 pub async fn create_users(req: web::Json<Register>) -> HttpResponse {
     match req.validate() {
         Ok(_) => {
-            let user = users_db::find_by_email(req.email.to_string())
+            let user_get = users_db::find_by_email(req.email.to_string())
                 .await
                 .unwrap();
-            match user {
+            match user_get {
                 Some(_) => Error::Conflict.error_response(),
-                None => match users_db::insert(req.to_owned().into()).await {
-                    Ok(id) => {
-                        println!("{}",id);
-                        HttpResponse::Created().json(req.to_owned())
-                    },
-                    Err(e) => Error::from(e).error_response()
+                None => {
+                    let user_save: User = req.to_owned().into();
+                    match users_db::insert(user_save.to_owned()).await {
+                        Ok(id) => {
+                            println!("{}", id);
+                            HttpResponse::Created().json(Response::from(user_save.to_owned()))
+                        }
+                        Err(e) => Error::from(e).error_response(),
+                    }
                 }
             }
-        },
+        }
         Err(e) => Error::from(e).error_response(),
     }
 }
@@ -43,17 +53,11 @@ pub async fn get_users(_query: web::Query<HashMap<String, String>>) -> HttpRespo
         .build();
     let data = users_db::find_all(doc! {}, option).await;
     match data {
-        Ok(vec) => match vec {
-            Some(v) => HttpResponse::Ok().json(ResponseList {
-                data: vec_user_to_vec_docs(v),
-                status: true,
-                message: "success".to_string(),
-            }),
-            None => {
-                error!("get_users: None");
-                return Error::InternalServerError.error_response();
-            }
-        },
+        Ok(vec) => HttpResponse::Ok().json(ResponseList {
+            data: vec_user_to_vec_docs(vec),
+            status: true,
+            message: "success".to_string(),
+        }),
         Err(e) => {
             error!("get_users: {:?}", e);
             return Error::InternalServerError.error_response();
@@ -61,7 +65,7 @@ pub async fn get_users(_query: web::Query<HashMap<String, String>>) -> HttpRespo
     }
 }
 pub async fn get_user(id: web::Path<String>) -> HttpResponse {
-    let user = users_db::find(id.to_string()).await.unwrap();
+    let user = users_db::find_by_id(id.to_string()).await.unwrap();
     match user {
         Some(v) => HttpResponse::Ok().json(Response {
             data: get_sub_field(&prepare_user(v)),
@@ -75,7 +79,7 @@ pub async fn get_user(id: web::Path<String>) -> HttpResponse {
     }
 }
 pub async fn update_user(_user: web::Json<Update>, id: web::Path<String>) -> HttpResponse {
-    let user = users_db::find(id.to_string()).await.unwrap();
+    let user = users_db::find_by_id(id.to_string()).await.unwrap();
     match user {
         Some(v) => {
             // let _execs = db_utils::insert(PENDING_COLLECTION, &user_doc).await;
@@ -125,6 +129,9 @@ fn vec_user_to_vec_docs(vec: Vec<User>) -> Vec<Document> {
     }
     res
 }
+fn user_to_doc(user: User) -> Document {
+    get_sub_field(&bson::to_document(&user).unwrap())
+}
 fn prepare_user(user: User) -> Document {
     // let current_time = Utc::now();
     doc! {
@@ -171,3 +178,30 @@ impl From<Register> for User {
         }
     }
 }
+impl From<User> for Response {
+    fn from(user: User) -> Self {
+        Response {
+            data: doc! {},
+            message: "".to_string(),
+            status: true,
+        }
+    }
+}
+// impl From<User> for Document{
+//     fn from(user: User) -> Self{
+//         doc! {
+//         "id": user.id.to_string(),
+//         "email": user.email.to_string(),
+//         // "password": HASHER.hash(&user.password).unwrap(),
+//         "first_name": user.first_name.to_string(),
+//         "last_name": user.last_name.to_string(),
+//         "phone_number": user.phone_number.to_string(),
+//         "role": user.role.to_string(),
+//         "created_by": user.created_by.to_string(),
+//         "created_time_dt": user.created_time_dt.naive_utc().to_string(),
+//         "updated_by": user.updated_by.to_string(),
+//         "updated_time_dt": user.updated_time_dt.naive_utc().to_string(),
+//         "status": user.status,
+//     }
+//     }
+// }
