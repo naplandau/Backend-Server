@@ -1,7 +1,8 @@
 use crate::core::db::get_mongo;
 use bson::{doc, document::Document, Bson};
-use mongodb::{error::Error, options::FindOptions, results::*, Client, Collection, Cursor};
-
+use futures::StreamExt;
+use mongodb::{error::Error, options::*, results::*, Client, Collection};
+// use crate::config::config::CONFIG;
 const MONGO_DB: &'static str = "stated-rust";
 
 fn get_collection(client: &Client, collection: &str) -> Collection {
@@ -13,98 +14,205 @@ pub async fn insert(collection: &str, doc: &Document) -> Result<InsertOneResult,
     let collection = get_collection(client, collection);
     collection.insert_one(doc.clone(), None).await
 }
-pub async fn find(collection: &str, id: String) -> Result<Option<Document>, Error> {
+
+pub async fn insert_many(
+    collection: &str,
+    docs: impl IntoIterator<Item = Document>,
+    options: impl Into<Option<InsertManyOptions>>,
+) -> Result<InsertManyResult, Error> {
+    let client = get_mongo().await.unwrap();
+    let collection = get_collection(client, collection);
+    collection.insert_many(docs, options).await
+}
+
+/// `Find document by id`
+pub async fn find_one(collection: &str, id: String) -> Result<Option<Document>, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
     collection.find_one(doc! {"id": id}, None).await
 }
-pub async fn find_by(collection: &str, field: Document) -> Result<Option<Document>, Error> {
+pub async fn find_one_and_update(
+    collection: &str,
+    id: String,
+    update: UpdateModifications,
+    options: Option<FindOneAndUpdateOptions>,
+) -> Result<Option<Document>, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
-    collection.find_one(field, None).await
+    collection
+        .find_one_and_update(doc! {"id": id}, update, options)
+        .await
 }
-pub async fn find_all_with_filter(
+pub async fn find_one_and_delete(
+    collection: &str,
+    id: String,
+    options: Option<FindOneAndDeleteOptions>,
+) -> Result<Option<Document>, Error> {
+    let client = get_mongo().await.unwrap();
+    let collection = &get_collection(client, collection);
+    collection
+        .find_one_and_delete(doc! {"id": id}, options)
+        .await
+}
+
+/// `filter = doc!{"key" : value, "key" : value, ...}`
+pub async fn find_one_by(
+    collection: &str,
+    filter: Option<Document>,
+    options: Option<FindOneOptions>,
+) -> Result<Option<Document>, Error> {
+    let client = get_mongo().await.unwrap();
+    let collection = &get_collection(client, collection);
+    collection.find_one(filter, options).await
+}
+pub async fn find_one_by_and_update(
     collection: &str,
     filter: Document,
-    find_options: FindOptions,
-) -> Result<Cursor, Error> {
+    update: UpdateModifications,
+    options: Option<FindOneAndUpdateOptions>,
+) -> Result<Option<Document>, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
-    collection.find(filter, find_options).await
+    collection
+        .find_one_and_update(filter, update, options)
+        .await
 }
-pub async fn find_all(collection: &str) -> Result<Cursor, Error> {
+pub async fn find_one_by_and_delete(
+    collection: &str,
+    filter: Document,
+    options: Option<FindOneAndDeleteOptions>,
+) -> Result<Option<Document>, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
-    collection.find(doc! {}, None).await
-    //let docs = Vec<_> = .map(|doc| doc.unwrap()).collect)
+    collection.find_one_and_delete(filter, options).await
 }
 
-pub async fn update(
+pub async fn find_many(
+    collection: &str,
+    filter: Option<Document>,
+    options: Option<FindOptions>,
+) -> Result<Vec<Document>, Error> {
+    let client = get_mongo().await.unwrap();
+    let collection = &get_collection(client, collection);
+    let cursor = collection.find(filter, options).await;
+    match cursor {
+        Ok(c) => {
+            let docs: Vec<_> = c.map(|doc| doc.unwrap()).collect().await;
+            Ok(docs)
+        }
+        Err(e) => Err(Error::from(e)),
+    }
+}
+
+pub async fn update_one(
     collection: &str,
     query: Document,
-    update: Document,
+    update: UpdateModifications,
+    options: Option<UpdateOptions>,
 ) -> Result<UpdateResult, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
-    collection.update_one(query.clone(), update, None).await
+    collection.update_one(query, update, options).await
 }
 
-pub async fn update_all(
+pub async fn update_many(
     collection: &str,
     query: Document,
-    update: Document,
+    update: impl Into<UpdateModifications>,
+    options: impl Into<Option<UpdateOptions>>,
 ) -> Result<UpdateResult, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
-    collection.update_many(query.clone(), update, None).await
+    collection.update_many(query, update, options).await
 }
 
-pub async fn delete(collection: &str, query: Document) -> Result<DeleteResult, Error> {
+pub async fn delete_one(
+    collection: &str,
+    query: Document,
+    options: impl Into<Option<DeleteOptions>>,
+) -> Result<DeleteResult, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
-    collection.delete_one(query.clone(), None).await
+    collection.delete_one(query, options).await
 }
 
-pub async fn delete_filter(collection: &str, filter: Document) -> Result<DeleteResult, Error> {
+pub async fn delete_many(
+    collection: &str,
+    query: Document,
+    options: impl Into<Option<DeleteOptions>>,
+) -> Result<DeleteResult, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
-    collection.delete_many(filter.clone(), None).await
+    collection.delete_many(query, options).await
 }
 
-pub async fn delete_all(collection: &str, query: Document) -> Result<DeleteResult, Error> {
+pub async fn delete_all(collection: &str) -> Result<DeleteResult, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
-    collection.delete_many(query.clone(), None).await
+    collection.delete_many(doc! {}, None).await
 }
 
-pub async fn count_filter(collection: &str, filter: Document) -> Result<i64, Error> {
+pub async fn count(
+    collection: &str,
+    filter: Option<Document>,
+    options: Option<CountOptions>,
+) -> Result<i64, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
-    collection.count_documents(filter.clone(), None).await
+    collection.count_documents(filter, options).await
+}
+pub async fn estimate_count(
+    collection: &str,
+    options: impl Into<Option<EstimatedDocumentCountOptions>>,
+) -> Result<i64, Error> {
+    let client = get_mongo().await.unwrap();
+    let collection = &get_collection(client, collection);
+    collection.estimated_document_count(options).await
 }
 
 pub async fn find_distinct_value(
     collection: &str,
     field_name: String,
-    filter: Document,
+    filter: impl Into<Option<Document>>,
+    options: impl Into<Option<DistinctOptions>>,
 ) -> Result<Vec<Bson>, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
-    collection
-        .distinct(&*field_name, filter.clone(), None)
-        .await
+    collection.distinct(&*field_name, filter, options).await
 }
 
-pub async fn drop(collection: &str) -> Result<(), Error> {
+pub async fn aggregate(
+    collection: &str,
+    pipeline: impl IntoIterator<Item = Document>,
+    options: impl Into<Option<AggregateOptions>>,
+) -> Result<Vec<Document>, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
-    collection.drop(None).await
+    let cursor = collection.aggregate(pipeline, options).await;
+    match cursor {
+        Ok(c) => {
+            let docs: Vec<_> = c.map(|doc| doc.unwrap()).collect().await;
+            Ok(docs)
+        }
+        Err(e) => Err(Error::from(e)),
+    }
 }
 
-pub async fn create_collection(collection: &str) -> Result<(), Error> {
+pub async fn drop_collection(
+    collection: &str,
+    options: Option<DropCollectionOptions>,
+) -> Result<(), Error> {
+    let client = get_mongo().await.unwrap();
+    let collection = &get_collection(client, collection);
+    collection.drop(options).await
+}
+pub async fn create_collection(
+    collection: &str,
+    options: Option<CreateCollectionOptions>,
+) -> Result<(), Error> {
     let client = get_mongo().await.unwrap();
     client
         .database(MONGO_DB)
-        .create_collection(&*collection, None)
+        .create_collection(&*collection, options)
         .await
 }
