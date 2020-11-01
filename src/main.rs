@@ -29,8 +29,6 @@ use actix_web::{
     middleware::errhandlers::{ErrorHandlerResponse},
     Result as ActixResult,
 };
-use actix::fut::err;
-use actix_web::web::resource;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
@@ -108,9 +106,9 @@ async fn main() -> std::io::Result<()> {
 }
 
 fn render_500<B>(mut res: dev::ServiceResponse<B>) -> ActixResult<ErrorHandlerResponse<B>> {
-//     res.response_mut().headers_mut().insert(
-//         http::header::CONTENT_TYPE,
-//         http::HeaderValue::from_static("Error"),
-//     );
-//     Ok(ErrorHandlerResponse::Response(res))
-// }
+    res.response_mut().headers_mut().insert(
+        http::header::CONTENT_TYPE,
+        http::HeaderValue::from_static("Error"),
+    );
+    Ok(ErrorHandlerResponse::Response(res))
+}
