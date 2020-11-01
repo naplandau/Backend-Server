@@ -8,7 +8,6 @@ use actix_service::{Service, Transform};
 use actix_web::{dev::ServiceRequest, dev::ServiceResponse, Error};
 use futures::future::{ok, Future, Ready};
 
-
 pub struct Logging;
 
 impl<S: 'static, B> Transform<S> for Logging
@@ -38,8 +37,7 @@ pub struct LoggingMiddleware<S> {
 
 impl<S, B> Service for LoggingMiddleware<S>
 where
-    S: Service<Request = ServiceRequest, Response = ServiceResponse<B>, Error = Error>
-        + 'static,
+    S: Service<Request = ServiceRequest, Response = ServiceResponse<B>, Error = Error> + 'static,
     S::Future: 'static,
     B: 'static,
 {
@@ -53,7 +51,7 @@ where
     }
 
     fn call(&mut self, req: ServiceRequest) -> Self::Future {
-        println!("Request: {}",req.path());
+        println!("Request: {}", req.path());
         let fut = self.service.call(req);
         // req.into_parts()
         Box::pin(async move {

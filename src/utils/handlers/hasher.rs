@@ -13,7 +13,7 @@ lazy_static! {
             .unwrap()
     };
 }
-pub fn hash_validation(store: String, need: String) -> bool{
+pub fn hash_validation(store: String, need: String) -> bool {
     let checker = HashBuilder::from_phc(store.as_str()).unwrap();
     checker.is_valid(need.as_str())
 }

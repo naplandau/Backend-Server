@@ -1,8 +1,8 @@
 use actix_web::{error, error::ResponseError, HttpRequest, HttpResponse};
 use failure::Fail;
+use mongodb::error::Error as MongoError;
 use serde_json::{Map as JsonMap, Value as JsonValue};
 use validator::ValidationErrors;
-use mongodb::error::Error as MongoError;
 
 #[derive(Debug, Fail, PartialEq)]
 pub enum Error {
@@ -54,18 +54,14 @@ impl From<Vec<String>> for ErrorResponse {
 impl ResponseError for Error {
     fn error_response(&self) -> HttpResponse {
         match self {
-            Error::BadRequest(err) => {
-                HttpResponse::BadRequest().json::<ErrorResponse>(err.into())
-            }
+            Error::BadRequest(err) => HttpResponse::BadRequest().json::<ErrorResponse>(err.into()),
 
             Error::NotFound(err) => HttpResponse::NotFound().json::<ErrorResponse>(err.into()),
             Error::Unauthorized(err) => {
                 HttpResponse::Unauthorized().json::<ErrorResponse>(err.into())
             }
             Error::Conflict => HttpResponse::Conflict().finish(),
-            Error::Forbidden(err) => {
-                HttpResponse::Forbidden().json::<ErrorResponse>(err.into())
-            }
+            Error::Forbidden(err) => HttpResponse::Forbidden().json::<ErrorResponse>(err.into()),
             Error::UnprocessableEntity(json) => HttpResponse::BadRequest().json(json),
             Error::RequestTimeOut => HttpResponse::RequestTimeout().finish(),
             Error::MethodNotAllowed => HttpResponse::MethodNotAllowed().finish(),
@@ -109,8 +105,8 @@ impl From<ValidationErrors> for Error {
         }))
     }
 }
-impl From<MongoError> for Error{
-    fn from(error: MongoError) -> Self{
+impl From<MongoError> for Error {
+    fn from(error: MongoError) -> Self {
         Error::DBError(error.to_string())
     }
 }

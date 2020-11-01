@@ -105,10 +105,7 @@ impl<B: MessageBody> MessageBody for BodyLogger<B> {
         self.body.size()
     }
 
-    fn poll_next(
-        self: Pin<&mut Self>,
-        cx: &mut Context<'_>,
-    ) -> Poll<Option<Result<Bytes, Error>>> {
+    fn poll_next(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Result<Bytes, Error>>> {
         let this = self.project();
 
         match this.body.poll_next(cx) {
