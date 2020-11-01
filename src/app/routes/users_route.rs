@@ -1,7 +1,7 @@
 use crate::app::modules::users::*;
 use crate::middleware;
 use actix_web::{web, HttpResponse};
-use actix_service::ServiceFactory;
+
 
 pub fn init_route(cfg: &mut web::ServiceConfig) {
     cfg.service(

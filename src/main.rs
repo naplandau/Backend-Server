@@ -24,37 +24,30 @@ mod middleware;
 #[allow(dead_code)]
 mod chatter;
 
-use actix_web::{
-    http,dev,
-    middleware::errhandlers::{ErrorHandlerResponse},
-    Result as ActixResult,
-};
-
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     use crate::app::routes;
     use crate::config::config::CONFIG;
 
     // use actix_cors::Cors;
-    use actix_session::{CookieSession, Session};
+    use actix_session::{CookieSession};
     //use actix_identity::{CookieIdentityPolicy, IdentityService};
     // use actix_web::http::header::{AUTHORIZATION, CONTENT_TYPE, ACCEPT};
     use actix_web::{
-        middleware::{errhandlers::ErrorHandlers, Compress, Logger},
-        web, App, HttpResponse, HttpServer,
+        middleware::{errhandlers::{ErrorHandlers, ErrorHandlerResponse}, Compress, Logger},
+        web, App, HttpResponse, HttpServer, http,
     };
     use actix_files as fs;
     use listenfd::ListenFd;
-    use env_logger::Env;
     // use rand::Rng;
 
     dotenv::dotenv().ok();
     std::env::set_var("RUST_LOG", "actix_web=info,actix_server=info");
     // std::env::set_var("RUST_BACKTRACE", "1");
     // env_logger::init();
-    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
-    core::db::get_mongo().await;
+    //core::db::get_mongo().await;
     //let private_key = rand::thread_rng().gen::<[u8; 32]>();
 
     let mut server = HttpServer::new(move || {
@@ -89,11 +82,18 @@ async fn main() -> std::io::Result<()> {
             //         .max_age(3600)
             // )
 
-            .wrap(ErrorHandlers::new().handler(http::StatusCode::INTERNAL_SERVER_ERROR, render_500))
+            .wrap(ErrorHandlers::new().handler(http::StatusCode::INTERNAL_SERVER_ERROR, |mut res| {
+                res.response_mut().headers_mut().insert(
+                    http::header::CONTENT_TYPE,
+                    http::HeaderValue::from_static("Error"),
+                );
+                dbg!("ErrorHandlers detect!");
+                Ok(ErrorHandlerResponse::Response(res))
+            }))
             .configure(routes::init_route)
             .service(web::resource("/chat/").route(web::get().to(chatter::chat::chat)))
             .default_service(web::route().to(|| HttpResponse::NotFound()))
-            .service(fs::Files::new("/","static/").index_file("index.html"))
+            .service(fs::Files::new("/", "static/").index_file("index.html"))
     });
 
     let mut listenfd = ListenFd::from_env();
@@ -103,12 +103,4 @@ async fn main() -> std::io::Result<()> {
         server.bind(&CONFIG.server)?
     };
     server.run().await
-}
-
-fn render_500<B>(mut res: dev::ServiceResponse<B>) -> ActixResult<ErrorHandlerResponse<B>> {
-    res.response_mut().headers_mut().insert(
-        http::header::CONTENT_TYPE,
-        http::HeaderValue::from_static("Error"),
-    );
-    Ok(ErrorHandlerResponse::Response(res))
 }
