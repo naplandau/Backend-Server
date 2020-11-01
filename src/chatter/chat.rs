@@ -1,5 +1,5 @@
 use actix::{Actor, StreamHandler, ActorContext, AsyncContext};
-use actix_web::{web, App, Error, HttpRequest, HttpResponse, HttpServer};
+use actix_web::{web, HttpRequest, HttpResponse};
 use actix_web_actors::ws;
 use std::time::{Duration, Instant};
 pub struct MyWs{

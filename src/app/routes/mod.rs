@@ -2,7 +2,7 @@ mod article_route;
 mod users_route;
 
 use crate::app::modules::health;
-use actix_web::{guard, HttpRequest, HttpResponse};
+use actix_web::{guard};
 use actix_web::web;
 
 pub fn init_route(cfg: &mut web::ServiceConfig) {

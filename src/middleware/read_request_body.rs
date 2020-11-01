@@ -4,10 +4,10 @@ use std::rc::Rc;
 use std::task::{Context, Poll};
 
 use actix_service::{Service, Transform};
-use actix_web::web::BytesMut;
-use actix_web::{dev::ServiceRequest, dev::ServiceResponse, Error, HttpMessage};
+
+use actix_web::{dev::ServiceRequest, dev::ServiceResponse, Error};
 use futures::future::{ok, Future, Ready};
-use futures::stream::StreamExt;
+
 
 pub struct Logging;
 
@@ -52,7 +52,7 @@ where
         self.service.poll_ready(cx)
     }
 
-    fn call(&mut self, mut req: ServiceRequest) -> Self::Future {
+    fn call(&mut self, req: ServiceRequest) -> Self::Future {
         println!("Request: {}",req.path());
         let fut = self.service.call(req);
         // req.into_parts()

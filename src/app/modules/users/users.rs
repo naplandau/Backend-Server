@@ -29,13 +29,13 @@ pub async fn create_users(req: web::Json<Register>) -> HttpResponse {
 pub async fn get_users(_query: web::Query<HashMap<String, String>>, _:Authorized, _session: Session) -> HttpResponse {
     println!("Into function");
 
-    if let Some(count) = _session.get::<i32>("counter").unwrap(){
-        _session.set("counter", count+1).unwrap();
-        println!("Session: {}",count+1);
-    } else {
-        _session.set("counter", 1).unwrap();
-        println!("Session start!: {}", 1);
-    }
+    // if let Some(count) = _session.get::<i32>("counter").unwrap(){
+    //     _session.set("counter", count+1).unwrap();
+    //     println!("Session: {}",count+1);
+    // } else {
+    //     _session.set("counter", 1).unwrap();
+    //     println!("Session start!: {}", 1);
+    // }
 
     let option = Some(
         FindOptions::builder()
