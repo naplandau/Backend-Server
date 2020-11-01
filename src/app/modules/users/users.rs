@@ -1,9 +1,9 @@
 use super::lib::*;
-use actix_web::FromRequest;
-use actix_web::error::ErrorUnauthorized;
-use actix_web::dev::Payload;
-use futures::future::{Ready, ok, err};
 use actix_session::Session;
+use actix_web::dev::Payload;
+use actix_web::error::ErrorUnauthorized;
+use actix_web::FromRequest;
+use futures::future::{err, ok, Ready};
 
 pub async fn create_users(req: web::Json<Register>) -> HttpResponse {
     match req.validate() {
@@ -26,7 +26,11 @@ pub async fn create_users(req: web::Json<Register>) -> HttpResponse {
         Err(e) => Error::from(e).error_response(),
     }
 }
-pub async fn get_users(_query: web::Query<HashMap<String, String>>, _:Authorized, _session: Session) -> HttpResponse {
+pub async fn get_users(
+    _query: web::Query<HashMap<String, String>>,
+    _: Authorized,
+    _session: Session,
+) -> HttpResponse {
     println!("Into function");
 
     // if let Some(count) = _session.get::<i32>("counter").unwrap(){
@@ -48,10 +52,11 @@ pub async fn get_users(_query: web::Query<HashMap<String, String>>, _:Authorized
         Ok(vec) => {
             println!("Go out function");
             HttpResponse::Ok().json(ResponseList {
-            data: vec_user_to_vec_docs(vec),
-            status: true,
-            message: "success".to_string(),
-        })},
+                data: vec_user_to_vec_docs(vec),
+                status: true,
+                message: "success".to_string(),
+            })
+        }
         Err(_e) => {
             // error!("get_users: {:?}", _e);
             println!("Go out function");
@@ -81,10 +86,10 @@ pub async fn update_user(req: web::Json<UpdateUser>, id: web::Path<String>) -> H
                     let _execs = users_db::update(user, update_doc).await;
                     match _execs {
                         Ok(user) => HttpResponse::Ok().json(Response {
-                                data: get_sub_field(&bson::to_document(&user).unwrap()),
-                                message: "Success".to_string(),
-                                status: true,
-                            }),
+                            data: get_sub_field(&bson::to_document(&user).unwrap()),
+                            message: "Success".to_string(),
+                            status: true,
+                        }),
                         Err(e) => {
                             println!("{:?}", e);
                             Error::InternalServerError.error_response()

@@ -27,8 +27,6 @@
 // #[rtype(result = "Result<Option<String>, redis::RedisError>")]
 // struct InfoCommand;
 
-
-
 // impl Handler<InfoCommand> for RedisActor {
 //     type Result = ResponseFuture<Result<Option<String>, redis::RedisError>>;
 
@@ -43,7 +41,6 @@
 //         Box::pin(fut)
 //     }
 // }
-
 
 // impl Actor for RedisActor {
 //     type Context = Context<Self>;

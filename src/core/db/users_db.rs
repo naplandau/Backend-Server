@@ -133,7 +133,7 @@ pub async fn find_all(
 fn build_updated_user(user: User, update: Document) -> User {
     let mut user_doc = bson::to_document(&user).unwrap();
     user_doc.extend(update);
-    println!("{:#?}",user_doc);
+    println!("{:#?}", user_doc);
     let user: User = bson::from_document(user_doc).unwrap();
     user
 }

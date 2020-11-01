@@ -64,7 +64,7 @@ pub async fn register(user: web::Json<Register>) -> HttpResponse {
                 }
             }
         }
-        Err(e) => Error::from(e).error_response()
+        Err(e) => Error::from(e).error_response(),
     }
 }
 pub async fn send_confirmation_mail(confirmation: &Confirmation) -> Result<(), ()> {
@@ -103,11 +103,11 @@ pub async fn send_confirmation_mail(confirmation: &Confirmation) -> Result<(), (
     let result = send_email(email);
     match result {
         Ok(v) => {
-            println!("Response: {:#?}",v);
+            println!("Response: {:#?}", v);
             Ok(())
-        },
+        }
         Err(e) => {
-            println!("Error: {:#?}",e);
+            println!("Error: {:#?}", e);
             Ok(())
         }
     }
@@ -181,9 +181,9 @@ fn prepare_register_user(user: Confirmation) -> Document {
         "status": 0,
     }
 }
-fn prepare_user(user: Register) -> Document{
+fn prepare_user(user: Register) -> Document {
     let current_time = Utc::now();
-    
+
     doc! {
         "id": String::from("user_") + &Uuid::new_v4().to_string(),
         "email": user.email.unwrap_or_default().to_string(),

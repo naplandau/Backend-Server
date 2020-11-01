@@ -1,25 +1,25 @@
-use actix::{Actor, StreamHandler, ActorContext, AsyncContext};
+use actix::{Actor, ActorContext, AsyncContext, StreamHandler};
 use actix_web::{web, HttpRequest, HttpResponse};
 use actix_web_actors::ws;
 use std::time::{Duration, Instant};
-pub struct MyWs{
-    hb: Instant
+pub struct MyWs {
+    hb: Instant,
 }
 const HEARTBEAT_INTERVAL: Duration = Duration::from_secs(5);
 const CLIENT_TIMEOUT: Duration = Duration::from_secs(10);
-impl Actor for MyWs{
+impl Actor for MyWs {
     type Context = ws::WebsocketContext<Self>;
-    fn started(&mut self, ctx: &mut Self::Context){
+    fn started(&mut self, ctx: &mut Self::Context) {
         self.hb(ctx);
     }
 }
-impl MyWs{
-    fn new() -> Self{
-        Self{hb: Instant::now()}
+impl MyWs {
+    fn new() -> Self {
+        Self { hb: Instant::now() }
     }
-    fn hb(&self, ctx: &mut <Self as Actor>::Context){
-        ctx.run_interval(HEARTBEAT_INTERVAL, |act, ctx|{
-            if Instant::now().duration_since(act.hb) >CLIENT_TIMEOUT{
+    fn hb(&self, ctx: &mut <Self as Actor>::Context) {
+        ctx.run_interval(HEARTBEAT_INTERVAL, |act, ctx| {
+            if Instant::now().duration_since(act.hb) > CLIENT_TIMEOUT {
                 println!("Websocket client timeout");
                 ctx.stop();
                 return;
@@ -28,14 +28,14 @@ impl MyWs{
         });
     }
 }
-impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for MyWs{
-    fn handle(&mut self, msg: Result<ws::Message, ws::ProtocolError>,ctx: &mut Self::Context){
+impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for MyWs {
+    fn handle(&mut self, msg: Result<ws::Message, ws::ProtocolError>, ctx: &mut Self::Context) {
         println!("WS: {:?}", msg);
-        match msg{
+        match msg {
             Ok(ws::Message::Ping(msg)) => {
                 self.hb = Instant::now();
                 ctx.pong(&msg)
-            },
+            }
             Ok(ws::Message::Pong(_)) => {
                 self.hb = Instant::now();
             }
@@ -49,9 +49,9 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for MyWs{
         }
     }
 }
-pub async fn chat(r: HttpRequest, stream: web::Payload) -> Result<HttpResponse, actix_web::Error>{
+pub async fn chat(r: HttpRequest, stream: web::Payload) -> Result<HttpResponse, actix_web::Error> {
     println!("{:?}", r);
-    let res = ws::start(MyWs::new(),&r, stream);
-    println!("{:?}",res);
+    let res = ws::start(MyWs::new(), &r, stream);
+    println!("{:?}", res);
     res
 }
