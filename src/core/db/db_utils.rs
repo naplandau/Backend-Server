@@ -34,13 +34,14 @@ pub async fn find_one(collection: &str, id: String) -> Result<Option<Document>, 
 pub async fn find_one_and_update(
     collection: &str,
     id: String,
-    update: UpdateModifications,
+    update: Document,
     options: Option<FindOneAndUpdateOptions>,
 ) -> Result<Option<Document>, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
+    let update_doc = parse_update_doc(update);
     collection
-        .find_one_and_update(doc! {"id": id}, update, options)
+        .find_one_and_update(doc! {"id": id}, update_doc, options)
         .await
 }
 pub async fn find_one_and_delete(
@@ -68,13 +69,14 @@ pub async fn find_one_by(
 pub async fn find_one_by_and_update(
     collection: &str,
     filter: Document,
-    update: UpdateModifications,
+    update: Document,
     options: Option<FindOneAndUpdateOptions>,
 ) -> Result<Option<Document>, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
+    let update_doc = parse_update_doc(update);
     collection
-        .find_one_and_update(filter, update, options)
+        .find_one_and_update(filter, update_doc, options)
         .await
 }
 pub async fn find_one_by_and_delete(
@@ -107,12 +109,13 @@ pub async fn find_many(
 pub async fn update_one(
     collection: &str,
     query: Document,
-    update: UpdateModifications,
+    update: Document,
     options: Option<UpdateOptions>,
 ) -> Result<UpdateResult, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
-    collection.update_one(query, update, options).await
+    let update_doc = parse_update_doc(update);
+    collection.update_one(query, update_doc, options).await
 }
 
 pub async fn update_many(
@@ -215,4 +218,10 @@ pub async fn create_collection(
         .database(MONGO_DB)
         .create_collection(&*collection, options)
         .await
+}
+
+fn parse_update_doc(doc: Document) -> Document {
+    doc! {
+        "$set": doc
+    }
 }

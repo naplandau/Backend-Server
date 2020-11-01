@@ -17,7 +17,7 @@ edition = "2018"
 [dependencies]
 actix = "0.10"
 #actix-files = "0.2.2"
-actix-web = "3.1"
+actix-web = "3.2"
 actix-rt = "1.1"
 # actix-identity = "0.3"
 # actix-http = "2.0"
@@ -53,9 +53,9 @@ listenfd = "0.3"
 #base64 = "0.12"
 rand = "0.7"
 bson = "1.1.0"
-mongodb = { version = "1.1.1", default-features = false , features = ["async-std-runtime"] }
-#mongodb = "1.1.1"
-#diesel = { version = "1.4.5", features = ["chrono", "postgres", "r2d2", "uuidv07", "numeric"] }
+mongodb = { version = "1.1.1", features = ["async-std-runtime"], default-features = false }
+
+# diesel = { version = "1.4.5", features = ["chrono", "postgres", "r2d2", "uuidv07", "numeric"] }
 
 serde = "1.0"
 serde_derive = "1.0"
@@ -80,9 +80,9 @@ lettre_email = "0.9"
 #mime = "0.3.16"
 
 # regex = "*"
-validator = "0.11"
-validator_derive = "0.11"
-uuid = {version = "0.8.1", features = ["serde", "v4"]}
-chrono = {version = "0.4", features=["serde"]}
+validator = { version = "0.11", features= ["phone"] }
+validator_derive = { version = "0.11", features = ["phone"] }
+uuid = { version = "0.8.1", features = ["serde", "v4"]}
+chrono = { version = "0.4", features = ["serde"] }
 # time="0.2"
 lazy_static ="1.4"
