@@ -1,4 +1,9 @@
 use super::lib::*;
+use actix_web::FromRequest;
+use actix_web::error::ErrorUnauthorized;
+use actix_web::dev::Payload;
+use futures::future::{Ready, ok, err};
+use actix_session::Session;
 
 pub async fn create_users(req: web::Json<Register>) -> HttpResponse {
     match req.validate() {
@@ -21,7 +26,17 @@ pub async fn create_users(req: web::Json<Register>) -> HttpResponse {
         Err(e) => Error::from(e).error_response(),
     }
 }
-pub async fn get_users(_query: web::Query<HashMap<String, String>>) -> HttpResponse {
+pub async fn get_users(_query: web::Query<HashMap<String, String>>, _:Authorized, _session: Session) -> HttpResponse {
+    println!("Into function");
+
+    if let Some(count) = _session.get::<i32>("counter").unwrap(){
+        _session.set("counter", count+1).unwrap();
+        println!("Session: {}",count+1);
+    } else {
+        _session.set("counter", 1).unwrap();
+        println!("Session start!: {}", 1);
+    }
+
     let option = Some(
         FindOptions::builder()
             //.sort(doc! {"title":1})
@@ -30,14 +45,17 @@ pub async fn get_users(_query: web::Query<HashMap<String, String>>) -> HttpRespo
     let filter = Some(doc! {});
     let data = users_db::find_all(filter, option).await;
     match data {
-        Ok(vec) => HttpResponse::Ok().json(ResponseList {
+        Ok(vec) => {
+            println!("Go out function");
+            HttpResponse::Ok().json(ResponseList {
             data: vec_user_to_vec_docs(vec),
             status: true,
             message: "success".to_string(),
-        }),
-        Err(e) => {
-            error!("get_users: {:?}", e);
-            return Error::InternalServerError.error_response();
+        })},
+        Err(_e) => {
+            // error!("get_users: {:?}", _e);
+            println!("Go out function");
+            Error::InternalServerError.error_response()
         }
     }
 }
@@ -173,5 +191,29 @@ impl From<User> for Response {
             message: "success".to_string(),
             status: true,
         }
+    }
+}
+pub struct Authorized;
+impl FromRequest for Authorized {
+    type Error = actix_web::Error;
+    type Future = Ready<Result<Self, Self::Error>>;
+    type Config = ();
+
+    fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
+        if is_authorized(req) {
+            ok(Authorized)
+        } else {
+            err(ErrorUnauthorized("not authorized"))
+        }
+    }
+}
+
+fn is_authorized(req: &HttpRequest) -> bool {
+    if let Some(value) = req.headers().get("Authorization") {
+        // actual implementation that checks header here
+        dbg!(value);
+        true
+    } else {
+        false
     }
 }
