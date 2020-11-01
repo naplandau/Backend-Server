@@ -1,5 +1,5 @@
 pub use crate::app::lib::*;
-pub use crate::core::models::users::{Claims, Delete, Login, Register, Update, Confirmation, User, ADMIN_DOC};
+pub use crate::core::models::users::{Claims, Login, Register, UpdateUser, Confirmation, User, ADMIN_DOC};
 pub use crate::utils::handlers::hasher::{hash_validation, HASHER};
 pub use crate::utils::handlers::jwt::{generate_jwt, validate_jwt};
 pub fn get_sub_field(doc: &Document) -> Document {

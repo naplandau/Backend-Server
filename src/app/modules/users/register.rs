@@ -5,8 +5,7 @@ const TIMEOUT_PENDING: i64 = 1; //Hours
 pub async fn register(user: web::Json<Register>) -> HttpResponse {
     match user.validate() {
         Ok(_) => {
-            let user = user.into_inner();
-            let _exits = users_db::find_by_email(user.email.to_string())
+            let _exits = users_db::find_by_email(user.email.to_owned().unwrap_or_default())
                 .await
                 .unwrap();
             match _exits {
@@ -17,7 +16,7 @@ pub async fn register(user: web::Json<Register>) -> HttpResponse {
                 }),
                 None => {
                     if CONFIG.dev_mode == true {
-                        let user_doc = prepare_user(user);
+                        let user_doc = prepare_user(user.to_owned());
                         let _exec = db_utils::insert(USERS_COLLECTION, &user_doc).await;
                         match _exec {
                             Ok(_) => HttpResponse::Ok()
@@ -39,8 +38,8 @@ pub async fn register(user: web::Json<Register>) -> HttpResponse {
                         let _confirm_id = String::from("confirm_") + &Uuid::new_v4().to_string();
                         let _confirm = Confirmation {
                             id: _confirm_id,
-                            email: user.clone().email,
-                            password: user.clone().password,
+                            email: user.email.to_owned().unwrap_or_default(),
+                            password: user.password.to_owned().unwrap_or_default(),
                             expires_time_dt: bson::DateTime(
                                 Utc::now() + Duration::hours(TIMEOUT_PENDING),
                             ),
@@ -155,8 +154,8 @@ fn prepare_pending_user(user: Register, confirm: Confirmation) -> Document {
     let current_time = Utc::now();
     doc! {
         "id": confirm.id,
-        "email": user.email.to_string(),
-        "password": HASHER.hash(&user.password).unwrap(),
+        "email": user.email.unwrap_or_default().to_string(),
+        "password": HASHER.hash(&user.password.unwrap_or_default()).unwrap(),
         "created_by": "CUSTOMER".to_string(),
         "created_time_dt": Bson::DateTime(current_time),
         "expires_time_dt": Bson::DateTime(*confirm.expires_time_dt),
@@ -184,10 +183,11 @@ fn prepare_register_user(user: Confirmation) -> Document {
 }
 fn prepare_user(user: Register) -> Document{
     let current_time = Utc::now();
+    
     doc! {
         "id": String::from("user_") + &Uuid::new_v4().to_string(),
-        "email": user.email.to_string(),
-        "password": HASHER.hash(&user.password).unwrap(),
+        "email": user.email.unwrap_or_default().to_string(),
+        "password": HASHER.hash(&user.password.unwrap_or_default()).unwrap(),
         "first_name": "".to_string(),
         "last_name": "".to_string(),
         "phone_number": "".to_string(),

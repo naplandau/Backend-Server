@@ -40,11 +40,27 @@ async fn index(mut body: web::Payload) -> HttpResponse
 async fn index3(id: web::Path<String>) -> impl Responder {
     HttpResponse::Ok().body("API ARTICLE GET DETAIL".to_owned()+&*id.to_string())
 }
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Test2{
+    // #[serde(skip_des = "Option::is_none")]
+    // #[serde(default = ("kl"))]
+    pub x: Option<String>,
+    // #[serde(skip_serializing_if = "Option::is_none")]
+    pub y: Option<String>,
+    // #[serde(skip_serializing_if = "Option::is_none")]
+    pub z: Option<i32>
+}
+async fn test1(data: web::Json<Test2> )-> HttpResponse{
+    print!("test1");
+    println!("{:?}",data);
+    HttpResponse::Ok().finish()
+}
+
 pub fn init_route(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::resource("articles")
-            .route(web::get().to(index1))
-            .route(web::post().to(index2)),
+            //.route(web::get().to(index1))
+            .route(web::post().to(test1)),
     )
-    .service(web::resource("articles/{id}").route(web::get().to(index3)));
+    .service(web::resource("articles/{id}").route(web::get().to(test1)));
 }

@@ -45,7 +45,7 @@ async fn main() -> std::io::Result<()> {
 
     dotenv::dotenv().ok();
     std::env::set_var("RUST_LOG", "actix_web=info,actix_server=info");
-    //std::env::set_var("RUST_BACKTRACE", "1");
+    // std::env::set_var("RUST_BACKTRACE", "1");
     env_logger::init();
 
     core::db::get_mongo().await;
