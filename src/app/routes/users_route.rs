@@ -1,11 +1,16 @@
 use crate::app::modules::users::*;
-use actix_web::web;
+use crate::middleware;
+use actix_web::{web, HttpResponse};
+use actix_service::ServiceFactory;
+
 pub fn init_route(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::resource("users")
             .route(web::get().to(get_users))
+            .wrap(middleware::read_request_body::Logging)
             .route(web::post().to(create_users))
             .route(web::delete().to(delete_users))
+            .default_service(web::route().to( ||HttpResponse::MethodNotAllowed()))
             // .route(web::put().to(|| ))
     )
     .service(
@@ -13,9 +18,8 @@ pub fn init_route(cfg: &mut web::ServiceConfig) {
             .route(web::get().to(get_user))
             .route(web::put().to(update_user))
             .route(web::delete().to(delete_user))
-            .route(web::delete().to(find_delete_user))
+            // .route(web::delete().to(find_delete_user))
+            .default_service(web::route().to( || HttpResponse::MethodNotAllowed()))
     )
-    // .service(web::resource("register/{id}").to(verify_register))
-    // .service(web::resource("login").route(web::post().to(login)))
     .service(web::resource("admin").to(admin));
 }

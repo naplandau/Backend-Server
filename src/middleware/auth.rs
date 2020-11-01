@@ -29,3 +29,12 @@ impl FromRequest for AuthorizationService{
         }
     }
 }
+fn is_authorized(req: &HttpRequest) -> bool {
+    if let Some(value) = req.headers().get("authorized") {
+        // actual implementation that checks header here
+        dbg!(value);
+        true
+    } else {
+        false
+    }
+}
