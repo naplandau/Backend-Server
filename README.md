@@ -18,4 +18,5 @@ To run use docker-compose
 - docker-compose down
 
 To run local environment
+- [without mongodb local] make mongostart (require docker)
 - make dev
