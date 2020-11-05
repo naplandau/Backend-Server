@@ -11,12 +11,3 @@
 ## Milestone
 -
 -
-
-To run use docker-compose
-- docker-compose build
-- docker-compose up -d
-- docker-compose down
-
-To run local environment
-- [without mongodb local] make mongostart (require docker)
-- make dev
