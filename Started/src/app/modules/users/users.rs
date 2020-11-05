@@ -28,7 +28,7 @@ pub async fn create_users(req: web::Json<Register>) -> HttpResponse {
 }
 pub async fn get_users(
     _query: web::Query<HashMap<String, String>>,
-    _: Authorized,
+    _: UserAuthorized,
     _session: Session,
 ) -> HttpResponse {
     println!("Into function");
@@ -198,15 +198,15 @@ impl From<User> for Response {
         }
     }
 }
-pub struct Authorized;
-impl FromRequest for Authorized {
+pub struct UserAuthorized;
+impl FromRequest for UserAuthorized {
     type Error = actix_web::Error;
     type Future = Ready<Result<Self, Self::Error>>;
     type Config = ();
 
     fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
         if is_authorized(req) {
-            ok(Authorized)
+            ok(UserAuthorized)
         } else {
             err(ErrorUnauthorized("not authorized"))
         }
