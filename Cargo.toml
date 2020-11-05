@@ -1,0 +1,23 @@
+[package]
+name = "started"
+version = "0.1.0"
+authors = ["DianaSensei <43933486+DianaSensei@users.noreply.github.com>"]
+edition = "2018"
+
+
+[workspace]
+members = [
+    "Started"
+]
+# [[bin]]
+# name = "started"
+# path = "Started/src/main.rs"
+
+# [[bin]]
+# name = "rabbitmq"
+# path = "RabbitQueue/src/main.rs"
+
+# [lib]
+# name = "mylib"
+# path = "Elastic/src/main.rs"
+
