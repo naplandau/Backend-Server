@@ -1,8 +1,8 @@
-/target
-.vscode/settings.json
-.idea
-/data
-/mongo*
-/init-mongo.js
-/server
-.docker/
+*target
+*vscode/settings.json
+*idea
+*data
+*mongo*
+*init-mongo.js
+*server
+*docker

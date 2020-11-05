@@ -6,7 +6,7 @@ pub fn init_route(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::resource("users")
             .route(web::get().to(get_users))
-            .wrap(middleware::read_request_body::Logging)
+            // .wrap(middleware::read_request_body::Logging)
             .route(web::post().to(create_users))
             .route(web::delete().to(delete_users))
             .default_service(web::route().to(|| HttpResponse::MethodNotAllowed())), // .route(web::put().to(|| ))
@@ -19,5 +19,6 @@ pub fn init_route(cfg: &mut web::ServiceConfig) {
             // .route(web::delete().to(find_delete_user))
             .default_service(web::route().to(|| HttpResponse::MethodNotAllowed())),
     )
-    .service(web::resource("admin").to(admin));
+    .service(web::resource("admin").to(admin))
+    .service(web::resource("auth").to(login));
 }
