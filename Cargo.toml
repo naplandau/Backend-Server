@@ -1,14 +1,13 @@
-[package]
-name = "started"
-version = "0.1.0"
-authors = ["DianaSensei <43933486+DianaSensei@users.noreply.github.com>"]
-edition = "2018"
-
-
 [workspace]
+default-members = ["Started"]
 members = [
     "Started"
 ]
+
+[profile.release]
+debug = false
+
+
 # [[bin]]
 # name = "started"
 # path = "Started/src/main.rs"
