@@ -1,0 +1,83 @@
+version: "3"
+
+services:
+    rabbit_queue:
+        image: rabbitmq:management-alpine
+        container_name: rabbit_queue
+        ports: 
+            - "5671:5671"
+            - "5672:5672"
+            - "15672:15672"
+            - "15671:15671"
+            - "4369:4369"
+            - "25672:25672"
+        volumes: 
+            # - .docker/rabbitmq/etc/:/etc/rabbitmq/
+            - .docker/rabbitmq/data/:/var/lib/rabbitmq/
+            - .docker/rabbitmq/logs/:/var/log/rabbitmq/
+        environment: 
+            - HOSTNAME=rabbitmq
+            - RABBITMQ_NODENAME=rabbitmq_test
+            - RABBITMQ_DEFAULT_USER=test
+            - RABBITMQ_DEFAULT_PASS=test
+        
+    # redis_cache:
+    #     image: redis:latest
+    #     ports:
+    #         - "6379:6379"
+    #     expose:
+    #         - "6379"
+    #     volumes:
+    #         - .docker/redis/data:/data
+    #     restart: unless-stopped
+    #     deploy:
+    #         replicas: 1
+        # configs:
+        #     - my_config
+        #     - my_other_config
+
+    # nats_queue:
+    #     image: nats:latest
+    #     # entrypoint: "/gnatsd -DV"
+    #     ports: 
+    #         - "8222:8222"
+    #         # - "4222:4222"
+    #         # - "6222:6222"
+    #     hostname: nats-server
+    #     networks: 
+    #         - nats
+
+    # nats_queue-clus1:
+    #     image: nats:latest
+    #     command: "--cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+    #     networks: 
+    #         - nats
+
+    # nats_queue-clus2:
+    #     image: nats:latest
+    #     command: "--cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+    #     networks: 
+    #         - nats
+
+    # cassandra_db:
+    #     image: cassandra:latest
+    #     ports:
+    #         - "7000:7000"
+    #         - "9042:9042"
+    #     volumes: 
+    #         - .docker/cassandra/data:/data
+    #     environment: 
+
+# configs:
+#   my_config:
+#     file: ./my_config.txt
+#   my_other_config:
+#     external: true
+
+networks:
+    nats:
+        driver: bridge
+#   default:
+#     external: 
+#         name: nats
+    # driver: bridge
