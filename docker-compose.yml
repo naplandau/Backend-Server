@@ -3,7 +3,7 @@ version: "3"
 services:
     rabbit_queue:
         image: rabbitmq:management-alpine
-        container_name: rabbit_queue
+        # container_name: rabbit_queue
         ports: 
             - "5671:5671"
             - "5672:5672"
@@ -11,6 +11,8 @@ services:
             - "15671:15671"
             - "4369:4369"
             - "25672:25672"
+        deploy:
+            replicas: 1
         volumes: 
             # - .docker/rabbitmq/etc/:/etc/rabbitmq/
             - .docker/rabbitmq/data/:/var/lib/rabbitmq/
@@ -21,17 +23,17 @@ services:
             - RABBITMQ_DEFAULT_USER=test
             - RABBITMQ_DEFAULT_PASS=test
         
-    # redis_cache:
-    #     image: redis:latest
-    #     ports:
-    #         - "6379:6379"
-    #     expose:
-    #         - "6379"
-    #     volumes:
-    #         - .docker/redis/data:/data
-    #     restart: unless-stopped
-    #     deploy:
-    #         replicas: 1
+    redis_cache:
+        image: redis:latest
+        ports:
+            - "6379:6379"
+        # expose:
+        #     - "6379"
+        volumes:
+            - .docker/redis/data:/data
+        # restart: unless-stopped
+        deploy:
+            replicas: 1
         # configs:
         #     - my_config
         #     - my_other_config
@@ -74,9 +76,9 @@ services:
 #   my_other_config:
 #     external: true
 
-networks:
-    nats:
-        driver: bridge
+# networks:
+#     nats:
+#         driver: bridge
 #   default:
 #     external: 
 #         name: nats
