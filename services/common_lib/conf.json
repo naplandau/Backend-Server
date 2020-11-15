@@ -1,0 +1,17 @@
+{
+    "host": "olhjl",
+    "port": 1031,
+    "app_name": "TEST",
+    "connect_timeout": {
+        "secs": 5,
+        "nanos": 0
+    },
+    "credential": {
+        "username": "iol",
+        "password": "oipi"
+    },
+    "max_pool_size": 10,
+    "min_pool_size": 0,
+    "retry_reads": false,
+    "retry_writes": false
+}
