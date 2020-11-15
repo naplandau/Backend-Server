@@ -12,8 +12,6 @@ extern crate validator_derive;
 #[allow(dead_code)]
 mod app;
 #[allow(dead_code)]
-mod chatter;
-#[allow(dead_code)]
 mod config;
 #[allow(dead_code)]
 mod core;
@@ -28,8 +26,6 @@ mod utils;
 async fn main() -> std::io::Result<()> {
     use crate::app::routes;
     use crate::config::config::CONFIG;
-
-    // use actix_cors::Cors;
     use actix_session::CookieSession;
     //use actix_identity::{CookieIdentityPolicy, IdentityService};
     // use actix_web::http::header::{AUTHORIZATION, CONTENT_TYPE, ACCEPT};
@@ -85,14 +81,6 @@ async fn main() -> std::io::Result<()> {
             //     .max_age(86400)
             //     .secure(false),
             // ))
-            // .wrap(
-            //     Cors::default()
-            //         .allowed_origin("*")
-            //         .send_wildcard()
-            //         .allowed_headers(vec![AUTHORIZATION, CONTENT_TYPE, ACCEPT])
-            //         .supports_credentials()
-            //         .max_age(3600)
-            // )
             .wrap(ErrorHandlers::new().handler(
                 http::StatusCode::INTERNAL_SERVER_ERROR,
                 |mut res| {
@@ -105,7 +93,6 @@ async fn main() -> std::io::Result<()> {
                 },
             ))
             .configure(routes::init_route)
-            .service(web::resource("/chat/").route(web::get().to(chatter::chat::chat)))
             .default_service(web::route().to(|| HttpResponse::NotFound()))
             .service(fs::Files::new("/", "static/").index_file("index.html"))
     });

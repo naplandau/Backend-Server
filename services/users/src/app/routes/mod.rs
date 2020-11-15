@@ -1,4 +1,3 @@
-mod article_route;
 mod users_route;
 
 use crate::app::modules::health;
@@ -11,6 +10,5 @@ pub fn init_route(cfg: &mut web::ServiceConfig) {
             .guard(guard::Header("content-type", "application/json"))
             .service(web::resource("health").to(health::get_health))
             .configure(users_route::init_route)
-            .configure(article_route::init_route),
     );
 }
