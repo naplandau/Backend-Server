@@ -49,7 +49,7 @@ async fn main() -> std::io::Result<()> {
 
     //core::db::get_mongo().await;
     //let private_key = rand::thread_rng().gen::<[u8; 32]>();
-
+    
     let mut server = HttpServer::new(move || {
         App::new()
             //.configure(add_cache)

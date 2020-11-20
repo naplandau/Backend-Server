@@ -216,7 +216,7 @@ impl FromRequest for UserAuthorized {
 fn is_authorized(req: &HttpRequest) -> bool {
     if let Some(value) = req.headers().get("Authorization") {
         // actual implementation that checks header here
-        dbg!(value);
+        info!("{:?}",value);
         true
     } else {
         false
