@@ -1,9 +1,6 @@
-use crate::config::config::CONFIG;
-// use actix::prelude::{Actor, SyncContext};
-// use actix::prelude::{Addr, SyncArbiter};
+use crate::config::CONFIG;
 use mongodb::Client;
 use once_cell::sync::OnceCell;
-use tokio;
 
 static MONGO: OnceCell<Client> = OnceCell::new();
 static MONGO_INIT: OnceCell<tokio::sync::Mutex<bool>> = OnceCell::new();
@@ -17,7 +14,6 @@ pub async fn get_mongo() -> Option<&'static Client> {
 
     if !*initialized {
         let database_url = &CONFIG.database_url;
-        info!("DB_URL {}\n", database_url);
         if let Ok(client) = Client::with_uri_str(database_url.as_str()).await {
             if let Ok(_) = MONGO.set(client) {
                 *initialized = true;

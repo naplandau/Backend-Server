@@ -1,4 +1,4 @@
-use super::lib::*;
+use super::super::lib::*;
 pub async fn login(user: web::Json<Login>) -> HttpResponse {
     let user = user.into_inner();
     let data = users_db::find_by_email(user.email.to_string())
@@ -18,8 +18,8 @@ pub async fn login(user: web::Json<Login>) -> HttpResponse {
                     sub: user.email,
                     exp: _date.timestamp() as usize,
                 };
-                let token = generate_jwt(my_claims);
-
+                // let token = generate_jwt(my_claims);
+                let token = "1";
                 HttpResponse::Ok().json(Response {
                     data: doc! {"auth_token": token.to_string()},
                     message: "".to_string(),

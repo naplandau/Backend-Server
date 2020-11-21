@@ -1,4 +1,4 @@
-use super::lib::*;
+use super::super::lib::*;
 const PENDING_COLLECTION: &str = "users_pending";
 const USERS_COLLECTION: &str = "users";
 const TIMEOUT_PENDING: i64 = 1; //Hours
@@ -64,7 +64,7 @@ pub async fn register(user: web::Json<Register>) -> HttpResponse {
                 }
             }
         }
-        Err(e) => Error::from(e).error_response(),
+        Err(e) => ServerError::from(e).error_response(),
     }
 }
 pub async fn send_confirmation_mail(confirmation: &Confirmation) -> Result<(), ()> {
@@ -90,27 +90,27 @@ pub async fn send_confirmation_mail(confirmation: &Confirmation) -> Result<(), (
         id = confirmation.id,
         expires = expires
     );
-
-    let email = Email::builder()
-        .to(confirmation.email.clone())
-        .from(("noreply@auth-started.com", "STARTED"))
-        .subject("Complete your registration on our one-of-a-kind Auth Service")
-        //.text(plain_text)
-        .html(html_text)
-        .build()
-        .unwrap();
-
-    let result = send_email(email);
-    match result {
-        Ok(v) => {
-            println!("Response: {:#?}", v);
-            Ok(())
-        }
-        Err(e) => {
-            println!("Error: {:#?}", e);
-            Ok(())
-        }
-    }
+    Ok(())
+    // let email = Email::builder()
+    //     .to(confirmation.email.clone())
+    //     .from(("noreply@auth-started.com", "STARTED"))
+    //     .subject("Complete your registration on our one-of-a-kind Auth Service")
+    //     //.text(plain_text)
+    //     .html(html_text)
+    //     .build()
+    //     .unwrap();
+    //
+    // let result = send_email(email);
+    // match result {
+    //     Ok(v) => {
+    //         println!("Response: {:#?}", v);
+    //         Ok(())
+    //     }
+    //     Err(e) => {
+    //         println!("Error: {:#?}", e);
+    //         Ok(())
+    //     }
+    // }
 }
 
 pub async fn verify_register(id: web::Path<String>) -> HttpResponse {

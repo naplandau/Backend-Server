@@ -1,23 +1,23 @@
 version: "3"
 
 services:
-  server:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports: 
-      - "3000:3000"
-    # expose: ["3000"]
-    volumes:
-      - .:/usr/src/app
-      - registry:/root/.cargo/registry
-    depends_on:
-      # - redis
-      - mongo_db
-    # links:
-    #   - mongo_db
-    env_file: .env
-    command: bash -c "bash cargo-watch -x run"
+  # server:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports: 
+  #     - "3000:3000"
+  #   # expose: ["3000"]
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - registry:/root/.cargo/registry
+  #   depends_on:
+  #     # - redis
+  #     - mongo_db
+  #   # links:
+  #   #   - mongo_db
+  #   env_file: .env
+  #   command: bash -c "bash cargo-watch -x run"
 
   # redis:
   #     image: redis:latest
@@ -34,19 +34,30 @@ services:
   #     #   - my_config
   #     #   - my_other_config
 
-  mongo_db:
-    image: mongo:latest
-    ports: 
-      - "27017:27017"
-    volumes:
-      #- .docker/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-      - .docker/mongodb/data/db/:/data/db/
-      - .docker/mongodb/data/log/:/var/log/mongodb/
-      - .docker/mongodb/config:/data/configdb
-    environment:
-      - MONGO_INITDB_DATABASE=stated-rust
+  # mongo_db:
+  #   image: mongo:latest
+  #   ports: 
+  #     - "27017:27017"
+  #   volumes:
+  #     #- .docker/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+  #     - .docker/mongodb/data/db/:/data/db/
+  #     - .docker/mongodb/data/log/:/var/log/mongodb/
+  #     - .docker/mongodb/config:/data/configdb
+  #   environment:
+  #     - MONGO_INITDB_DATABASE=stated-rust
     # restart: unless-stopped
-
+  rabbitmq: 
+    image: rabbitmq:management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      # - .docker/rabbitmq/etc/:/etc/rabbitmq/
+      - .docker/rabbitmq/data/:/var/lib/rabbitmq/
+      - .docker/rabbitmq/logs/:/var/log/rabbitmq/
+    environment:
+      - RABBITMQ_DEFAULT_USER=test
+      - RABBITMQ_DEFAULT_PASS=test
 # configs:
 #   my_config:
 #     file: ./my_config.txt

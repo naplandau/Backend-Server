@@ -1,5 +1,4 @@
-use super::lib::*;
-use actix_session::Session;
+use super::super::lib::*;
 use actix_web::dev::Payload;
 use actix_web::error::ErrorUnauthorized;
 use actix_web::FromRequest;
@@ -11,36 +10,25 @@ pub async fn create_users(req: web::Json<Register>) -> HttpResponse {
             let email = req.email.to_owned().unwrap_or_default();
             let find_res = users_db::find_by_email(email.to_owned()).await.unwrap();
             match find_res {
-                Some(_) => Error::Conflict.error_response(),
+                Some(_) => ServerError::Conflict.error_response(),
                 None => {
                     let user_save: User = req.to_owned().into();
                     match users_db::insert(user_save.to_owned()).await {
                         Ok(_id) => {
                             HttpResponse::Created().json(Response::from(user_save.to_owned()))
                         }
-                        Err(e) => Error::from(e).error_response(),
+                        Err(e) => ServerError::from(e).error_response(),
                     }
                 }
             }
         }
-        Err(e) => Error::from(e).error_response(),
+        Err(e) => ServerError::from(e).error_response(),
     }
 }
 pub async fn get_users(
     _query: web::Query<HashMap<String, String>>,
     _: UserAuthorized,
-    _session: Session,
 ) -> HttpResponse {
-    println!("Into function");
-
-    // if let Some(count) = _session.get::<i32>("counter").unwrap(){
-    //     _session.set("counter", count+1).unwrap();
-    //     println!("Session: {}",count+1);
-    // } else {
-    //     _session.set("counter", 1).unwrap();
-    //     println!("Session start!: {}", 1);
-    // }
-
     let option = Some(
         FindOptions::builder()
             //.sort(doc! {"title":1})
@@ -50,7 +38,6 @@ pub async fn get_users(
     let data = users_db::find_all(filter, option).await;
     match data {
         Ok(vec) => {
-            println!("Go out function");
             HttpResponse::Ok().json(ResponseList {
                 data: vec_user_to_vec_docs(vec),
                 status: true,
@@ -59,8 +46,7 @@ pub async fn get_users(
         }
         Err(_e) => {
             // error!("get_users: {:?}", _e);
-            println!("Go out function");
-            Error::InternalServerError.error_response()
+            ServerError::InternalServerError.error_response()
         }
     }
 }
@@ -70,8 +56,7 @@ pub async fn get_user(id: web::Path<String>) -> HttpResponse {
         Some(user) => HttpResponse::Ok().json(Response::from(user)),
         None => {
             error!("get_user: Not Found");
-            Error::NoContent.error_response()
-            //Error::NotFound("User Not Found".to_string()).error_response()
+            ServerError::NoContent.error_response()
         }
     }
 }
@@ -92,16 +77,16 @@ pub async fn update_user(req: web::Json<UpdateUser>, id: web::Path<String>) -> H
                         }),
                         Err(e) => {
                             println!("{:?}", e);
-                            Error::InternalServerError.error_response()
+                            ServerError::InternalServerError.error_response()
                         }
                     }
                 }
-                None => Error::NoContent.error_response(),
+                None => ServerError::NoContent.error_response(),
             }
         }
         Err(e) => {
             println!("Validate error: {:?}", e);
-            Error::from(e).error_response()
+            ServerError::from(e).error_response()
         }
     }
 }
@@ -113,14 +98,14 @@ pub async fn delete_user(id: web::Path<String>) -> HttpResponse {
             match res {
                 Ok(op) => match op {
                     Some(u) => HttpResponse::Ok().json(Response::from(u.to_owned())),
-                    None => Error::NoContent.error_response(),
+                    None => ServerError::NoContent.error_response(),
                 },
-                Err(_) => Error::InternalServerError.error_response(),
+                Err(_) => ServerError::InternalServerError.error_response(),
             }
         }
         None => {
             error!("delete_user: Not Found");
-            Error::NoContent.error_response()
+            ServerError::NoContent.error_response()
         }
     }
 }
@@ -128,16 +113,16 @@ pub async fn delete_users() -> HttpResponse {
     let res = users_db::delete_all().await;
     match res {
         Ok(deleted) => HttpResponse::Ok().json(doc! {"deleted": deleted}),
-        Err(_) => Error::InternalServerError.error_response(),
+        Err(_) => ServerError::InternalServerError.error_response(),
     }
 }
 pub async fn find_delete_user(id: web::Path<String>) -> HttpResponse {
     match users_db::find_by_id_and_delete(id.to_owned()).await {
         Ok(op) => match op {
             Some(user) => HttpResponse::Ok().json(Response::from(user)),
-            None => Error::NoContent.error_response(),
+            None => ServerError::NoContent.error_response(),
         },
-        Err(_) => Error::InternalServerError.error_response(),
+        Err(_) => ServerError::InternalServerError.error_response(),
     }
 }
 pub async fn admin() -> HttpResponse {
@@ -157,7 +142,7 @@ pub async fn admin() -> HttpResponse {
                     message: "Success".to_string(),
                     status: true,
                 }),
-                Err(_) => Error::InternalServerError.error_response(),
+                Err(_) => ServerError::InternalServerError.error_response(),
             }
         }
     }

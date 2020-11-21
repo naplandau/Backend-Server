@@ -1,2 +1,5 @@
-pub mod users;
-pub use self::users::*;
+mod login;
+mod register;
+mod users;
+
+pub use self::{login::*, register::*, users::*};

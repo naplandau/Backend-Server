@@ -1,11 +1,12 @@
-use actix_web::{web, HttpResponse, guard};
-use super::lib::*;
+use actix_web::{guard, web, HttpResponse};
 pub fn init_route(cfg: &mut web::ServiceConfig) {
-    use crate::app::modules::users::*;
+    use super::lib::*;
+    use crate::app::modules::*;
     cfg.service(
         web::scope("/api/v1")
             .guard(guard::Header("content-type", "application/json"))
-            .service(web::resource("health").to(get_health))
+            .service(web::resource("get").to(get_health))
+            .service(web::resource("set").to(set_health))
             .service(
                 web::resource("users")
                     .route(web::get().to(get_users))
@@ -31,8 +32,53 @@ struct HealthResponse {
     pub status: String,
     pub version: String,
 }
-
-async fn get_health() -> HttpResponse {
+use crate::core::db::rabbit_queue::*;
+use crate::core::db::redis_db::*;
+use lapin::{
+    options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties,
+    ConnectionProperties, Consumer,
+};
+async fn get_health(
+    pool: web::Data<RedisFactory>,
+    queue_pool: web::Data<RabbitPool>,
+) -> HttpResponse {
+    // let conn = pool.get_connection().await.expect("");
+    // let res = get_str(&pool.pool, "abc").await.unwrap();
+    let conn = queue_pool.get().await.expect("msg");
+    let channel = conn.create_channel().await.unwrap();
+    let _ = channel
+        .queue_declare(
+            "ha_qu_test",
+            QueueDeclareOptions::default(),
+            FieldTable::default(),
+        )
+        .await
+        .unwrap();
+    let send_props = BasicProperties::default().with_kind(format!("Sender: ").into());
+    let res = channel
+        .basic_publish(
+            "",
+            "ha_qu_test",
+            BasicPublishOptions::default(),
+            b"haha".to_vec(),
+            send_props.clone(),
+        )
+        .await
+        .unwrap()
+        .await
+        .unwrap();
+    let b  = match res {
+        Confirmation::NotRequested=> "NotRequested",
+        _ => "ABC"
+    };
+    HttpResponse::Ok().json(HealthResponse {
+        status: b.to_string(),
+        version: "Cargo Version: ".to_string() + env!("CARGO_PKG_VERSION").into(),
+    })
+}
+async fn set_health(pool: web::Data<RedisFactory>) -> HttpResponse {
+    // let conn = pool.get_connection().await.expect("");
+    let res = set_str(&pool.pool, "abc", "1234", 10).await.unwrap();
     HttpResponse::Ok().json(HealthResponse {
         status: "Ok".into(),
         version: "Cargo Version: ".to_string() + env!("CARGO_PKG_VERSION").into(),

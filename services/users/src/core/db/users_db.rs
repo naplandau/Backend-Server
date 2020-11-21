@@ -1,6 +1,6 @@
 use super::db_utils;
 use crate::core::models::{Confirmation, User};
-use crate::utils::handlers::HASHER;
+use crate::utils::hasher::HASHER;
 use bson::{doc, Document};
 use chrono::Utc;
 use mongodb::{error::Error, options::*};

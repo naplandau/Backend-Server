@@ -1,7 +1,6 @@
-use crate::utils::handlers::HASHER;
 use bson::{DateTime, Document};
 use chrono::Utc;
-// use serde::{Deserialize, Serialize};
+use crate::utils::hasher::HASHER;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct User {

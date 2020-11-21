@@ -3,6 +3,8 @@ use serde::Deserialize;
 pub struct Config {
     //pub auth_salt: String,
     pub database_url: String,
+    pub redis_url: String,
+    pub rabbit_url: String,
     //pub jwt_expiration: i64,
     //pub jwt_key: String,
     //pub rust_backtrace:u8,
@@ -14,10 +16,11 @@ pub struct Config {
     pub smtp_host: String,
     pub smtp_port: i64,
     pub domain: String,
-    pub dev_mode: bool, //pub session_key: String,
-                        //pub session_name:String,
-                        //pub session_secure: bool,
-                        //pub session_timeout: i64
+    pub dev_mode: bool,
+    //pub session_key: String,
+    //pub session_name:String,
+    //pub session_secure: bool,
+    //pub session_timeout: i64
 }
 
 lazy_static! {
