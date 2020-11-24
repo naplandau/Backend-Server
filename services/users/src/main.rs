@@ -21,7 +21,7 @@ mod middleware;
 mod utils;
 use crate::core::db::rabbit_queue::*;
 use futures::StreamExt;
-use lapin::{options::*, Consumer};
+use lapin::{options::*};
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     use crate::core::db::redis_db::*;

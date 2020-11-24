@@ -74,7 +74,7 @@ pub async fn send_confirmation_mail(confirmation: &Confirmation) -> Result<(), (
         .with_timezone(&Local)
         .format("%I:%M %p %A, %-d %B, %C%y")
         .to_string();
-    let html_text = format!(
+    let _html_text = format!(
         "Please click on the link below to complete registration. <br/>
        <a href=\"{domain}/register/{id}\">Complete registration</a> <br/>
       This link expires on <strong>{expires}</strong>",

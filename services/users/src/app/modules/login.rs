@@ -14,7 +14,7 @@ pub async fn login(user: web::Json<Login>) -> HttpResponse {
                 } else {
                     _date = chrono::Utc::now() + Duration::days(365);
                 }
-                let my_claims = Claims {
+                let _my_claims = Claims {
                     sub: user.email,
                     exp: _date.timestamp() as usize,
                 };

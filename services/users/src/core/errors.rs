@@ -1,5 +1,5 @@
 use actix_web::{error, error::ResponseError, HttpRequest, HttpResponse};
-use failure::Fail;
+
 use mongodb::error::Error as MongoError;
 use serde_json::{Map as JsonMap, Value as JsonValue};
 use validator::ValidationErrors;

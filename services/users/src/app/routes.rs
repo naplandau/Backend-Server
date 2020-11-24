@@ -36,7 +36,6 @@ use crate::core::db::rabbit_queue::*;
 use crate::core::db::redis_db::*;
 use lapin::{
     options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties,
-    ConnectionProperties, Consumer,
 };
 async fn get_health(
     _pool: web::Data<RedisFactory>,
