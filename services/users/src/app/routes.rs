@@ -39,16 +39,24 @@ use lapin::{
     ConnectionProperties, Consumer,
 };
 async fn get_health(
-    pool: web::Data<RedisFactory>,
-    queue_pool: web::Data<RabbitPool>,
+    _pool: web::Data<RedisFactory>,
+    _queue_pool: web::Data<RabbitPool>,
 ) -> HttpResponse {
     // let conn = pool.get_connection().await.expect("");
     // let res = get_str(&pool.pool, "abc").await.unwrap();
-    let conn = queue_pool.get().await.expect("msg");
+    let conn = _queue_pool.get().await.expect("msg");
     let channel = conn.create_channel().await.unwrap();
     let _ = channel
         .queue_declare(
             "ha_qu_test",
+            QueueDeclareOptions::default(),
+            FieldTable::default(),
+        )
+        .await
+        .unwrap();
+    let _ = channel
+        .queue_declare(
+            "ha_qu_test1",
             QueueDeclareOptions::default(),
             FieldTable::default(),
         )
@@ -67,18 +75,34 @@ async fn get_health(
         .unwrap()
         .await
         .unwrap();
-    let b  = match res {
-        Confirmation::NotRequested=> "NotRequested",
-        _ => "ABC"
+    let res1 = channel
+        .basic_publish(
+            "",
+            "ha_qu_test1",
+            BasicPublishOptions::default(),
+            b"huhu".to_vec(),
+            send_props,
+        )
+        .await
+        .unwrap()
+        .await
+        .unwrap();
+    let a = match res1 {
+        Confirmation::NotRequested => "NotRequested",
+        _ => "ABC",
+    };
+    let b = match res {
+        Confirmation::NotRequested => "NotRequested",
+        _ => "ABC",
     };
     HttpResponse::Ok().json(HealthResponse {
-        status: b.to_string(),
+        status: a.to_string() + b,
         version: "Cargo Version: ".to_string() + env!("CARGO_PKG_VERSION").into(),
     })
 }
 async fn set_health(pool: web::Data<RedisFactory>) -> HttpResponse {
     // let conn = pool.get_connection().await.expect("");
-    let res = set_str(&pool.pool, "abc", "1234", 10).await.unwrap();
+    let _res = set_str(&pool.pool, "abc", "1234", 0).await.unwrap();
     HttpResponse::Ok().json(HealthResponse {
         status: "Ok".into(),
         version: "Cargo Version: ".to_string() + env!("CARGO_PKG_VERSION").into(),

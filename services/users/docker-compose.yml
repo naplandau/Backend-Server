@@ -19,14 +19,14 @@ services:
   #   env_file: .env
   #   command: bash -c "bash cargo-watch -x run"
 
-  # redis:
-  #     image: redis:latest
-  #     ports:
-  #       - "6379:6379"
-  #     expose:
-  #       - "6379"
-  #     volumes:
-  #       - .docker/redis:/data
+  redis:
+      image: redis:latest
+      ports:
+        - "6379:6379"
+      expose:
+        - "6379"
+      volumes:
+        - .docker/redis:/data
   #     restart: unless-stopped
   #     deploy:
   #       replicas: 1

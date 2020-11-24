@@ -20,11 +20,11 @@ actix-web = "3.2"
 actix-rt = "1.1"
 #hyper="0.13"
 #reqwest="0.10"
-
+# async-trait = "0.1"
 #kafka="0.8"
 lapin="1.5"
 mobc-lapin = "0.5"
-tokio-amqp = "0.3"
+# tokio-amqp = "0.3"
 #cookie="0.14"
 #openssl="0.10"
 

@@ -1,6 +1,6 @@
-use mobc::Pool;
+use mobc::{Pool, Connection};
 use mobc_lapin::RMQConnectionManager;
-use tokio_amqp::*;
+// use tokio_amqp::*;
 // use futures::StreamExt;
 use lapin::{
     options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties,
@@ -9,7 +9,7 @@ use lapin::{
 use std::time::Duration;
 
 pub type RabbitPool = Pool<RMQConnectionManager>;
-// pub type RabbitConnection = Connection<RabbitConnectionManager>;
+pub type RabbitConnection = Connection<RMQConnectionManager>;
 
 const CACHE_POOL_MAX_OPEN: u64 = 16;
 const CACHE_POOL_MAX_IDLE: u64 = 8;
@@ -27,7 +27,7 @@ pub enum RabbitError {
 pub struct RabbitFactory;
 impl RabbitFactory {
     pub async fn get_pool(url: String) -> Result<RabbitPool, ()> {
-        let manager = RMQConnectionManager::new(url.to_owned(), ConnectionProperties::default().with_tokio());
+        let manager = RMQConnectionManager::new(url.to_owned(), ConnectionProperties::default());
         Ok(Pool::builder()
             .get_timeout(Some(Duration::from_secs(CACHE_POOL_TIMEOUT_SECONDS)))
             .max_open(CACHE_POOL_MAX_OPEN)
@@ -39,12 +39,20 @@ impl RabbitFactory {
 pub struct RabbitServer;
 impl RabbitServer {
     pub async fn create_consumer(
-        pool: &RabbitPool,
+        conn: &RabbitConnection,
         queue_name: &str,
         consumer_tag: &str,
     ) -> Result<Consumer, ()> {
-        let conn = pool.get().await.unwrap();
         let channel = conn.create_channel().await.unwrap();
+        let queue = channel
+            .queue_declare(
+                queue_name,
+                QueueDeclareOptions::default(),
+                FieldTable::default(),
+            )
+            .await
+            .unwrap();
+        println!("Decleared queue {:#?}", queue);
         let consumer_open = channel
             .basic_consume(
                 queue_name,
@@ -55,7 +63,7 @@ impl RabbitServer {
             .await;
         match consumer_open {
             Ok(consumer) => Ok(consumer),
-            Err(_e) => Err(())
+            Err(_e) => Err(()),
         }
     }
 }
