@@ -22,14 +22,15 @@ mod utils;
 #[allow(dead_code)]
 mod nats_server;
 #[allow(dead_code)]
+mod rabbit_server;
+#[allow(dead_code)]
 mod models;
 #[allow(dead_code)]
 mod errors;
 
 use crate::core::nats_broker::*;
 use crate::core::rabbit_queue::*;
-use futures::StreamExt;
-use lapin::options::*;
+
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     use crate::core::redis_db::*;
@@ -49,8 +50,8 @@ async fn main() -> std::io::Result<()> {
         .await
         .expect("Connect Nats Fail");
 
-    // rabbit_server(rabbit_fac.clone()).await;
-    nats_server(nats_fac.clone()).await;
+    // rabbit_server::rabbit_server(rabbit_fac.clone()).await;
+    nats_server::nats_server(nats_fac.clone()).await;//Start Nats server
     let mut server = actix_web::HttpServer::new(move || {
         actix_web::App::new()
             .data(redis_fac.clone()) //Use Redis
@@ -90,51 +91,4 @@ async fn main() -> std::io::Result<()> {
         server.bind(&config::CONFIG.server)?
     };
     server.run().await
-}
-
-async fn queue_consume(conn: RabbitConnection) {
-    let mut consumer = RabbitServer::create_consumer(&conn, "ha_qu_test", "test")
-        .await
-        .unwrap();
-    while let Some(delivery) = consumer.next().await {
-        let (channel, delivery) = delivery.expect("error in consumer");
-        println!("[{}] consume messsage: {:?}", "ha_qu_test", delivery.data);
-        channel
-            .basic_ack(delivery.delivery_tag, BasicAckOptions::default())
-            .await
-            .expect("ack");
-    }
-}
-async fn queue_consume1(conn: RabbitConnection) {
-    let mut consumer = RabbitServer::create_consumer(&conn, "ha_qu_test1", "test")
-        .await
-        .unwrap();
-    while let Some(delivery) = consumer.next().await {
-        let (channel, delivery) = delivery.expect("error in consumer");
-        println!("[{}] consume messsage: {:?}", "ha_qu_test_1", delivery.data);
-        channel
-            .basic_ack(delivery.delivery_tag, BasicAckOptions::default())
-            .await
-            .expect("ack");
-    }
-}
-
-async fn rabbit_server(rabbit_fac1: RabbitPool) {
-    let rabbit = rabbit_fac1.to_owned();
-    let conn = rabbit.get().await.unwrap();
-    actix_rt::spawn(async move { queue_consume(conn).await });
-    let conn1 = rabbit.get().await.unwrap();
-    actix_rt::spawn(async move {
-        queue_consume1(conn1).await;
-    });
-}
-
-async fn nats_server(nat_fac: NatsConnection) {
-    let sub = NatsServer::create_response_subcriber(nat_fac, "my.subject".to_string())
-        .await
-        .expect("Create Subcriber fail");
-    sub.with_handler(move |msg| {
-        println!("Received {}", &msg);
-        msg.respond("Responsed Success")
-    });
 }

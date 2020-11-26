@@ -48,12 +48,11 @@ async fn get_health(
     _nats_pool.publish("my.subject", "Hello World!").expect("Publist to my.subject fail");
     //send a message request with timeout
     let resp = _nats_pool.request_timeout("my.subject", "Request Hello World", Duration::from_secs(15));
-    let mut data:String;
-    match resp {
+    let data= match resp {
         Ok(msg) => {
-            data = msg.to_string();
+            msg.to_string()
         },
-        Err(e) => data = e.to_string()
+        Err(e) => e.to_string()
     };
     // let conn = pool.get_connection().await.expect("");
     // let res = get_str(&pool.pool, "abc").await.unwrap();
