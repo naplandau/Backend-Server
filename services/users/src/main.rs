@@ -19,13 +19,20 @@ mod core;
 mod middleware;
 #[allow(dead_code)]
 mod utils;
-use crate::core::db::nats_broker::*;
-use crate::core::db::rabbit_queue::*;
+#[allow(dead_code)]
+mod nats_server;
+#[allow(dead_code)]
+mod models;
+#[allow(dead_code)]
+mod errors;
+
+use crate::core::nats_broker::*;
+use crate::core::rabbit_queue::*;
 use futures::StreamExt;
 use lapin::options::*;
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    use crate::core::db::redis_db::*;
+    use crate::core::redis_db::*;
     use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
 
     dotenv::dotenv().ok();

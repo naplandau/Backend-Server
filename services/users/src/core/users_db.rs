@@ -1,5 +1,5 @@
 use super::db_utils;
-use crate::core::models::{Confirmation, User};
+use crate::models::{Confirmation, User};
 use crate::utils::hasher::HASHER;
 use bson::{doc, Document};
 use chrono::Utc;

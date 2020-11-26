@@ -33,9 +33,9 @@ struct HealthResponse {
     pub status: String,
     pub version: String,
 }
-use crate::core::db::rabbit_queue::*;
-use crate::core::db::redis_db::*;
-use crate::core::db::nats_broker::*;
+use crate::core::rabbit_queue::*;
+use crate::core::redis_db::*;
+use crate::core::nats_broker::*;
 use lapin::{
     options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties,
 };
@@ -48,7 +48,7 @@ async fn get_health(
     _nats_pool.publish("my.subject", "Hello World!").expect("Publist to my.subject fail");
     //send a message request with timeout
     let resp = _nats_pool.request_timeout("my.subject", "Request Hello World", Duration::from_secs(15));
-    let mut data:String = String::new();
+    let mut data:String;
     match resp {
         Ok(msg) => {
             data = msg.to_string();
