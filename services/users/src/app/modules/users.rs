@@ -55,7 +55,7 @@ pub async fn get_user(id: web::Path<String>) -> HttpResponse {
     match find_res {
         Some(user) => HttpResponse::Ok().json(Response::from(user)),
         None => {
-            error!("get_user: Not Found");
+            // error!("get_user: Not Found");
             ServerError::NoContent.error_response()
         }
     }
@@ -104,7 +104,7 @@ pub async fn delete_user(id: web::Path<String>) -> HttpResponse {
             }
         }
         None => {
-            error!("delete_user: Not Found");
+            // error!("delete_user: Not Found");
             ServerError::NoContent.error_response()
         }
     }
@@ -201,7 +201,7 @@ impl FromRequest for UserAuthorized {
 fn is_authorized(req: &HttpRequest) -> bool {
     if let Some(value) = req.headers().get("Authorization") {
         // actual implementation that checks header here
-        info!("{:?}",value);
+        // info!("{:?}",value);
         true
     } else {
         false

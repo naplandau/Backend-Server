@@ -4,8 +4,8 @@ extern crate lazy_static;
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
-#[macro_use]
-extern crate log;
+// #[macro_use]
+// extern crate log;
 #[macro_use]
 extern crate validator_derive;
 
@@ -16,23 +16,23 @@ mod config;
 #[allow(dead_code)]
 mod core;
 #[allow(dead_code)]
+mod errors;
+#[allow(dead_code)]
 mod middleware;
-#[allow(dead_code)]
-mod utils;
-#[allow(dead_code)]
-mod nats_server;
-#[allow(dead_code)]
-mod rabbit_server;
 #[allow(dead_code)]
 mod models;
 #[allow(dead_code)]
-mod errors;
-
-use crate::core::nats_broker::*;
-use crate::core::rabbit_queue::*;
+mod nats_server;
+#[allow(dead_code)]
+#[allow(unused_must_use)]
+mod rabbit_server;
+#[allow(dead_code)]
+mod utils;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
+    use crate::core::nats_broker::*;
+    use crate::core::rabbit_queue::*;
     use crate::core::redis_db::*;
     use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
 
@@ -51,7 +51,7 @@ async fn main() -> std::io::Result<()> {
         .expect("Connect Nats Fail");
 
     // rabbit_server::rabbit_server(rabbit_fac.clone()).await;
-    nats_server::nats_server(nats_fac.clone()).await;//Start Nats server
+    nats_server::nats_server(nats_fac.clone()).await; //Start Nats server
     let mut server = actix_web::HttpServer::new(move || {
         actix_web::App::new()
             .data(redis_fac.clone()) //Use Redis
