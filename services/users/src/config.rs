@@ -5,6 +5,7 @@ pub struct Config {
     pub database_url: String,
     pub redis_url: String,
     pub rabbit_url: String,
+    pub nats_url: String,
     //pub jwt_expiration: i64,
     //pub jwt_key: String,
     //pub rust_backtrace:u8,

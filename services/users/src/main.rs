@@ -19,20 +19,14 @@ mod core;
 mod middleware;
 #[allow(dead_code)]
 mod utils;
+use crate::core::db::nats_broker::*;
 use crate::core::db::rabbit_queue::*;
 use futures::StreamExt;
-use lapin::{options::*};
+use lapin::options::*;
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     use crate::core::db::redis_db::*;
-    use actix_web::{
-        http,
-        middleware::{
-            errhandlers::{ErrorHandlerResponse, ErrorHandlers},
-            Logger,
-        },
-        web, App, HttpResponse, HttpServer,
-    };
+    use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
 
     dotenv::dotenv().ok();
     std::env::set_var("RUST_LOG", "actix_web=info,actix_server=info");
@@ -40,46 +34,47 @@ async fn main() -> std::io::Result<()> {
 
     let redis_fac = RedisFactory::connect(config::CONFIG.redis_url.to_owned())
         .await
-        .expect("");
+        .expect("Connect Redis Fail");
     let rabbit_fac = RabbitFactory::get_pool(config::CONFIG.rabbit_url.to_owned())
         .await
-        .expect("");
-    let rabbit_fac1 = RabbitFactory::get_pool(config::CONFIG.rabbit_url.to_owned())
+        .expect("Connect Rabbit Fail");
+    let nats_fac = NatsFactory::get_pool(config::CONFIG.nats_url.to_owned())
         .await
-        .expect("");
+        .expect("Connect Nats Fail");
 
-    rabbit_server(rabbit_fac1).await;
-
-    let mut server = HttpServer::new(move || {
-        App::new()
-            .data(redis_fac.clone())
-            .data(rabbit_fac.clone())
-            .wrap(Logger::default())
+    // rabbit_server(rabbit_fac.clone()).await;
+    nats_server(nats_fac.clone()).await;
+    let mut server = actix_web::HttpServer::new(move || {
+        actix_web::App::new()
+            .data(redis_fac.clone()) //Use Redis
+            .data(rabbit_fac.clone()) //Use Rabbit
+            .data(nats_fac.clone()) //Use Nats
+            .wrap(actix_web::middleware::Logger::default())
             .data(
-                web::JsonConfig::default()
+                actix_web::web::JsonConfig::default()
                     .limit(4096)
                     .error_handler(|err, _req| {
                         println!("Json parse fail!: {:?}", err);
                         actix_web::error::InternalError::from_response(
                             err,
-                            HttpResponse::BadRequest().finish(),
+                            actix_web::HttpResponse::BadRequest().finish(),
                         )
                         .into()
                     }),
             )
             .wrap(ErrorHandlers::new().handler(
-                http::StatusCode::INTERNAL_SERVER_ERROR,
+                actix_web::http::StatusCode::INTERNAL_SERVER_ERROR,
                 |mut res| {
                     res.response_mut().headers_mut().insert(
-                        http::header::CONTENT_TYPE,
-                        http::HeaderValue::from_static("Error"),
+                        actix_web::http::header::CONTENT_TYPE,
+                        actix_web::http::HeaderValue::from_static("Error"),
                     );
                     dbg!("ErrorHandlers detect!");
                     Ok(ErrorHandlerResponse::Response(res))
                 },
             ))
             .configure(app::routes::init_route)
-            .default_service(web::route().to(|| HttpResponse::NotFound()))
+            .default_service(actix_web::web::route().to(|| actix_web::HttpResponse::NotFound()))
     });
     let mut listenfd = listenfd::ListenFd::from_env();
     server = if let Some(l) = listenfd.take_tcp_listener(0)? {
@@ -117,33 +112,22 @@ async fn queue_consume1(conn: RabbitConnection) {
     }
 }
 
-async fn rabbit_server(rabbit_fac1: RabbitPool){
+async fn rabbit_server(rabbit_fac1: RabbitPool) {
     let rabbit = rabbit_fac1.to_owned();
     let conn = rabbit.get().await.unwrap();
-    actix_rt::spawn(async move{
-        queue_consume(conn).await
-    });
-    let conn1= rabbit.get().await.unwrap();
-    actix_rt::spawn(async move{
+    actix_rt::spawn(async move { queue_consume(conn).await });
+    let conn1 = rabbit.get().await.unwrap();
+    actix_rt::spawn(async move {
         queue_consume1(conn1).await;
     });
 }
-// use actix::{Actor, Context};
-// struct RabbitActor {
-//     consumer: Consumer,
-// }
-// impl Actor for RabbitActor {
-//     type Context = Context<Self>;
-//     fn started(&mut self, ctx: &mut Self::Context) {
-//         ctx.spawn(async move {
-//             while let Some(delivery) = self.consumer.next().await {
-//                 let (channel, delivery) = delivery.expect("error in consumer");
-//                 println!("incoming message from: {:?}", delivery.properties.kind());
-//                 channel
-//                     .basic_ack(delivery.delivery_tag, BasicAckOptions::default())
-//                     .await
-//                     .expect("ack");
-//             }
-//         })
-//     }
-// }
+
+async fn nats_server(nat_fac: NatsConnection) {
+    let sub = NatsServer::create_response_subcriber(nat_fac, "my.subject".to_string())
+        .await
+        .expect("Create Subcriber fail");
+    sub.with_handler(move |msg| {
+        println!("Received {}", &msg);
+        msg.respond("Responsed Success")
+    });
+}

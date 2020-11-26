@@ -1,4 +1,5 @@
 use actix_web::{guard, web, HttpResponse};
+use std::time::Duration;
 pub fn init_route(cfg: &mut web::ServiceConfig) {
     use super::lib::*;
     use crate::app::modules::*;
@@ -34,68 +35,81 @@ struct HealthResponse {
 }
 use crate::core::db::rabbit_queue::*;
 use crate::core::db::redis_db::*;
+use crate::core::db::nats_broker::*;
 use lapin::{
     options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties,
 };
 async fn get_health(
     _pool: web::Data<RedisFactory>,
     _queue_pool: web::Data<RabbitPool>,
+    _nats_pool: web::Data<NatsConnection>
 ) -> HttpResponse {
+    //publish a message to topic
+    _nats_pool.publish("my.subject", "Hello World!").expect("Publist to my.subject fail");
+    //send a message request with timeout
+    let resp = _nats_pool.request_timeout("my.subject", "Request Hello World", Duration::from_secs(15));
+    let mut data:String = String::new();
+    match resp {
+        Ok(msg) => {
+            data = msg.to_string();
+        },
+        Err(e) => data = e.to_string()
+    };
     // let conn = pool.get_connection().await.expect("");
     // let res = get_str(&pool.pool, "abc").await.unwrap();
-    let conn = _queue_pool.get().await.expect("msg");
-    let channel = conn.create_channel().await.unwrap();
-    let _ = channel
-        .queue_declare(
-            "ha_qu_test",
-            QueueDeclareOptions::default(),
-            FieldTable::default(),
-        )
-        .await
-        .unwrap();
-    let _ = channel
-        .queue_declare(
-            "ha_qu_test1",
-            QueueDeclareOptions::default(),
-            FieldTable::default(),
-        )
-        .await
-        .unwrap();
-    let send_props = BasicProperties::default().with_kind(format!("Sender: ").into());
-    let res = channel
-        .basic_publish(
-            "",
-            "ha_qu_test",
-            BasicPublishOptions::default(),
-            b"haha".to_vec(),
-            send_props.clone(),
-        )
-        .await
-        .unwrap()
-        .await
-        .unwrap();
-    let res1 = channel
-        .basic_publish(
-            "",
-            "ha_qu_test1",
-            BasicPublishOptions::default(),
-            b"huhu".to_vec(),
-            send_props,
-        )
-        .await
-        .unwrap()
-        .await
-        .unwrap();
-    let a = match res1 {
-        Confirmation::NotRequested => "NotRequested",
-        _ => "ABC",
-    };
-    let b = match res {
-        Confirmation::NotRequested => "NotRequested",
-        _ => "ABC",
-    };
+    // let conn = _queue_pool.get().await.expect("msg");
+    // let channel = conn.create_channel().await.unwrap();
+    // let _ = channel
+    //     .queue_declare(
+    //         "ha_qu_test",
+    //         QueueDeclareOptions::default(),
+    //         FieldTable::default(),
+    //     )
+    //     .await
+    //     .unwrap();
+    // let _ = channel
+    //     .queue_declare(
+    //         "ha_qu_test1",
+    //         QueueDeclareOptions::default(),
+    //         FieldTable::default(),
+    //     )
+    //     .await
+    //     .unwrap();
+    // let send_props = BasicProperties::default().with_kind(format!("Sender: ").into());
+    // let res = channel
+    //     .basic_publish(
+    //         "",
+    //         "ha_qu_test",
+    //         BasicPublishOptions::default(),
+    //         b"haha".to_vec(),
+    //         send_props.clone(),
+    //     )
+    //     .await
+    //     .unwrap()
+    //     .await
+    //     .unwrap();
+    // let res1 = channel
+    //     .basic_publish(
+    //         "",
+    //         "ha_qu_test1",
+    //         BasicPublishOptions::default(),
+    //         b"huhu".to_vec(),
+    //         send_props,
+    //     )
+    //     .await
+    //     .unwrap()
+    //     .await
+    //     .unwrap();
+    // let a = match res1 {
+    //     Confirmation::NotRequested => "NotRequested",
+    //     _ => "ABC",
+    // };
+    // let b = match res {
+    //     Confirmation::NotRequested => "NotRequested",
+    //     _ => "ABC",
+    // };
     HttpResponse::Ok().json(HealthResponse {
-        status: a.to_string() + b,
+        status: data,
         version: "Cargo Version: ".to_string() + env!("CARGO_PKG_VERSION").into(),
     })
 }
