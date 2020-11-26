@@ -36,9 +36,9 @@ struct HealthResponse {
 use crate::core::rabbit_queue::*;
 use crate::core::redis_db::*;
 use crate::core::nats_broker::*;
-use lapin::{
-    options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties,
-};
+// use lapin::{
+//     options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties,
+// };
 async fn get_health(
     _pool: web::Data<RedisFactory>,
     _queue_pool: web::Data<RabbitPool>,

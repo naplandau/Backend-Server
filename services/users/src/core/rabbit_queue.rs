@@ -1,9 +1,7 @@
 use mobc::{Pool, Connection};
 use mobc_lapin::RMQConnectionManager;
-// use tokio_amqp::*;
-// use futures::StreamExt;
 use lapin::{
-    options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties,
+    options::*, types::FieldTable,
     ConnectionProperties, Consumer,
 };
 use std::time::Duration;
