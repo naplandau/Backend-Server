@@ -2,10 +2,10 @@ use actix_web::{guard, web, HttpResponse};
 use std::time::Duration;
 pub fn init_route(cfg: &mut web::ServiceConfig) {
     use super::lib::*;
-    use crate::app::modules::*;
+    use crate::app::controllers::*;
     cfg.service(
         web::scope("/api/v1")
-            .guard(guard::Header("content-type", "application/json"))
+            // .guard(guard::Header("content-type", "application/json"))
             .service(web::resource("get").to(get_health))
             .service(web::resource("set").to(set_health))
             .service(
@@ -33,26 +33,27 @@ struct HealthResponse {
     pub status: String,
     pub version: String,
 }
-use crate::rabbit_queue::*;
 use crate::core::redis_db::*;
 use crate::nats_broker::*;
+use crate::rabbit_queue::*;
 // use lapin::{
 //     options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties,
 // };
 async fn get_health(
     _pool: web::Data<RedisFactory>,
     _queue_pool: web::Data<RabbitPool>,
-    _nats_pool: web::Data<NatsConnection>
+    _nats_pool: web::Data<NatsConnection>,
 ) -> HttpResponse {
     //publish a message to topic
-    _nats_pool.publish("my.subject", "Hello World!").expect("Publist to my.subject fail");
+    _nats_pool
+        .publish("my.subject", "Hello World!")
+        .expect("Publist to my.subject fail");
     //send a message request with timeout
-    let resp = _nats_pool.request_timeout("my.subject", "Request Hello World", Duration::from_secs(15));
-    let data= match resp {
-        Ok(msg) => {
-            msg.to_string()
-        },
-        Err(e) => e.to_string()
+    let resp =
+        _nats_pool.request_timeout("my.subject", "Request Hello World", Duration::from_secs(15));
+    let data = match resp {
+        Ok(msg) => msg.to_string(),
+        Err(e) => e.to_string(),
     };
     // let conn = pool.get_connection().await.expect("");
     // let res = get_str(&pool.pool, "abc").await.unwrap();

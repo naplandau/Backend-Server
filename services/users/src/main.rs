@@ -4,8 +4,6 @@ extern crate lazy_static;
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
-// #[macro_use]
-// extern crate log;
 #[macro_use]
 extern crate validator_derive;
 
@@ -35,7 +33,6 @@ async fn main() -> std::io::Result<()> {
     use crate::core::redis_db::*;
     use crate::core::nats_server;
     use crate::core::rabbit_server;
-
     use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
 
     dotenv::dotenv().ok();

@@ -12,8 +12,9 @@ services:
   #     - .:/usr/src/app
   #     - registry:/root/.cargo/registry
   #   depends_on:
-  #     # - redis
+  #     - redis
   #     - mongo_db
+  #     - nats
   #   # links:
   #   #   - mongo_db
   #   env_file: .env
@@ -34,18 +35,45 @@ services:
   #     #   - my_config
   #     #   - my_other_config
 
-  # mongo_db:
-  #   image: mongo:latest
-  #   ports: 
-  #     - "27017:27017"
-  #   volumes:
-  #     #- .docker/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-  #     - .docker/mongodb/data/db/:/data/db/
-  #     - .docker/mongodb/data/log/:/var/log/mongodb/
-  #     - .docker/mongodb/config:/data/configdb
-  #   environment:
-  #     - MONGO_INITDB_DATABASE=stated-rust
-    # restart: unless-stopped
+  mongo_db:
+    image: mongo:latest
+    ports: 
+      - "27017:27017"
+    volumes:
+      #- .docker/mongodb/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - .docker/mongodb/data/db/:/data/db/
+      - .docker/mongodb/data/log/:/var/log/mongodb/
+      - .docker/mongodb/config:/data/configdb
+    environment:
+      - MONGO_INITDB_DATABASE=stated-rust
+    restart: unless-stopped
+
+  nats:
+    image: nats:latest
+    ports: 
+      - "4222:4222"
+      - "6222:6222"
+      - "8222:8222"
+    hostname: nats-server
+
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"
+      - "6222:6222"
+      - "8222:8222"
+    networks: ["nats"]
+  nats-1:
+    image: nats:latest
+    command: "--cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+    networks: ["nats"]
+    depends_on: ["nats"]
+  nats-2:
+    image: nats:latest
+    command: "--cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+    networks: ["nats"]
+    depends_on: ["nats"]
+
   rabbitmq: 
     image: rabbitmq:management-alpine
     ports:
@@ -64,7 +92,9 @@ services:
 #   my_other_config:
 #     external: true
 
-# networks:
+networks:
+  nats:
+    name: nats
 #   default:
 #     driver: bridge
 
