@@ -22,18 +22,20 @@ mod middleware;
 #[allow(dead_code)]
 mod models;
 #[allow(dead_code)]
-mod nats_server;
+mod nats_broker;
 #[allow(dead_code)]
-#[allow(unused_must_use)]
-mod rabbit_server;
+mod rabbit_queue;
 #[allow(dead_code)]
 mod utils;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    use crate::core::nats_broker::*;
-    use crate::core::rabbit_queue::*;
+    use crate::nats_broker::*;
+    use crate::rabbit_queue::*;
     use crate::core::redis_db::*;
+    use crate::core::nats_server;
+    use crate::core::rabbit_server;
+
     use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
 
     dotenv::dotenv().ok();

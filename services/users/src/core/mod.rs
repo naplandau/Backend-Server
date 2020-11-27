@@ -2,6 +2,7 @@ pub mod db;
 pub mod db_utils;
 pub mod users_db;
 pub mod redis_db;
-pub mod rabbit_queue;
-pub mod nats_broker;
+#[allow(unused_must_use)]
+pub mod rabbit_server;
+pub mod nats_server;
 pub use self::db::*;

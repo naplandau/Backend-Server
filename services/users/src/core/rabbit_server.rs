@@ -1,4 +1,4 @@
-use crate::core::rabbit_queue::*;
+use crate::rabbit_queue::*;
 use lapin::message::DeliveryResult;
 use lapin::options::*;
 use std::str;

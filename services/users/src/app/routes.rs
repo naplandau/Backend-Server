@@ -33,9 +33,9 @@ struct HealthResponse {
     pub status: String,
     pub version: String,
 }
-use crate::core::rabbit_queue::*;
+use crate::rabbit_queue::*;
 use crate::core::redis_db::*;
-use crate::core::nats_broker::*;
+use crate::nats_broker::*;
 // use lapin::{
 //     options::*, publisher_confirm::Confirmation, types::FieldTable, BasicProperties,
 // };
