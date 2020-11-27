@@ -5,7 +5,7 @@ use once_cell::sync::OnceCell;
 static MONGO: OnceCell<Client> = OnceCell::new();
 static MONGO_INIT: OnceCell<tokio::sync::Mutex<bool>> = OnceCell::new();
 
-pub fn get_mongo() -> Option<&'static Client> {
+pub async fn get_mongo() -> Option<&'static Client> {
     if let Some(v) = MONGO.get() {
         return Some(v);
     }
@@ -22,5 +22,5 @@ pub fn get_mongo() -> Option<&'static Client> {
         }
     }
     drop(initialized);
-    MONGO.get();
+    MONGO.get()
 }

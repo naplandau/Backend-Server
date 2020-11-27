@@ -27,7 +27,7 @@ pub struct Movie {
     pub updated_by: String,
     pub updated_time_dt: DateTime,
 }
-
+#[derive(Serialize, Deserialize, Debug, Validate, Clone)]
 pub struct AddMovie {
     pub tittle: String,
 }

@@ -1,9 +1,10 @@
 use actix_web::{error, error::ResponseError, HttpRequest, HttpResponse};
-use validator::ValidationErrors;
 use failure::Fail;
 use mongodb::error::Error as MongoError;
 use serde_json::{Map as JsonMap, Value as JsonValue};
+use validator::ValidationErrors;
 
+#[derive(Debug, failure::Fail, PartialEq)]
 pub enum ServerError {
     #[fail(display = "No content")]
     NoContent,
@@ -35,12 +36,13 @@ pub enum ServerError {
     RequestTimeOut,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ResErr {
-    errors: Vec<String>
+    errors: Vec<String>,
 }
 
 impl From<&String> for ResErr {
-    fn from(error: &String) -> Self{
+    fn from(error: &String) -> Self {
         ResErr {
             errors: vec![error.into()],
         }
@@ -48,23 +50,25 @@ impl From<&String> for ResErr {
 }
 
 impl From<Vec<String>> for ResErr {
-    fn from(errors: Vec<String>) -> Self{
-        ResErr {errors}
+    fn from(errors: Vec<String>) -> Self {
+        ResErr { errors }
     }
 }
 
 impl ResponseError for ServerError {
-    fn error_respone(&self) -> HttpResponse {
+    fn error_response(&self) -> HttpResponse {
         match self {
             ServerError::UnprocessableEntity(json) => HttpResponse::BadRequest().json(json),
             ServerError::NotFound(err) => HttpResponse::NotFound().json::<ResErr>(err.into()),
-            ServerError::Unauthorized(err) => HttpResponse::Unauthorized().json::<ResErr>(err.into()),
+            ServerError::Unauthorized(err) => {
+                HttpResponse::Unauthorized().json::<ResErr>(err.into())
+            }
             ServerError::Forbidden(err) => HttpResponse::Forbidden().json::<ResErr>(err.into()),
-            ServerError::RequestTimeOut(err) => HttpResponse::RequestTimeOut().json::<ResErr>(err.into()),
+            ServerError::RequestTimeOut => HttpResponse::RequestTimeout().finish(),
             ServerError::Conflict => HttpResponse::Conflict().finish(),
             ServerError::BadGateway => HttpResponse::BadGateway().finish(),
             ServerError::NoContent => HttpResponse::NoContent().finish(),
-            _ => HttpResponse::InternalServerError().finish()
+            _ => HttpResponse::InternalServerError().finish(),
         }
     }
 }
@@ -72,15 +76,9 @@ impl ResponseError for ServerError {
 impl From<ValidationErrors> for ServerError {
     fn from(errors: ValidationErrors) -> Self {
         let mut err_map = JsonMap::new();
-        for(field, errors) in errors.field_errors().iter() {
-            let errors: Vec<JsonValue> = err_map
-            .iter()
-            .map(|error| {
-                json!(error.message)
-            })
-            .collect();
+        for (field, errors) in errors.field_errors().iter() {
+            let errors: Vec<JsonValue> = errors.iter().map(|error| json!(error.message)).collect();
             err_map.insert(field.to_string(), json!(errors));
-            
         }
         ServerError::UnprocessableEntity(json!({
             "errors": err_map,
@@ -89,8 +87,7 @@ impl From<ValidationErrors> for ServerError {
 }
 
 impl From<MongoError> for ServerError {
-    fn from(errors: MongoError) -> Self {
-        ServerError::DBError(error.to_string());
+    fn from(error: MongoError) -> Self {
+        ServerError::DBError(error.to_string())
     }
 }
-

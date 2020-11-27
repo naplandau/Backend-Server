@@ -1,26 +1,26 @@
 use crate::core::db::get_mongo;
 use bson::{doc, document::Document, Bson};
-use futures::StreamExt;
+
 use mongodb::{error::Error, options::*, results::*, Client, Collection};
 
 const MONGO_DB: &'static str = "stated-rust";
 
 fn get_collection(client: &Client, collection: &str) -> Collection {
-    client.database(MONGO_DB).collection(collection);
+    client.database(MONGO_DB).collection(collection)
 }
 
 //insert operation
 pub async fn insert(collection: &str, doc: &Document) -> Result<InsertOneResult, Error> {
     let client = get_mongo().await.unwrap();
     let collection = get_collection(client, collection);
-    collection.inser_one(doc.clone(), None).await
+    collection.insert_one(doc.clone(), None).await
 }
 
 pub async fn insert_many(
     collection: &str,
     docs: impl IntoIterator<Item = Document>,
     options: impl Into<Option<InsertManyOptions>>,
-) {
+) -> Result<InsertManyResult, Error> {
     let client = get_mongo().await.unwrap();
     let collection = get_collection(client, collection);
     collection.insert_many(docs, options).await
@@ -36,7 +36,7 @@ pub async fn find_one_and_update(
     collection: &str,
     id: String,
     doc: Document,
-    options: impl Into<FindOneAndUpdateOptions>,
+    options: Option<FindOneAndUpdateOptions>,
 ) -> Result<Option<Document>, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
@@ -49,7 +49,7 @@ pub async fn find_one_and_update(
 pub async fn find_one_and_delete(
     collection: &str,
     id: String,
-    options: impl Into<FindOneAndDeleteOptions>,
+    options: Option<FindOneAndDeleteOptions>,
 ) -> Result<Option<Document>, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
@@ -61,7 +61,7 @@ pub async fn find_one_and_delete(
 pub async fn find_one_by(
     collection: &str,
     filter: Option<Document>,
-    options: impl Into<FindOneOptions>,
+    options: Option<FindOneOptions>,
 ) -> Result<Option<Document>, Error> {
     let client = get_mongo().await.unwrap();
     let collection = &get_collection(client, collection);
