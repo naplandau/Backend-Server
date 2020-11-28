@@ -1,5 +1,5 @@
 use actix_web::{guard, web, HttpResponse};
-use std::time::Duration;
+use bson::doc;
 pub fn init_route(cfg: &mut web::ServiceConfig) {
     use super::lib::*;
     use crate::app::controllers::*;
@@ -33,7 +33,7 @@ struct HealthResponse {
     pub status: String,
     pub version: String,
 }
-use crate::core::redis_db::*;
+use crate::{models::nats_message::NatsRequest, core::redis_db::*};
 use crate::nats_broker::*;
 use crate::rabbit_queue::*;
 // use lapin::{
@@ -44,15 +44,31 @@ async fn get_health(
     _queue_pool: web::Data<RabbitPool>,
     _nats_pool: web::Data<NatsConnection>,
 ) -> HttpResponse {
-    //publish a message to topic
-    _nats_pool
-        .publish("my.subject", "Hello World!")
-        .expect("Publist to my.subject fail");
-    //send a message request with timeout
+    use uuid::Uuid;
+    let random_mail = Uuid::new_v4().to_string() + "@gmail.com";
+    let req_data = NatsRequest{
+        request_type: "".to_owned(),
+        request_id: "".to_owned(),
+        from: "client".to_owned(),
+        data: doc!{
+            "email": random_mail,
+            "password": "acbasdkqndqw"
+        },
+        status: true,
+        status_code: 1,
+        status_des: "success".to_string(),
+        send_time: 1,
+    };
+    let req = serde_json::to_string(&req_data).unwrap();
     let resp =
-        _nats_pool.request_timeout("my.subject", "Request Hello World", Duration::from_secs(15));
+        _nats_pool.request("my.subject", req.to_owned());
+    
     let data = match resp {
-        Ok(msg) => msg.to_string(),
+        Ok(msg) => {
+            // println!("res: {:?}", serde_json::from_slice(&msg.data));
+            msg.to_string()
+            // serde_json::from_slice(&msg.data).unwrap()
+        },
         Err(e) => e.to_string(),
     };
     // let conn = pool.get_connection().await.expect("");
@@ -88,6 +104,7 @@ async fn get_health(
     //     .unwrap()
     //     .await
     //     .unwrap();
+
     // let res1 = channel
     //     .basic_publish(
     //         "",

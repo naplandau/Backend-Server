@@ -16,6 +16,7 @@ pub use mobc_redis::redis::{AsyncCommands, FromRedisValue};
 pub use mongodb::{options::*, Cursor};
 pub use std::collections::HashMap;
 pub use uuid::Uuid;
+pub use std::time::Instant;
 pub use validator::Validate;
 pub fn get_sub_field(doc: &Document) -> Document {
     let mut new_doc = doc.clone();

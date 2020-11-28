@@ -1,6 +1,7 @@
 use super::lib::*;
 
 pub async fn create_users(req: Register) -> Result<User, ServerError> {
+    let now = Instant::now();
     match req.validate() {
         Ok(_) => {
             let email = req.email.to_owned().unwrap_or_default();
@@ -10,16 +11,35 @@ pub async fn create_users(req: Register) -> Result<User, ServerError> {
                 None => {
                     let user_save: User = req.to_owned().into();
                     match users_db::insert(user_save.to_owned()).await {
-                        Ok(_id) => Ok(user_save),
-                        Err(e) => Err(ServerError::from(e)),
+                        Ok(_id) => {
+                            println!(
+                                "[MODULES] | [CREATE_USER] | [{:?}]",
+                                now.elapsed().as_secs_f32()
+                            );
+                            Ok(user_save)
+                        }
+                        Err(e) => {
+                            println!(
+                                "[MODULES] | [CREATE_USER] | [{:?}]",
+                                now.elapsed().as_secs_f32()
+                            );
+                            Err(ServerError::from(e))
+                        }
                     }
                 }
             }
         }
-        Err(e) => Err(ServerError::from(e)),
+        Err(e) => {
+            println!(
+                "[MODULES] | [CREATE_USER] | [{:?}]",
+                now.elapsed().as_secs_f32()
+            );
+            Err(ServerError::from(e))
+        }
     }
 }
 pub async fn get_users(_query: HashMap<String, String>) -> Result<Vec<User>, ServerError> {
+    let now = Instant::now();
     let option = Some(
         FindOptions::builder()
             //.sort(doc! {"title":1})
@@ -27,21 +47,53 @@ pub async fn get_users(_query: HashMap<String, String>) -> Result<Vec<User>, Ser
     );
     let filter = Some(doc! {});
     match users_db::find_all(filter, option).await {
-        Ok(vec) => Ok(vec),
-        Err(e) => Err(ServerError::from(e)),
+        Ok(vec) => {
+            println!(
+                "[MODULES] | [GET_USERS] | [{:?}]",
+                now.elapsed().as_secs_f32()
+            );
+            Ok(vec)
+        }
+        Err(e) => {
+            println!(
+                "[MODULES] | [GET_USERS] | [{:?}]",
+                now.elapsed().as_secs_f32()
+            );
+            Err(ServerError::from(e))
+        }
     }
 }
 pub async fn get_user(id: String) -> Result<User, ServerError> {
+    let now = Instant::now();
     match users_db::find_by_id(id.to_string()).await {
         Ok(ops) => match ops {
-            Some(user) => Ok(user),
-            None => Err(ServerError::NoContent),
+            Some(user) => {
+                println!(
+                    "[MODULES] | [GET_USER] | [{:?}]",
+                    now.elapsed().as_secs_f32()
+                );
+                Ok(user)
+            }
+            None => {
+                println!(
+                    "[MODULES] | [GET_USER] | [{:?}]",
+                    now.elapsed().as_secs_f32()
+                );
+                Err(ServerError::NoContent)
+            }
         },
-        Err(e) => Err(ServerError::from(e)),
+        Err(e) => {
+            println!(
+                "[MODULES] | [GET_USER] | [{:?}]",
+                now.elapsed().as_secs_f32()
+            );
+            Err(ServerError::from(e))
+        }
     }
 }
 /// Now return old document before update
 pub async fn update_user(req: UpdateUser, id: String) -> Result<User, ServerError> {
+    let now = Instant::now();
     match req.validate() {
         Ok(_) => {
             let find_res = users_db::find_by_id(id.to_string()).await.unwrap_or(None);
@@ -50,35 +102,95 @@ pub async fn update_user(req: UpdateUser, id: String) -> Result<User, ServerErro
                     let update_doc = bson::to_document(&req.to_owned()).unwrap();
                     let _execs = users_db::update(user, update_doc).await;
                     match _execs {
-                        Ok(user) => Ok(user),
-                        Err(e) => Err(ServerError::from(e)),
+                        Ok(user) => {
+                            println!(
+                                "[MODULES] | [UPDATE_USER] | [{:?}]",
+                                now.elapsed().as_secs_f32()
+                            );
+                            Ok(user)
+                        }
+                        Err(e) => {
+                            println!(
+                                "[MODULES] | [UPDATE_USER] | [{:?}]",
+                                now.elapsed().as_secs_f32()
+                            );
+                            Err(ServerError::from(e))
+                        }
                     }
                 }
-                None => Err(ServerError::NoContent),
+                None => {
+                    println!(
+                        "[MODULES] | [UPDATE_USER] | [{:?}]",
+                        now.elapsed().as_secs_f32()
+                    );
+                    Err(ServerError::NoContent)
+                }
             }
         }
         Err(e) => {
             println!("Validate error: {:?}", e);
+            println!(
+                "[MODULES] | [UPDATE_USER] | [{:?}]",
+                now.elapsed().as_secs_f32()
+            );
             Err(ServerError::from(e))
         }
     }
 }
 pub async fn delete_user(id: String) -> Result<User, ServerError> {
+    let now = Instant::now();
     match users_db::find_by_id(id.to_owned()).await.unwrap_or(None) {
         Some(_) => match users_db::delete_by_id(id.to_owned()).await {
             Ok(ops) => match ops {
-                Some(user) => Ok(user),
-                None => Err(ServerError::NoContent),
+                Some(user) => {
+                    println!(
+                        "[MODULES] | [DELETE_USER] | [{:?}]",
+                        now.elapsed().as_secs_f32()
+                    );
+                    Ok(user)
+                }
+                None => {
+                    println!(
+                        "[MODULES] | [DELETE_USER] | [{:?}]",
+                        now.elapsed().as_secs_f32()
+                    );
+                    Err(ServerError::NoContent)
+                }
             },
-            Err(_) => Err(ServerError::InternalServerError),
+            Err(_) => {
+                println!(
+                    "[MODULES] | [DELETE_USER] | [{:?}]",
+                    now.elapsed().as_secs_f32()
+                );
+                Err(ServerError::InternalServerError)
+            }
         },
-        None => Err(ServerError::NoContent),
+        None => {
+            println!(
+                "[MODULES] | [DELETE_USER] | [{:?}]",
+                now.elapsed().as_secs_f32()
+            );
+            Err(ServerError::NoContent)
+        }
     }
 }
 pub async fn delete_users() -> Result<i64, ServerError> {
+    let now = Instant::now();
     match users_db::delete_all().await {
-        Ok(deleted) => Ok(deleted),
-        Err(_) => Err(ServerError::InternalServerError),
+        Ok(deleted) => {
+            println!(
+                "[MODULES] | [DELETE_USERS] | [{:?}]",
+                now.elapsed().as_secs_f32()
+            );
+            Ok(deleted)
+        }
+        Err(_) => {
+            println!(
+                "[MODULES] | [DELETE_USERS] | [{:?}]",
+                now.elapsed().as_secs_f32()
+            );
+            Err(ServerError::InternalServerError)
+        }
     }
 }
 

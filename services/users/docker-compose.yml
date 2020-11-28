@@ -50,42 +50,35 @@ services:
 
   nats:
     image: nats:latest
-    ports: 
+    ports:
       - "4222:4222"
       - "6222:6222"
       - "8222:8222"
     hostname: nats-server
+    # networks: ["nats"]
+  # nats-1:
+  #   image: nats:latest
+  #   command: "--cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+  #   # networks: ["nats"]
+  #   depends_on: ["nats"]
+  # nats-2:
+  #   image: nats:latest
+  #   command: "--cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+  #   # networks: ["nats"]
+  #   depends_on: ["nats"]
 
-  nats:
-    image: nats:latest
-    ports:
-      - "4222:4222"
-      - "6222:6222"
-      - "8222:8222"
-    networks: ["nats"]
-  nats-1:
-    image: nats:latest
-    command: "--cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
-    networks: ["nats"]
-    depends_on: ["nats"]
-  nats-2:
-    image: nats:latest
-    command: "--cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
-    networks: ["nats"]
-    depends_on: ["nats"]
-
-  rabbitmq: 
-    image: rabbitmq:management-alpine
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    volumes:
-      # - .docker/rabbitmq/etc/:/etc/rabbitmq/
-      - .docker/rabbitmq/data/:/var/lib/rabbitmq/
-      - .docker/rabbitmq/logs/:/var/log/rabbitmq/
-    environment:
-      - RABBITMQ_DEFAULT_USER=test
-      - RABBITMQ_DEFAULT_PASS=test
+  # rabbitmq: 
+  #   image: rabbitmq:management-alpine
+  #   ports:
+  #     - "5672:5672"
+  #     - "15672:15672"
+  #   volumes:
+  #     # - .docker/rabbitmq/etc/:/etc/rabbitmq/
+  #     - .docker/rabbitmq/data/:/var/lib/rabbitmq/
+  #     - .docker/rabbitmq/logs/:/var/log/rabbitmq/
+  #   environment:
+  #     - RABBITMQ_DEFAULT_USER=test
+  #     - RABBITMQ_DEFAULT_PASS=test
 # configs:
 #   my_config:
 #     file: ./my_config.txt
@@ -94,7 +87,7 @@ services:
 
 networks:
   nats:
-    name: nats
+
 #   default:
 #     driver: bridge
 
