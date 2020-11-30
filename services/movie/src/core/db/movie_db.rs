@@ -15,3 +15,16 @@ pub async fn insert(movie: Movie) -> Result<String, Error> {
         Err(error) => Err(Error::from(error)),
     }
 }
+
+impl From<Document> for Movie {
+    fn from(doc: Document) -> Self {
+        let movie: Movie = bson::from_document(doc).unwrap();
+        movie
+    }
+}
+
+impl From<Movie> for Document {
+    fn from(mut movie: Movie) -> Self {
+        bson::to_document(&movie).unwrap()
+    }
+}

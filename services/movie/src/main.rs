@@ -15,8 +15,7 @@ mod app;
 mod config;
 #[allow(dead_code)]
 mod core;
-#[allow(dead_code)]
-mod middleware;
+
 #[allow(dead_code)]
 mod utils;
 
@@ -69,4 +68,6 @@ async fn main() -> std::io::Result<()> {
         server.bind(&config::CONFIG.server)?
     };
     server.run();
+
+    Ok(())
 }

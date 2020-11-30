@@ -1,5 +1,4 @@
 pub use crate::config::CONFIG;
-pub use crate::core::db::rabbit_queue::*;
 pub use crate::core::db::*;
 pub use crate::core::errors::ServerError;
 pub use crate::core::models::movies::{AddMovie, Movie};

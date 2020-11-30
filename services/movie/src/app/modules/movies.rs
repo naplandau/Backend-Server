@@ -11,3 +11,13 @@ pub async fn create_movies(req: web::Json<Movie>) -> HttpResponse {
         Err(e) => ServerError::from(e).error_response(),
     }
 }
+
+impl From<Movie> for Response {
+    fn from(movie: Movie) -> Self {
+        Response {
+            data: get_sub_field(&bson::to_document(&movie).unwrap()),
+            message: "success".to_string(),
+            status: true,
+        }
+    }
+}
