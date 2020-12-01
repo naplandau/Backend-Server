@@ -1,6 +1,5 @@
 use crate::utils::hasher::HASHER;
 use bson::{DateTime, Document};
-use chrono::Utc;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Movie {
@@ -9,7 +8,7 @@ pub struct Movie {
     pub description: String,
     pub format: String,
     pub suitability: Vec<String>,
-    pub duration: DataTime,
+    pub duration: DateTime,
     pub directors: Vec<String>,
     pub language: String,
     pub status: i32,
@@ -19,8 +18,8 @@ pub struct Movie {
     pub keyword: Vec<String>,
     pub trailer: Vec<String>,
     pub category: Vec<String>,
-    pub IBM: u32,
-    pub ticketSold: i64,
+    pub ibm: u32,
+    pub ticket_sold: i64,
     pub studio: String,
     pub created_by: String,
     pub created_time_dt: DateTime,

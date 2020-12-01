@@ -24,7 +24,7 @@ impl From<Document> for Movie {
 }
 
 impl From<Movie> for Document {
-    fn from(mut movie: Movie) -> Self {
+    fn from(movie: Movie) -> Self {
         bson::to_document(&movie).unwrap()
     }
 }

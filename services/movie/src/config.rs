@@ -3,8 +3,8 @@ use serde::Deserialize;
 pub struct Config {
     //pub auth_salt: String,
     pub database_url: String,
-    pub redis_url: String,
-    pub rabbit_url: String,
+    //pub redis_url: String,
+    //pub rabbit_url: String,
     //pub jwt_expiration: i64,
     //pub jwt_key: String,
     //pub rust_backtrace:u8,

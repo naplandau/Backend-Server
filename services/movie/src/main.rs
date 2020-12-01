@@ -67,7 +67,5 @@ async fn main() -> std::io::Result<()> {
     } else {
         server.bind(&config::CONFIG.server)?
     };
-    server.run();
-
-    Ok(())
+    server.run().await
 }
