@@ -24,8 +24,9 @@ pub fn init_route(cfg: &mut web::ServiceConfig) {
                     // .route(web::delete().to(find_delete_user))
                     .default_service(web::route().to(|| HttpResponse::MethodNotAllowed())),
             )
-            .service(web::resource("admin").to(admin))
-            .service(web::resource("auth").to(login)),
+            .service(web::resource("nats/users").route(web::post().to(nats_client::create_users)))
+            // .service(web::resource("admin").to(admin))
+            // .service(web::resource("auth").to(login)),
     );
 }
 #[derive(Serialize)]
@@ -44,33 +45,6 @@ async fn get_health(
     _queue_pool: web::Data<RabbitPool>,
     _nats_pool: web::Data<NatsConnection>,
 ) -> HttpResponse {
-    use uuid::Uuid;
-    let random_mail = Uuid::new_v4().to_string() + "@gmail.com";
-    let req_data = NatsRequest{
-        request_type: "".to_owned(),
-        request_id: "".to_owned(),
-        from: "client".to_owned(),
-        data: doc!{
-            "email": random_mail,
-            "password": "acbasdkqndqw"
-        },
-        status: true,
-        status_code: 1,
-        status_des: "success".to_string(),
-        send_time: 1,
-    };
-    let req = serde_json::to_string(&req_data).unwrap();
-    let resp =
-        _nats_pool.request("my.subject", req.to_owned());
-    
-    let data = match resp {
-        Ok(msg) => {
-            // println!("res: {:?}", serde_json::from_slice(&msg.data));
-            msg.to_string()
-            // serde_json::from_slice(&msg.data).unwrap()
-        },
-        Err(e) => e.to_string(),
-    };
     // let conn = pool.get_connection().await.expect("");
     // let res = get_str(&pool.pool, "abc").await.unwrap();
     // let conn = _queue_pool.get().await.expect("msg");
@@ -126,7 +100,7 @@ async fn get_health(
     //     _ => "ABC",
     // };
     HttpResponse::Ok().json(HealthResponse {
-        status: data,
+        status: "".to_owned(),
         version: "Cargo Version: ".to_string() + env!("CARGO_PKG_VERSION").into(),
     })
 }

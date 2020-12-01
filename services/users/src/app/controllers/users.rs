@@ -33,7 +33,7 @@ pub async fn get_user(id: web::Path<String>) -> HttpResponse {
 pub async fn update_user(req: web::Json<UpdateUser>, id: web::Path<String>) -> HttpResponse {
     match modules::update_user(req.to_owned(), id.to_owned()).await {
         Ok(user) => HttpResponse::Ok().json(Response {
-            data: get_sub_field(&bson::to_document(&user).unwrap()),
+            data: get_sub_field(&serde_json::to_value(&user).unwrap()),
             message: "Success".to_string(),
             status: true,
         }),
@@ -61,32 +61,32 @@ pub async fn find_delete_user(id: web::Path<String>) -> HttpResponse {
         Err(_) => ServerError::InternalServerError.error_response(),
     }
 }
-pub async fn admin() -> HttpResponse {
-    let id = ADMIN_DOC.get_str("id").unwrap();
-    let _exists = users_db::find_by_id(id.to_owned()).await.unwrap();
-    match _exists {
-        Some(_) => HttpResponse::Ok().json(Response {
-            data: get_sub_field(&*ADMIN_DOC),
-            message: "Success".to_string(),
-            status: true,
-        }),
-        None => {
-            let _exec = db_utils::insert("users", &ADMIN_DOC).await;
-            match _exec {
-                Ok(_) => HttpResponse::Ok().json(Response {
-                    data: get_sub_field(&*ADMIN_DOC),
-                    message: "Success".to_string(),
-                    status: true,
-                }),
-                Err(_) => ServerError::InternalServerError.error_response(),
-            }
-        }
-    }
-}
-fn vec_user_to_vec_docs(vec: Vec<User>) -> Vec<Document> {
-    let mut res: Vec<Document> = Vec::new();
+// pub async fn admin() -> HttpResponse {
+//     let id = ADMIN_DOC.get_str("id").unwrap();
+//     let _exists = users_db::find_by_id(id.to_owned()).await.unwrap();
+//     match _exists {
+//         Some(_) => HttpResponse::Ok().json(Response {
+//             data: get_sub_field(&*ADMIN_DOC),
+//             message: "Success".to_string(),
+//             status: true,
+//         }),
+//         None => {
+//             let _exec = db_utils::insert("users", &ADMIN_DOC).await;
+//             match _exec {
+//                 Ok(_) => HttpResponse::Ok().json(Response {
+//                     data: get_sub_field(&*ADMIN_DOC),
+//                     message: "Success".to_string(),
+//                     status: true,
+//                 }),
+//                 Err(_) => ServerError::InternalServerError.error_response(),
+//             }
+//         }
+//     }
+// }
+fn vec_user_to_vec_docs(vec: Vec<User>) -> Vec<serde_json::Value> {
+    let mut res: Vec<serde_json::Value> = Vec::new();
     for user in vec.iter() {
-        res.push(get_sub_field(&bson::to_document(&user).unwrap()));
+        res.push(get_sub_field(&serde_json::to_value(&user).unwrap()));
     }
     res
 }
@@ -94,7 +94,7 @@ fn vec_user_to_vec_docs(vec: Vec<User>) -> Vec<Document> {
 impl From<User> for Response {
     fn from(user: User) -> Self {
         Response {
-            data: get_sub_field(&bson::to_document(&user).unwrap()),
+            data: get_sub_field(&serde_json::to_value(&user).unwrap()),
             message: "success".to_string(),
             status: true,
         }

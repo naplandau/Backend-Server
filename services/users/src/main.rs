@@ -44,9 +44,9 @@ async fn main() -> std::io::Result<()> {
     let redis_fac = RedisFactory::connect(config::CONFIG.redis_url.to_owned())
         .await
         .expect("Connect Redis Fail");
-    let rabbit_fac = RabbitFactory::get_pool(config::CONFIG.rabbit_url.to_owned())
-        .await
-        .expect("Connect Rabbit Fail");
+    // let rabbit_fac = RabbitFactory::get_pool(config::CONFIG.rabbit_url.to_owned())
+    //     .await
+    //     .expect("Connect Rabbit Fail");
     let nats_fac = NatsFactory::get_pool(config::CONFIG.nats_url.to_owned())
         .await
         .expect("Connect Nats Fail");
@@ -56,7 +56,7 @@ async fn main() -> std::io::Result<()> {
     let mut server = actix_web::HttpServer::new(move || {
         actix_web::App::new()
             .data(redis_fac.clone()) //Use Redis
-            .data(rabbit_fac.clone()) //Use Rabbit
+            // .data(rabbit_fac.clone()) //Use Rabbit
             .data(nats_fac.clone()) //Use Nats
             .wrap(actix_web::middleware::Logger::default())
             .data(
