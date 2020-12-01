@@ -19,7 +19,7 @@ async fn create_users_topic(topic: String, nats_conn: NatsConnection) {
                     Ok(user) => {
                         resp_nats(
                         nats_req,
-                        "create_user".to_owned(),
+                        "resp_create_user".to_owned(),
                         serde_json::to_value(&user).unwrap(),
                         true,
                         0,
@@ -101,8 +101,8 @@ fn resp_nats(
     let now = Utc::now().timestamp();
     NatsResponse {
         nats_request: nats_req,
-        response_type: "resp_create_user".to_owned(),
-        response_id: "resp_create_user".to_owned() + &now.to_string(),
+        response_type: resp_type.to_owned(),
+        response_id: resp_type.to_owned() + &now.to_string(),
         from: "User Service".to_owned(),
         data: data,
         status: status,

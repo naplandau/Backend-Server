@@ -1,5 +1,5 @@
 use actix_web::{error, error::ResponseError, HttpRequest, HttpResponse};
-
+use actix_web::http::StatusCode;
 use mongodb::error::Error as MongoError;
 use serde_json::{Map as JsonMap, Value as JsonValue};
 use validator::ValidationErrors;
@@ -70,19 +70,19 @@ impl ResponseError for ServerError {
             _ => HttpResponse::InternalServerError().finish(),
         }
     }
-    // fn status_code(&self) -> StatusCode {
-    //     match *self {
-    //         Error::BadRequest(_) => StatusCode::BAD_REQUEST,
-    //         Error::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
-    //         Error::DBError(_) => StatusCode::INTERNAL_SERVER_ERROR,
-    //         Error::BadGateway => StatusCode::BAD_GATEWAY,
-    //         Error::NotFound(_) => StatusCode::NOT_FOUND,
-    //         Error::RequestTimeOut => StatusCode::REQUEST_TIMEOUT,
-    //         Error::Unauthorized(_) => StatusCode::UNAUTHORIZED,
-    //         Error::Conflict => StatusCode::CONFLICT,
-    //         _ => StatusCode::OK,
-    //     }
-    // }
+    fn status_code(&self) -> StatusCode {
+        match *self {
+            ServerError::BadRequest(_) => StatusCode::BAD_REQUEST,
+            ServerError::InternalServerError => StatusCode::INTERNAL_SERVER_ERROR,
+            ServerError::DBError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            ServerError::BadGateway => StatusCode::BAD_GATEWAY,
+            ServerError::NotFound(_) => StatusCode::NOT_FOUND,
+            ServerError::RequestTimeOut => StatusCode::REQUEST_TIMEOUT,
+            ServerError::Unauthorized(_) => StatusCode::UNAUTHORIZED,
+            ServerError::Conflict => StatusCode::CONFLICT,
+            _ => StatusCode::OK,
+        }
+    }
 }
 
 impl From<ValidationErrors> for ServerError {

@@ -1,5 +1,5 @@
-use bson::{DateTime, Document};
-use chrono::Utc;
+use bson::{Document};
+use chrono::{Utc, DateTime};
 use crate::utils::hasher::HASHER;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -12,9 +12,9 @@ pub struct User {
     pub phone_number: Option<String>,
     pub role: String,
     pub created_by: String,
-    pub created_time_dt: DateTime,
+    pub created_time_dt: i64,
     pub updated_by: String,
-    pub updated_time_dt: DateTime,
+    pub updated_time_dt: i64,
     pub status: i32,
 }
 
@@ -44,13 +44,13 @@ pub struct Register {
     )]
     pub password: Option<String>,
 }
-#[derive(Serialize, Deserialize, Debug, Validate, Clone)]
-pub struct Confirmation {
-    pub id: String,
-    pub email: String,
-    pub password: String,
-    pub expires_time_dt: DateTime,
-}
+// #[derive(Serialize, Deserialize, Debug, Validate, Clone)]
+// pub struct Confirmation {
+//     pub id: String,
+//     pub email: String,
+//     pub password: String,
+//     pub expires_time_dt: DateTime,
+// }
 #[derive(Debug, Serialize, Deserialize, Clone, Validate)]
 pub struct UpdateUser {
     // #[serde(rename = "firstName")]
@@ -73,9 +73,9 @@ lazy_static! {
         "phone_number": "+84767336687".to_string(),
         "role": "ADMIN".to_string(),
         "created_by": "admin".to_string(),
-        "created_time_dt": Utc::now(),
+        "created_time_dt": Utc::now().timestamp(),
         "updated_by": "admin".to_string(),
-        "updated_time_dt": Utc::now(),
+        "updated_time_dt": Utc::now().timestamp(),
         "status": 1
     };
 }

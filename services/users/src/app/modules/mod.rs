@@ -206,9 +206,9 @@ impl From<Register> for User {
             phone_number: None,
             role: "USER".to_owned(),
             created_by: "".to_owned(),
-            created_time_dt: bson::DateTime(current_time),
+            created_time_dt: current_time.timestamp(),
             updated_by: "".to_owned(),
-            updated_time_dt: bson::DateTime(current_time),
+            updated_time_dt: current_time.timestamp(),
             status: 1,
         }
     }

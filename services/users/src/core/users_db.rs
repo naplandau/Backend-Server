@@ -1,5 +1,5 @@
 use super::db_utils;
-use crate::models::{Confirmation, User};
+use crate::models::{User};
 use crate::utils::hasher::HASHER;
 use bson::{doc, Document};
 use chrono::Utc;
@@ -100,22 +100,22 @@ pub async fn find_by_email(email: String) -> Result<Option<User>, Error> {
     }
 }
 /// this function is maintaining
-pub async fn find_pending(id: String) -> Result<Option<Confirmation>, Error> {
-    let filter = Some(doc! {
-        "id": id
-    });
+// pub async fn find_pending(id: String) -> Result<Option<Confirmation>, Error> {
+//     let filter = Some(doc! {
+//         "id": id
+//     });
 
-    let doc = db_utils::find_one_by(PENDING_COLLECTION, filter, None)
-        .await
-        .unwrap();
-    match doc {
-        Some(doc) => match bson::from_bson(bson::Bson::Document(doc)) {
-            Ok(model) => Ok(model),
-            Err(e) => Err(Error::from(e)),
-        },
-        None => Ok(None),
-    }
-}
+//     let doc = db_utils::find_one_by(PENDING_COLLECTION, filter, None)
+//         .await
+//         .unwrap();
+//     match doc {
+//         Some(doc) => match bson::from_bson(bson::Bson::Document(doc)) {
+//             Ok(model) => Ok(model),
+//             Err(e) => Err(Error::from(e)),
+//         },
+//         None => Ok(None),
+//     }
+// }
 pub async fn find_all(
     filter: Option<Document>,
     option: Option<FindOptions>,

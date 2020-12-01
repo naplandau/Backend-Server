@@ -21,7 +21,6 @@ pub async fn create_users(
     match resp {
         Ok(msg) => {    
             let nats_res = NatsResponse::from(msg.clone());
-            println!("{:#?}", nats_res);
             match nats_res.status_code {
                 0 => HttpResponse::Created().json(Response::from(nats_res)),
                 _ => ServerError::InternalServerError.error_response(),
