@@ -1,4 +1,4 @@
-use actix_web::{guard, web, HttpResponse};
+use actix_web::{web, HttpResponse};
 use bson::doc;
 pub fn init_route(cfg: &mut web::ServiceConfig) {
     use super::lib::*;
@@ -34,7 +34,7 @@ struct HealthResponse {
     pub status: String,
     pub version: String,
 }
-use crate::{models::nats_message::NatsRequest, core::redis_db::*};
+use crate::{core::redis_db::*};
 use crate::nats_broker::*;
 use crate::rabbit_queue::*;
 // use lapin::{

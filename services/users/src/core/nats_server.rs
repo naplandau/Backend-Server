@@ -2,7 +2,7 @@ use crate::app::modules::*;
 use crate::models::nats_message::*;
 use crate::models::*;
 use crate::nats_broker::*;
-use bson::doc;
+
 use chrono::Utc;
 use std::collections::HashMap;
 pub async fn nats_server(nats_conn: NatsConnection) {
@@ -85,7 +85,7 @@ impl From<NatsRequest> for Register {
     }
 }
 impl From<NatsRequest> for HashMap<String, String> {
-    fn from(nats_req: NatsRequest) -> Self {
+    fn from(_nats_req: NatsRequest) -> Self {
         HashMap::new()
     }
 }

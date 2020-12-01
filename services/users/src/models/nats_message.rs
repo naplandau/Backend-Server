@@ -1,10 +1,10 @@
-use bson::{Document, doc};
+use bson::{doc};
 use nats::Message;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value as Json};
-use crate::errors::ServerError;
 
-use super::Response;
+
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct NatsRequest {
     pub request_type: String, /// Type of request to topic
@@ -17,7 +17,7 @@ pub struct NatsRequest {
     pub send_time: i64
 }
 impl NatsRequest{
-    pub fn errorParse()-> Self{
+    pub fn error_parse()-> Self{
         Self{
             request_type: "".to_string(),
             request_id: "".to_string(),
@@ -49,9 +49,9 @@ pub struct NatsResponse {
     pub status_des: String // Response result Describle
 }
 impl NatsResponse{
-    pub fn errorParse()-> Self{
+    pub fn error_parse()-> Self{
         Self{
-            nats_request: NatsRequest::errorParse(),
+            nats_request: NatsRequest::error_parse(),
             response_type: "".to_string(),
             response_id: "".to_string(),
             from: "".to_string(),

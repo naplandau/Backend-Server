@@ -1,5 +1,5 @@
 use bson::{Document};
-use chrono::{Utc, DateTime};
+use chrono::{Utc};
 use crate::utils::hasher::HASHER;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

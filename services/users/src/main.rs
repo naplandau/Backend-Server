@@ -6,8 +6,8 @@ extern crate serde_derive;
 extern crate serde_json;
 #[macro_use]
 extern crate validator_derive;
-#[macro_use]
-extern crate log;
+// #[macro_use]
+// extern crate log;
 
 #[allow(dead_code)]
 mod app;
@@ -27,14 +27,14 @@ mod nats_broker;
 mod rabbit_queue;
 #[allow(dead_code)]
 mod utils;
-use log::Level;
+
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
     use crate::nats_broker::*;
-    use crate::rabbit_queue::*;
+    
     use crate::core::redis_db::*;
     use crate::core::nats_server;
-    use crate::core::rabbit_server;
+    
     use actix_web::middleware::errhandlers::{ErrorHandlerResponse, ErrorHandlers};
 
     dotenv::dotenv().ok();

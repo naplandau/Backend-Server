@@ -26,7 +26,7 @@ pub async fn create_users(
                 _ => ServerError::InternalServerError.error_response(),
             }
         }
-        Err(e) => ServerError::InternalServerError.error_response(),
+        Err(_e) => ServerError::InternalServerError.error_response(),
     }
 }
 // pub async fn get_users(query: web::Query<HashMap<String, String>>) -> HttpResponse {
