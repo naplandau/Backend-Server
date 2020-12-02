@@ -1,5 +1,5 @@
-pub mod response;
-pub mod users;
-pub mod nats_message;
-pub mod token;
-pub use self::{users::*,nats_message::*, response::*};
+mod response;
+mod users;
+mod nats_message;
+mod token;
+pub use self::{users::*,nats_message::*, response::*, token::*};

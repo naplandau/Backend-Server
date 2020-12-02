@@ -1,5 +1,4 @@
 use crate::app::modules::*;
-use crate::models::nats_message::*;
 use crate::models::*;
 use crate::nats_broker::*;
 

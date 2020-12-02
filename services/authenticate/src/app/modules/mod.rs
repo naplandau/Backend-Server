@@ -1,4 +1,6 @@
 use super::lib::*;
+mod token;
+mod authenticate;
 
 pub async fn create_users(req: Register) -> Result<User, ServerError> {
     let now = Instant::now();
