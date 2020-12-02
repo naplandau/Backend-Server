@@ -16,10 +16,39 @@ pub async fn insert(movie: Movie) -> Result<String, Error> {
     }
 }
 
+pub async fn find_all() -> Result<Vec<Movie>, Error> {
+    let res = db_utils::find_many(COLLECTION_NAME, None, None).await;
+    match res {
+        Ok(docs) => Ok(docs.into_iter().map(|doc| doc.into()).collect()),
+        Err(error) => Err(Error::from(error)),
+    }
+}
+
+pub async fn find_by_id(id: String) -> Result<Option<Movie>, Error> {
+    let res = db_utils::find_one(COLLECTION_NAME, id).await;
+    match res {
+        Ok(op) => match op {
+            Some(doc) => Ok(Some(doc.into())),
+            None => Ok(None),
+        },
+        Err(e) => Err(Error::from(e)),
+    }
+}
+
+pub async fn delete_by_id(id: String) -> Result<Option<Movie>, Error> {
+    let res = db_utils::find_one_and_delete(COLLECTION_NAME, id, None).await;
+    match res {
+        Ok(op) => match op {
+            Some(doc) => Ok(Some(doc.into())),
+            None => Ok(None)
+        }
+        Err(e) => Err(Error::from(e))
+    }
+}
+
 impl From<Document> for Movie {
     fn from(doc: Document) -> Self {
-        let movie: Movie = bson::from_document(doc).unwrap();
-        movie
+        bson::from_document(doc).unwrap()
     }
 }
 
