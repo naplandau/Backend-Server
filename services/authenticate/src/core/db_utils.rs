@@ -3,7 +3,7 @@ use bson::{doc, document::Document, Bson};
 use futures::StreamExt;
 use mongodb::{error::Error, options::*, results::*, Client, Collection};
 // use crate::config::config::CONFIG;
-const MONGO_DB: &'static str = "stated-rust";
+const MONGO_DB: &'static str = "token";
 
 fn get_collection(client: &Client, collection: &str) -> Collection {
     client.database(MONGO_DB).collection(collection)
