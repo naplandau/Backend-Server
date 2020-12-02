@@ -34,6 +34,25 @@ pub async fn get_movie(id: web::Path<String>) -> HttpResponse {
     }
 }
 
+pub async fn update_movie(id: web::Path<String>, req: web::Json<UpdateMovie>) -> HttpResponse {
+    let find_movie = movie_db::find_by_id(id.to_string()).await.unwrap();
+    match find_movie {
+        Some(movie) => {
+            let doc = bson::to_document(&req.to_owned()).unwrap();
+            let update = movie_db::update(movie.to_owned(), doc.to_owned()).await;
+            match update {
+                Ok(movie) => HttpResponse::Ok().json(Response {
+                    data: get_sub_field(&bson::to_document(&movie).unwrap()),
+                    status: true,
+                    message: "Update success.".to_string(),
+                }),
+                Err(e) => ServerError::InternalServerError.error_response()
+            }
+        },
+        None => ServerError::NoContent.error_response()
+    }
+}
+
 pub async fn delete_movie(id: web::Path<String>) -> HttpResponse {
     let data = movie_db::find_by_id(id.to_owned()).await.unwrap();
     match data {
@@ -66,7 +85,7 @@ impl From<AddMovie> for Movie {
         let current_time = Utc::now();
         Movie {
             id: String::from("movie_") + &Uuid::new_v4().to_simple().to_string(),
-            tittle: movie.tittle.to_owned(),
+            title: movie.title.to_owned(),
             description: movie.description.to_owned(),
             format: movie.format.to_owned(),
             suitability: movie.suitability.to_owned(),

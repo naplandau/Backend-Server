@@ -1,7 +1,7 @@
 use super::db_utils;
 use crate::core::models::Movie;
 use crate::utils::hasher::HASHER;
-use bson::{doc, Document};
+use bson::{Document, document::DocumentIntoIterator, doc};
 use chrono::Utc;
 use mongodb::{error::Error, options::*};
 use std::iter::Iterator;
@@ -35,6 +35,17 @@ pub async fn find_by_id(id: String) -> Result<Option<Movie>, Error> {
     }
 }
 
+pub async fn update(movie: Movie, doc: Document) -> Result<Movie, Error> {
+    let query = doc! {
+        "id": movie.to_owned().id
+    };
+    let res = db_utils::update_one(COLLECTION_NAME, query, update_time(doc.to_owned()), None).await;
+    match res {
+        Ok(_) => Ok(handle_update(movie.to_owned(), doc.to_owned())),
+        Err(e) => Err(Error::from(e))
+    }
+}
+
 pub async fn delete_by_id(id: String) -> Result<Option<Movie>, Error> {
     let res = db_utils::find_one_and_delete(COLLECTION_NAME, id, None).await;
     match res {
@@ -56,4 +67,15 @@ impl From<Movie> for Document {
     fn from(movie: Movie) -> Self {
         bson::to_document(&movie).unwrap()
     }
+}
+
+fn update_time(mut update: Document) -> Document {
+    update.insert("updated_time_dt", bson::Bson::DateTime(Utc::now()));
+    update
+}
+
+fn handle_update(movie: Movie, doc: Document) -> Movie {
+    let mut movie_doc = bson::to_document(&movie).unwrap();
+    movie_doc.extend(doc);
+    bson::from_document(movie_doc).unwrap()
 }

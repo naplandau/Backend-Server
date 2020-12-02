@@ -19,6 +19,7 @@ pub fn init_route(cfg: &mut web::ServiceConfig) {
                 web::resource("movies/{id}")
                     .route(web::delete().to(delete_movie))
                     .route(web::get().to(get_movie))
+                    .route(web::put().to(update_movie))
                     .default_service(web::route().to(|| HttpResponse::MethodNotAllowed())), // .route(web::put().to(|| )))
             ),
     );

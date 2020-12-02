@@ -1,7 +1,7 @@
 pub use crate::config::CONFIG;
 pub use crate::core::db::*;
 pub use crate::core::errors::ServerError;
-pub use crate::core::models::movies::{Movie, AddMovie};
+pub use crate::core::models::movies::{Movie, AddMovie, UpdateMovie};
 pub use crate::core::models::response::*;
 pub use crate::utils::hasher::*;
 pub use actix_web::{
