@@ -49,8 +49,6 @@ use mobc_redis::redis::{AsyncCommands, FromRedisValue};
 pub async fn get_str(pool: &RedisPool, key: &str) -> Result<Option<String>, RedisError> {
     let mut con = pool.get().await.expect("msg");
     let value = con.get(key).await.expect("");
-    // dbg!(value.to_owned());
-    // Ok(value)
     FromRedisValue::from_redis_value(&value).map_err(|e| RedisError::RedisTypeError(e))
 }
 pub async fn set_str(pool: &RedisPool, key: &str, value: &str, ttl_seconds: usize) -> Result<(),RedisError> {

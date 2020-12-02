@@ -25,7 +25,7 @@ mobc = "0.5"
 mobc-redis = "0.5"
 thiserror = "1.0"
 #elasticsearch = "7.9.0-alpha.1"
-
+meilisearch-sdk = "0.4"
 
 envy = "0.4"
 log = "0.4"

@@ -9,59 +9,59 @@ pub async fn nats_server(nats_conn: NatsConnection) {
 }
 
 async fn create_users_topic(topic: String, nats_conn: NatsConnection) {
-    match NatsServer::create_response_subcriber(nats_conn, topic.to_owned(), "".to_string()).await {
-        Ok(sub) => {
-            sub.with_handler(move |msg| {
-                let nats_req = NatsRequest::from(msg.clone());
-                let res = futures::executor::block_on(create_users(nats_req.to_owned().into()));
-                let nats_res = match res {
-                    Ok(user) => {
-                        resp_nats(
-                        nats_req,
-                        "resp_create_user".to_owned(),
-                        serde_json::to_value(&user).unwrap(),
-                        true,
-                        0,
-                        "Ok".to_owned(),
-                    )
-                },
-                    Err(e) => resp_nats(
-                        nats_req,
-                        "create_user".to_owned(),
-                        json!({}),
-                        false,
-                        -1,
-                        e.to_string(),
-                    ),
-                };
-                msg.respond(serde_json::to_string(&nats_res).unwrap())
-            });
-        }
-        Err(e) => {
-            println!(
-                "[NATS][FAIL] Create subcriber for topic:`{}` fail | {}",
-                topic, e
-            );
-        }
-    }
+    // match NatsServer::create_response_subcriber(nats_conn, topic.to_owned(), "".to_string()).await {
+    //     Ok(sub) => {
+    //         sub.with_handler(move |msg| {
+    //             let nats_req = NatsRequest::from(msg.clone());
+    //             let res = futures::executor::block_on(create_users(nats_req.to_owned().into()));
+    //             let nats_res = match res {
+    //                 Ok(user) => {
+    //                     resp_nats(
+    //                     nats_req,
+    //                     "resp_create_user".to_owned(),
+    //                     serde_json::to_value(&user).unwrap(),
+    //                     true,
+    //                     0,
+    //                     "Ok".to_owned(),
+    //                 )
+    //             },
+    //                 Err(e) => resp_nats(
+    //                     nats_req,
+    //                     "create_user".to_owned(),
+    //                     json!({}),
+    //                     false,
+    //                     -1,
+    //                     e.to_string(),
+    //                 ),
+    //             };
+    //             msg.respond(serde_json::to_string(&nats_res).unwrap())
+    //         });
+    //     }
+    //     Err(e) => {
+    //         println!(
+    //             "[NATS][FAIL] Create subcriber for topic:`{}` fail | {}",
+    //             topic, e
+    //         );
+    //     }
+    // }
 }
 async fn get_users_topic(topic: String, nats_conn: NatsConnection) {
-    match NatsServer::create_response_subcriber(nats_conn, topic.to_owned(), "".to_string()).await {
-        Ok(sub) => {
-            sub.with_handler(move |msg| {
-                let nats_res = NatsRequest::from(msg.clone());
-                let res = futures::executor::block_on(get_users(nats_res.into()));
-                // let res_data = serde_json::to_string(&res.unwrap()).unwrap();
-                msg.respond(serde_json::to_string(&res.unwrap()).unwrap())
-            });
-        }
-        Err(e) => {
-            println!(
-                "[NATS][FAIL] Create subcriber for topic:`{}` fail | {}",
-                topic, e
-            );
-        }
-    }
+    // match NatsServer::create_response_subcriber(nats_conn, topic.to_owned(), "".to_string()).await {
+    //     Ok(sub) => {
+    //         sub.with_handler(move |msg| {
+    //             let nats_res = NatsRequest::from(msg.clone());
+    //             let res = futures::executor::block_on(get_users(nats_res.into()));
+    //             // let res_data = serde_json::to_string(&res.unwrap()).unwrap();
+    //             msg.respond(serde_json::to_string(&res.unwrap()).unwrap())
+    //         });
+    //     }
+    //     Err(e) => {
+    //         println!(
+    //             "[NATS][FAIL] Create subcriber for topic:`{}` fail | {}",
+    //             topic, e
+    //         );
+    //     }
+    // }
 }
 
 impl From<NatsRequest> for Register {

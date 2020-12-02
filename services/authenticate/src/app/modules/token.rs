@@ -1,13 +1,13 @@
 use crate::app::lib::*;
 
-pub async fn gen_token()-> String{
+pub async fn gen_token() -> String {
     String::from("")
 }
-pub async fn gen_ref_token() -> String{
+pub async fn gen_ref_token() -> String {
     String::from("")
 }
-pub async fn check_token() -> TokenResult{
-    TokenResult{
+pub async fn check_token() -> TokenResult {
+    TokenResult {
         user: "".to_owned(),
         access_token: "".to_owned(),
         refresh_token: "".to_owned(),
@@ -22,8 +22,8 @@ pub async fn check_token() -> TokenResult{
         created_time: 0,
     }
 }
-pub async fn check_ref_token() -> TokenResult{
-    TokenResult{
+pub async fn check_ref_token() -> TokenResult {
+    TokenResult {
         user: "".to_owned(),
         access_token: "".to_owned(),
         refresh_token: "".to_owned(),
@@ -38,9 +38,18 @@ pub async fn check_ref_token() -> TokenResult{
         created_time: 0,
     }
 }
-pub async fn get_permission() -> Vec<String>{
+pub async fn get_permission() -> Vec<String> {
     vec![]
 }
-pub async fn check_blacklist() -> AuthResult{
-    AuthResult{}
+pub async fn check_blacklist() -> AuthResult {
+    AuthResult {
+        user: "".to_owned(),
+        access_token: "".to_owned(),
+        refresh_token: "".to_owned(),
+        scope: "".to_owned(),
+        status: true,
+        result_code: 1,
+        result_description: "".to_owned(),
+        created_time: 0,
+    }
 }

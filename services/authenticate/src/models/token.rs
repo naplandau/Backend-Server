@@ -1,4 +1,4 @@
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, Validate)]
 pub struct Token{
     pub access_token: String,
     pub refresh_token: String
@@ -18,7 +18,14 @@ pub struct TokenResult{
     pub result_description: String,
     pub created_time: i64,
 }
-
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct AuthResult{
-    
+    pub user: String,
+    pub access_token: String,
+    pub refresh_token: String,
+    pub scope: String,
+    pub status: bool,
+    pub result_code: i64,
+    pub result_description: String,
+    pub created_time: i64
 }
