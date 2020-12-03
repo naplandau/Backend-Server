@@ -1,6 +1,16 @@
-- name: Notify
-  uses: athul/telewire@v1.1.0
-  with:
-    chat: ${{ secrets.chat }}
-    token: ${{ secrets.token }}
-    status: ${{ job.status }}
+name: Notify
+uses: athul/telewire@v1.1.0
+with:
+  chat: ${{ secrets.chat }}
+  token: ${{ secrets.token }}
+  status: ${{ job.status }}
+on:
+  push:
+  pull_request:
+    types: [opened,closed]
+  issues:
+    types: [opened, closed, reopened]
+  issue_comment:
+    types: [created]
+  watch:
+    types: [started]
