@@ -4,60 +4,119 @@ use crate::nats_broker::*;
 use chrono::Utc;
 
 pub async fn nats_server(nats_conn: NatsConnection) {
-    create_users_topic("user.create".to_owned(), nats_conn.to_owned()).await;
     check_token_topic(
         "auth.token.check".to_owned(),
         "".to_owned(),
-        nats_conn.to_owned(),
+        nats_conn.clone(),
     )
     .await;
     check_and_gen_token(
         "auth.token.check_gen".to_owned(),
         "".to_owned(),
-        nats_conn.to_owned(),
+        nats_conn.clone(),
     )
     .await;
-    login("auth.login".to_owned(), "".to_owned(), nats_conn.to_owned()).await;
+    login("auth.login".to_owned(), "".to_owned(), nats_conn.clone()).await;
     register(
         "auth.register".to_owned(),
         "".to_owned(),
-        nats_conn.to_owned(),
+        nats_conn.clone(),
     )
     .await;
     forgot(
         "auth.forgot.*".to_owned(),
         "".to_owned(),
-        nats_conn.to_owned(),
+        nats_conn.clone(),
+    )
+    .await;
+    modify_permission(
+        "auth.permission.modify".to_owned(),
+        "".to_owned(),
+        nats_conn.clone(),
+    )
+    .await;
+    check_permission(
+        "auth.permission.check".to_owned(),
+        "".to_owned(),
+        nats_conn.clone(),
     )
     .await;
 }
+
 async fn login(topic: String, queue: String, conn: NatsConnection) {
     match NatsServer::create_response_subcriber(conn, topic, queue).await {
-        Ok(sub) => {}
+        Ok(sub) => {
+            sub.with_handler(move |msg| {
+                println!("Login");
+                msg.respond("")
+            });
+        }
         Err(e) => {}
     }
 }
 async fn register(topic: String, queue: String, conn: NatsConnection) {
     match NatsServer::create_response_subcriber(conn, topic, queue).await {
-        Ok(sub) => {}
+        Ok(sub) => {
+            sub.with_handler(move |msg| {
+                println!("Register");
+                msg.respond("")
+            });
+        }
         Err(e) => {}
     }
 }
 async fn forgot(topic: String, queue: String, conn: NatsConnection) {
     match NatsServer::create_response_subcriber(conn, topic, queue).await {
-        Ok(sub) => {}
+        Ok(sub) => {
+            sub.with_handler(move |msg| {
+                println!("Forgot");
+                msg.respond("")
+            });
+        }
         Err(e) => {}
     }
 }
 async fn check_token_topic(topic: String, queue: String, conn: NatsConnection) {
     match NatsServer::create_response_subcriber(conn, topic, queue).await {
-        Ok(sub) => {}
+        Ok(sub) => {
+            sub.with_handler(move |msg| {
+                println!("Check Token");
+                msg.respond("")
+            });
+        }
         Err(e) => {}
     }
 }
 async fn check_and_gen_token(topic: String, queue: String, conn: NatsConnection) {
     match NatsServer::create_response_subcriber(conn, topic, queue).await {
-        Ok(sub) => {}
+        Ok(sub) => {
+            sub.with_handler(move |msg| {
+                println!("Check And Gen");
+                msg.respond("")
+            });
+        }
+        Err(e) => {}
+    }
+}
+async fn check_permission(topic: String, queue: String, conn: NatsConnection) {
+    match NatsServer::create_response_subcriber(conn, topic, queue).await {
+        Ok(sub) => {
+            sub.with_handler(move |msg| {
+                println!("Check Permission");
+                msg.respond("")
+            });
+        }
+        Err(e) => {}
+    }
+}
+async fn modify_permission(topic: String, queue: String, conn: NatsConnection) {
+    match NatsServer::create_response_subcriber(conn, topic, queue).await {
+        Ok(sub) => {
+            sub.with_handler(move |msg| {
+                println!("Modify");
+                msg.respond("")
+            });
+        },
         Err(e) => {}
     }
 }
