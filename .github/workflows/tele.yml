@@ -1,1 +1,6 @@
-
+- name: Notify
+  uses: athul/telewire@v1.1.0
+  with:
+    chat: ${{ secrets.chat }}
+    token: ${{ secrets.token }}
+    status: ${{ job.status }}
