@@ -44,14 +44,10 @@ async fn main() -> std::io::Result<()> {
     let redis_fac = RedisFactory::connect(config::CONFIG.redis_url.to_owned())
         .await
         .expect("Connect Redis Fail");
-    // let rabbit_fac = RabbitFactory::get_pool(config::CONFIG.rabbit_url.to_owned())
-    //     .await
-    //     .expect("Connect Rabbit Fail");
     let nats_fac = NatsFactory::get_pool(config::CONFIG.nats_url.to_owned())
         .await
         .expect("Connect Nats Fail");
 
-    // rabbit_server::rabbit_server(rabbit_fac.clone()).await;
     nats_server::nats_server(nats_fac.clone()).await; //Start Nats server
     let mut server = actix_web::HttpServer::new(move || {
         actix_web::App::new()
