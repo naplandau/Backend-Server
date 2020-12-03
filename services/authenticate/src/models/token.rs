@@ -6,8 +6,7 @@ pub struct Token{
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct TokenResult{
     pub user: String,
-    pub access_token: String,
-    pub refresh_token: String,
+    pub token: String,
     pub signature: String,
     pub roles: Vec<String>,
     pub permissions: Vec<String>,

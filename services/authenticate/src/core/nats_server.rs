@@ -5,9 +5,20 @@ use crate::nats_broker::*;
 use chrono::Utc;
 use std::collections::HashMap;
 pub async fn nats_server(nats_conn: NatsConnection) {
-    create_users_topic("user.create".to_owned(), nats_conn).await;
+    create_users_topic("user.create".to_owned(), nats_conn.to_owned()).await;
+    check_token_topic("auth.token.check".to_owned(), "".to_owned(), nats_conn.to_owned()).await;
 }
 
+async fn check_token_topic(topic: String, queue: String, conn: NatsConnection){
+    match NatsServer::create_response_subcriber(conn, topic, queue).await{
+        Ok(sub) => {
+
+        },
+        Err(e) => {
+
+        }
+    }
+}
 async fn create_users_topic(topic: String, nats_conn: NatsConnection) {
     // match NatsServer::create_response_subcriber(nats_conn, topic.to_owned(), "".to_string()).await {
     //     Ok(sub) => {
@@ -45,24 +56,7 @@ async fn create_users_topic(topic: String, nats_conn: NatsConnection) {
     //     }
     // }
 }
-async fn get_users_topic(topic: String, nats_conn: NatsConnection) {
-    // match NatsServer::create_response_subcriber(nats_conn, topic.to_owned(), "".to_string()).await {
-    //     Ok(sub) => {
-    //         sub.with_handler(move |msg| {
-    //             let nats_res = NatsRequest::from(msg.clone());
-    //             let res = futures::executor::block_on(get_users(nats_res.into()));
-    //             // let res_data = serde_json::to_string(&res.unwrap()).unwrap();
-    //             msg.respond(serde_json::to_string(&res.unwrap()).unwrap())
-    //         });
-    //     }
-    //     Err(e) => {
-    //         println!(
-    //             "[NATS][FAIL] Create subcriber for topic:`{}` fail | {}",
-    //             topic, e
-    //         );
-    //     }
-    // }
-}
+
 
 impl From<NatsRequest> for Register {
     fn from(nas_req: NatsRequest) -> Self {

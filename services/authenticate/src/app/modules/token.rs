@@ -6,11 +6,10 @@ pub async fn gen_token() -> String {
 pub async fn gen_ref_token() -> String {
     String::from("")
 }
-pub async fn check_token() -> TokenResult {
+pub async fn check_access_token(token: Token) -> TokenResult{
     TokenResult {
         user: "".to_owned(),
-        access_token: "".to_owned(),
-        refresh_token: "".to_owned(),
+        token: "".to_owned(),
         signature: "".to_owned(),
         roles: vec![],
         permissions: vec![],
@@ -22,11 +21,10 @@ pub async fn check_token() -> TokenResult {
         created_time: 0,
     }
 }
-pub async fn check_ref_token() -> TokenResult {
+pub async fn check_refresh_token(token: Token)->TokenResult{
     TokenResult {
         user: "".to_owned(),
-        access_token: "".to_owned(),
-        refresh_token: "".to_owned(),
+        token: "".to_owned(),
         signature: "".to_owned(),
         roles: vec![],
         permissions: vec![],
@@ -38,6 +36,7 @@ pub async fn check_ref_token() -> TokenResult {
         created_time: 0,
     }
 }
+
 pub async fn get_permission() -> Vec<String> {
     vec![]
 }

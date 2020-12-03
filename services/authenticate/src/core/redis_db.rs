@@ -18,31 +18,22 @@ pub enum RedisError {
 }
 
 #[derive(Clone)]
-pub struct RedisFactory {
-    pub pool: RedisPool,
-}
+pub struct RedisFactory;
 impl RedisFactory {
-    pub async fn connect(url: String) -> Result<Self, ()> {
+    pub async fn connect(url: String) -> Result<RedisPool, ()> {
         match redis::Client::open(url) {
             Ok(client) => {
                 let manager = RedisConnectionManager::new(client);
-                Ok(RedisFactory {
-                    pool: Pool::builder()
+                Ok(Pool::builder()
                         .get_timeout(Some(Duration::from_secs(CACHE_POOL_TIMEOUT_SECONDS)))
                         .max_open(CACHE_POOL_MAX_OPEN)
                         .max_idle(CACHE_POOL_MAX_IDLE)
                         .max_lifetime(Some(Duration::from_secs(CACHE_POOL_EXPIRE_SECONDS)))
                         .build(manager),
-                })
+                )
             }
             Err(_) => Err(()),
         }
-    }
-    pub async fn get_connection(&self) -> Result<RedisConnection, RedisError> {
-        self.pool.get().await.map_err(|e| {
-            println!("Error Connecting to Redis: {}", e);
-            RedisError::RedisPoolError(e).into()
-        })
     }
 }
 use mobc_redis::redis::{AsyncCommands, FromRedisValue};
