@@ -1,22 +1,64 @@
 use crate::app::modules::*;
 use crate::models::*;
 use crate::nats_broker::*;
-
 use chrono::Utc;
-use std::collections::HashMap;
+
 pub async fn nats_server(nats_conn: NatsConnection) {
     create_users_topic("user.create".to_owned(), nats_conn.to_owned()).await;
-    check_token_topic("auth.token.check".to_owned(), "".to_owned(), nats_conn.to_owned()).await;
+    check_token_topic(
+        "auth.token.check".to_owned(),
+        "".to_owned(),
+        nats_conn.to_owned(),
+    )
+    .await;
+    check_and_gen_token(
+        "auth.token.check_gen".to_owned(),
+        "".to_owned(),
+        nats_conn.to_owned(),
+    )
+    .await;
+    login("auth.login".to_owned(), "".to_owned(), nats_conn.to_owned()).await;
+    register(
+        "auth.register".to_owned(),
+        "".to_owned(),
+        nats_conn.to_owned(),
+    )
+    .await;
+    forgot(
+        "auth.forgot.*".to_owned(),
+        "".to_owned(),
+        nats_conn.to_owned(),
+    )
+    .await;
 }
-
-async fn check_token_topic(topic: String, queue: String, conn: NatsConnection){
-    match NatsServer::create_response_subcriber(conn, topic, queue).await{
-        Ok(sub) => {
-
-        },
-        Err(e) => {
-
-        }
+async fn login(topic: String, queue: String, conn: NatsConnection) {
+    match NatsServer::create_response_subcriber(conn, topic, queue).await {
+        Ok(sub) => {}
+        Err(e) => {}
+    }
+}
+async fn register(topic: String, queue: String, conn: NatsConnection) {
+    match NatsServer::create_response_subcriber(conn, topic, queue).await {
+        Ok(sub) => {}
+        Err(e) => {}
+    }
+}
+async fn forgot(topic: String, queue: String, conn: NatsConnection) {
+    match NatsServer::create_response_subcriber(conn, topic, queue).await {
+        Ok(sub) => {}
+        Err(e) => {}
+    }
+}
+async fn check_token_topic(topic: String, queue: String, conn: NatsConnection) {
+    match NatsServer::create_response_subcriber(conn, topic, queue).await {
+        Ok(sub) => {}
+        Err(e) => {}
+    }
+}
+async fn check_and_gen_token(topic: String, queue: String, conn: NatsConnection) {
+    match NatsServer::create_response_subcriber(conn, topic, queue).await {
+        Ok(sub) => {}
+        Err(e) => {}
     }
 }
 async fn create_users_topic(topic: String, nats_conn: NatsConnection) {
@@ -57,7 +99,6 @@ async fn create_users_topic(topic: String, nats_conn: NatsConnection) {
     // }
 }
 
-
 impl From<NatsRequest> for Register {
     fn from(nas_req: NatsRequest) -> Self {
         let doc = nas_req.data;
@@ -75,11 +116,6 @@ impl From<NatsRequest> for Register {
                 Some(password.to_string())
             },
         }
-    }
-}
-impl From<NatsRequest> for HashMap<String, String> {
-    fn from(_nats_req: NatsRequest) -> Self {
-        HashMap::new()
     }
 }
 
