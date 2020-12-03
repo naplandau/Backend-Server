@@ -1,4 +1,4 @@
-name: Notify
+name: Telegram Notify
 uses: athul/telewire@v1.1.0
 with:
   chat: ${{ secrets.chat }}
