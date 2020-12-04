@@ -28,26 +28,15 @@ mod utils;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-    use crate::nats_broker::*;
-    use crate::core::redis_db::*;
     use crate::core::nats_server;
 
     dotenv::dotenv().ok();
     std::env::set_var("RUST_LOG", "actix_web=info,actix_server=info");
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
 
-    let redis_fac = RedisFactory::connect(config::CONFIG.redis_url.to_owned())
-        .await
-        .expect("Connect Redis Fail");
-    let nats_fac = NatsFactory::get_pool(config::CONFIG.nats_url.to_owned())
-        .await
-        .expect("Connect Nats Fail");
-
-    nats_server::nats_server(nats_fac.clone()).await; //Start Nats server
+    nats_server::nats_server().await; //Start Nats server
     let mut server = actix_web::HttpServer::new(move || {
         actix_web::App::new()
-            .data(redis_fac.clone()) //Use Redis
-            .data(nats_fac.clone()) //Use Nats
             .wrap(actix_web::middleware::Logger::default())
             .configure(app::routes::init_route)
             .default_service(actix_web::web::route().to(|| actix_web::HttpResponse::MethodNotAllowed()))

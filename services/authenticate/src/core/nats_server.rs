@@ -1,43 +1,38 @@
 use crate::app::modules::*;
 use crate::models::*;
 use crate::nats_broker::*;
+use crate::config;
+use crate::core::db::get_nats;
 use chrono::Utc;
 
-pub async fn nats_server(nats_conn: NatsConnection) {
-    check_token_topic(
-        "auth.token.check".to_owned(),
-        "".to_owned(),
-        nats_conn.clone(),
-    )
-    .await;
-    check_and_gen_token(
-        "auth.token.check_gen".to_owned(),
-        "".to_owned(),
-        nats_conn.clone(),
-    )
-    .await;
-    login("auth.login".to_owned(), "".to_owned(), nats_conn.clone()).await;
-    register(
-        "auth.register".to_owned(),
-        "".to_owned(),
-        nats_conn.clone(),
-    )
-    .await;
-    forgot(
-        "auth.forgot.*".to_owned(),
-        "".to_owned(),
-        nats_conn.clone(),
-    )
-    .await;
+pub async fn nats_server() {
+    let nats_conn = get_nats()
+        .await
+        .expect("Connect Nats Fail");
+    // check_token_topic(
+    //     "auth.token.check".to_owned(),
+    //     "".to_owned(),
+    //     nats_conn.clone(),
+    // )
+    // .await;
+    // check_and_gen_token(
+    //     "auth.token.check_gen".to_owned(),
+    //     "".to_owned(),
+    //     nats_conn.clone(),
+    // )
+    // .await;
+    // login("auth.login".to_owned(), "".to_owned(), nats_conn.clone()).await;
+    // register("auth.register".to_owned(), "".to_owned(), nats_conn.clone()).await;
+    // forgot("auth.forgot.*".to_owned(), "".to_owned(), nats_conn.clone()).await;
     modify_permission(
-        "auth.permission.modify".to_owned(),
-        "".to_owned(),
+        "auth.permission.check".to_owned(),
+        "a".to_owned(),
         nats_conn.clone(),
     )
     .await;
     check_permission(
         "auth.permission.check".to_owned(),
-        "".to_owned(),
+        "a".to_owned(),
         nats_conn.clone(),
     )
     .await;
@@ -116,7 +111,7 @@ async fn modify_permission(topic: String, queue: String, conn: NatsConnection) {
                 println!("Modify");
                 msg.respond("")
             });
-        },
+        }
         Err(e) => {}
     }
 }
